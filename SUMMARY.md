@@ -1,6 +1,7 @@
 # Java 程式語言教學
 
 * [Introduction](README.md)
+* [Java 與 C 的比較](java-vs-c.md)
 * [類別與物件](class-and-obj.md)
 
 ## 範例
