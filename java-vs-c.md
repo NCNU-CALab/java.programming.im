@@ -93,7 +93,7 @@ Java 對數值型態的轉換比 C 稍微嚴格一點，下列左邊的部分都
 `String s`;
 宣告 s 是一個型態為 reference 的變數，這表示我們可透過 s 來存取屬於 String 類別的物件 (s is a reference to String object)。
 
-要特別強調的是，==s 並不是物件，而是用來指向 String 物件的 reference==。打個比方，
+要特別強調的是，**s 並不是物件，而是用來指向 String 物件的 reference**。打個比方，
 
 ```java
 public class 動物 {
