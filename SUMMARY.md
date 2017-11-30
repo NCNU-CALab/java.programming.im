@@ -12,3 +12,4 @@
 * [反矩陣](example/reverse-matrix.md)
 * [連線猜數字](example/guess-sever-client.md)
 * [黑白棋(Othello)](example/othello.md)
+* [踩地雷](example/minesweeper.md)
