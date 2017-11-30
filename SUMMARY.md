@@ -5,6 +5,7 @@
 
 ## 範例
 
-* [所得稅計算](fan-li.md)
-* [檔案處理](dang-an-chu-li.md)
-
+* [所得稅計算](example/tax-calculate.md)
+* [檔案處理](example/file-handler.md)
+* [矩陣加法與乘法](example/matrix.md)
+* [反矩陣](example/reverse-matrix.md)
