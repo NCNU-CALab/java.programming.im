@@ -13,3 +13,4 @@
 * [連線猜數字](example/guess-sever-client.md)
 * [黑白棋(Othello)](example/othello.md)
 * [踩地雷](example/minesweeper.md)
+* [工程型計算機](example/engineering-calculator.md)
