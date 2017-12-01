@@ -19,11 +19,11 @@ public class Othello extends JFrame implements ActionListener {
         add(oxBoard = new OX(this));
         CloseWindow close = new CloseWindow(this, true);
         setMenuBar(mb = new MenuBar());
-        mb.add(m = new Menu("¹CÀž")).add(new MenuItem("·s¹CÀž")).addActionListener(this);
-        m.add(black = new MenuItem("¹qž£€U¶Â€è")).addActionListener(this);
-        m.add(white = new MenuItem("¹qž£€U¥Õ€è")).addActionListener(this);
-        m.add(new MenuItem("µ²§ô")).addActionListener(close);
-        mb.add(new Menu("»¡©ú")).add(new MenuItem("Ãö©ó¥»¹CÀž")).addActionListener(this);
+        mb.add(m = new Menu("遊戲")).add(new MenuItem("新遊戲")).addActionListener(this);
+        m.add(black = new MenuItem("電腦下黑方")).addActionListener(this);
+        m.add(white = new MenuItem("電腦下白方")).addActionListener(this);
+        m.add(new MenuItem("結束")).addActionListener(close);
+        mb.add(new Menu("說明")).add(new MenuItem("關於本遊戲")).addActionListener(this);
         addWindowListener(close);
         pack();
         setResizable(false);
@@ -35,49 +35,49 @@ public class Othello extends JFrame implements ActionListener {
     // implements the ActionListener interface
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        if (command.equals("Ãö©ó¥»¹CÀž")) {
-            new ErrorDialog(this,"µ{Š¡³]­p¶Â¥ÕŽÑ(Ä«ªGªá)œdšÒ.\n§@ªÌ:«\Š°ª@©óº[«n€jŸÇžêºÞšt");
-        } else if (command.equals("·s¹CÀž")) {
+        if (command.equals("關於本遊戲")) {
+            new ErrorDialog(this,"程式設計黑白棋(蘋果花)範例.\n作者:俞旭昇於暨南大學資管系");
+        } else if (command.equals("新遊戲")) {
             oxBoard.newGame();
-        } else if (command.equals("£Ÿ¹qž£€U¶Â€è")) {
+        } else if (command.equals("ˇ電腦下黑方")) {
             oxBoard.setBlackPlayer(0);
-            black.setLabel("¹qž£€U¶Â€è");
-        } else if (command.equals("¹qž£€U¶Â€è")) {
+            black.setLabel("電腦下黑方");
+        } else if (command.equals("電腦下黑方")) {
             oxBoard.setBlackPlayer(1);
-            black.setLabel("£Ÿ¹qž£€U¶Â€è");
-        } else if (command.equals("£Ÿ¹qž£€U¥Õ€è")) {
+            black.setLabel("ˇ電腦下黑方");
+        } else if (command.equals("ˇ電腦下白方")) {
             oxBoard.setWhitePlayer(0);
-            white.setLabel("¹qž£€U¥Õ€è");
-        } else if (command.equals("¹qž£€U¥Õ€è")) {
+            white.setLabel("電腦下白方");
+        } else if (command.equals("電腦下白方")) {
             oxBoard.setWhitePlayer(1);
-            white.setLabel("£Ÿ¹qž£€U¥Õ€è");
+            white.setLabel("ˇ電腦下白方");
         }
     }
 }
 class OX extends Component implements MouseListener, MouseMotionListener, Runnable {
-    private int[] board; // œL­±ª¬ªp,ªí¹FŠ³Ãä®Øªº10*10œL­±
-    private int turn, diskdiff; // ²{Šb­þ€è¥i€U, »PŒÄ€èªº€lŒÆ®t²§
-    private OX parent; // ¥Ñ­þ€@­ÓœL­±ÅÜ€ÆŠÓšÓ
-    private double val = -1000000; // Šô­pŠ¹œL­±ªºÀu¶Õª¬ªp
+    private int[] board; // 盤面狀況,表達有邊框的10*10盤面
+    private int turn, diskdiff; // 現在哪方可下, 與敵方的子數差異
+    private OX parent; // 由哪一個盤面變化而來
+    private double val = -1000000; // 估計此盤面的優勢狀況
     private int hashval; // for hashtable
-    private int[] legals; // ÀxŠsŠ¹œL­±¥i¥H€UªºµÛ€â
-    public static final int EMPTY = 0x00; // ªÅ®æ
-    public static final int BLACK = 0x01; // ¶Â€l
-    public static final int WHITE = 0x02; // ¥Õ€l
-    public static final int STONE = 0x03; // €W­±šâ­Ó or
-    public static final int BOUND = 0x04; // Ãä¬É
-    public static final int ADEMP = 0x08; // ¬O§_ŸF±µ€lªºªÅÂI
-    private static final Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR); // œbÀYŽåŒÐ
-    private static final Cursor hintCursor = new Cursor(Cursor.HAND_CURSOR); // €â§ÎŽåŒÐ
-    private static final Cursor thinkCursor = new Cursor(Cursor.WAIT_CURSOR); // º|€æŽåŒÐ
-    private static Dimension mySize = new Dimension(600,400); // ©T©wµe­±ªº€j€p¬°Œe600,°ª400
-    private static JFrame top; // ¥]§tŠ¹€ž¥óªº³Ì€WŒhFrame
-    private static Thread thinking; // ­pºâ€€ªºThread
-    private static final byte[] directions = {1,-1,10,-10,9,-9,11,-11}; // €@ºû°}ŠC€Uªº8­Ó€èŠV
-    private static final int HASHSIZE = 63999979; // €p©ó64Mªº³Ì€jœèŒÆ
+    private int[] legals; // 儲存此盤面可以下的著手
+    public static final int EMPTY = 0x00; // 空格
+    public static final int BLACK = 0x01; // 黑子
+    public static final int WHITE = 0x02; // 白子
+    public static final int STONE = 0x03; // 上面兩個 or
+    public static final int BOUND = 0x04; // 邊界
+    public static final int ADEMP = 0x08; // 是否鄰接子的空點
+    private static final Cursor normalCursor = new Cursor(Cursor.DEFAULT_CURSOR); // 箭頭游標
+    private static final Cursor hintCursor = new Cursor(Cursor.HAND_CURSOR); // 手形游標
+    private static final Cursor thinkCursor = new Cursor(Cursor.WAIT_CURSOR); // 漏斗游標
+    private static Dimension mySize = new Dimension(600,400); // 固定畫面的大小為寬600,高400
+    private static JFrame top; // 包含此元件的最上層Frame
+    private static Thread thinking; // 計算中的Thread
+    private static final byte[] directions = {1,-1,10,-10,9,-9,11,-11}; // 一維陣列下的8個方向
+    private static final int HASHSIZE = 63999979; // 小於64M的最大質數
     public static int whoPlayBlack, whoPlayWhite;
     public static final int HUMAN = 0, COMPUTER = 1;
-    private static int newboard[] = { // ¹CÀž¶}©lªº³Ìªìµe­±
+    private static int newboard[] = { // 遊戲開始的最初畫面
         BOUND,BOUND,BOUND,BOUND,BOUND,BOUND,BOUND,BOUND,BOUND,BOUND,
         BOUND,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,BOUND,
         BOUND,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,BOUND,
@@ -97,7 +97,7 @@ class OX extends Component implements MouseListener, MouseMotionListener, Runnab
         turn = BLACK;
         legals = new int[] {34,43,56,65};
     }
-    // œÆ»spªºª¬ºA
+    // 複製p的狀態
     public OX(OX p) {
         board = new int[100];
         System.arraycopy(p.board, 0, board, 0, 100);
@@ -119,25 +119,25 @@ class OX extends Component implements MouseListener, MouseMotionListener, Runnab
         }
         whoPlayWhite = who;
     }
-    // ÀË¬dpos¬O§_ŠXªk
+    // 檢查pos是否合法
     boolean isLegal(int pos) {
         return isLegal(turn, pos);
     }
-    // ÀË¬dside³o­ÓÃCŠâ,¯à§_€UŠbpos
+    // 檢查side這個顏色,能否下在pos
     boolean isLegal(int side, int pos) {
         int opp = side^STONE;
         for (int i = 0, scan; i < 8; i++) {
             scan = pos+directions[i];
             if (board[scan] == opp) {
                     for (scan+=directions[i]; board[scan] == opp; scan+=directions[i]);
-                    if ((board[scan] & side) != 0) { // ¥i§šŠí¹ï€è
+                    if ((board[scan] & side) != 0) { // 可夾住對方
                         return true;
                 }
             }
         }
         return false;
     }
-    // ÀË¬dside¬O§_Š³ŠXªkªºµÛ€â¥i€U
+    // 檢查side是否有合法的著手可下
     boolean hasLegal(int side) {
         for (int i=11; i < 89; i++) {
             if ((board[i]==ADEMP) && isLegal(side, i)) {
@@ -146,57 +146,57 @@ class OX extends Component implements MouseListener, MouseMotionListener, Runnab
         }
         return false;
     }
-    // €UŠbpos,šÃ§ïÅÜœL­±µ²ºc. ­Ypos¬°0, ªí¥ÜŠ¹µÛ€â¬°pass
+    // 下在pos,並改變盤面結構. 若pos為0, 表示此著手為pass
     boolean addMove(int pos) {
         int opp = turn^STONE;
-        if (pos != 0) { // 0 ªí¥Üpass
+        if (pos != 0) { // 0 表示pass
             int legal = diskdiff;
             for (int i = 0, scan; i < 8; i++) {
                 scan = pos+directions[i];
-                if (board[scan] == opp) { // Š¹€èŠVºòŸFµÛŒÄ€èªº€l
-                    // žõ¹L³sÄòªºŒÄ€è€l
+                if (board[scan] == opp) { // 此方向緊鄰著敵方的子
+                    // 跳過連續的敵方子
                     for (scan += directions[i]; board[scan] == opp; scan+=directions[i]);
-                    if (board[scan] == turn) { // ¥i§šŠí¹ï€è
-                        // ±N©ÒŠ³ŒÄ€è€lÅÜŠš§Ú€è€l
+                    if (board[scan] == turn) { // 可夾住對方
+                        // 將所有敵方子變成我方子
                         for (int c = pos+directions[i]; c!=scan ;board[c]=turn, c+=directions[i], diskdiff+=2);
                     }
                 }
             }
-            if (diskdiff==legal) { // ŠpªG³£šSŠ³ŠYšì
+            if (diskdiff==legal) { // 如果都沒有吃到
                 return false;
             }
             diskdiff++;
             board[pos] = turn;
-            for (int i = 0; i < 8; i++) { // ³]©wŠ¹ÂI®ÇªºªÅÂI¬°ADEMP
+            for (int i = 0; i < 8; i++) { // 設定此點旁的空點為ADEMP
                 if (board[pos+directions[i]] == EMPTY) {
                     board[pos+directions[i]] = ADEMP;
                 }
             }
         }
-        turn = opp; // Ž«¹ï€è€U€F
+        turn = opp; // 換對方下了
         diskdiff = -diskdiff;
         hashval=(hashval*64+(pos-11))%HASHSIZE;
         return true;
     }
-    // Threadªº¶i€JÂI
+    // Thread的進入點
     public void run() {
         setCursor(thinkCursor);
-        for (;;) { // ·íŒÄ€è»Ýpass®É,§Ú€è€@ªœ€U
-            if (turn==BLACK && whoPlayBlack == HUMAN) { // ¥ýÀË¬d¬O§_§ï¥Ñ€H€U
+        for (;;) { // 當敵方需pass時,我方一直下
+            if (turn==BLACK && whoPlayBlack == HUMAN) { // 先檢查是否改由人下
                 break;
             }
-            if (turn==WHITE && whoPlayWhite == HUMAN) { // ¥ýÀË¬d¬O§_§ï¥Ñ€H€U
+            if (turn==WHITE && whoPlayWhite == HUMAN) { // 先檢查是否改由人下
                 break;
             }
             addMove(best());
             repaint(); // ask winder manager to call paint() in another thread
-            if (turn==BLACK && whoPlayBlack==HUMAN && hasLegal(turn)) { // €H¥i¥H€U€F
+            if (turn==BLACK && whoPlayBlack==HUMAN && hasLegal(turn)) { // 人可以下了
                 break;
             }
-            if (turn==WHITE && whoPlayWhite==HUMAN && hasLegal(turn)) { // €H¥i¥H€U€F
+            if (turn==WHITE && whoPlayWhite==HUMAN && hasLegal(turn)) { // 人可以下了
                 break;
             }
-            if (!hasLegal(turn) && !hasLegal(turn^STONE)) { // ¹ï€â©MŠÛ€v³£€£¯à€U€F
+            if (!hasLegal(turn) && !hasLegal(turn^STONE)) { // 對手和自己都不能下了
                 new ErrorDialog(top, "Game Over");
                 break;
             }
@@ -215,7 +215,7 @@ class OX extends Component implements MouseListener, MouseMotionListener, Runnab
         int col = e.getX()/40;
         if (row >= 8 || col >= 8) {
             setCursor(normalCursor);
-            return; // ¶W¹LÃä¬É
+            return; // 超過邊界
         }
         int pos = row*10 + col + 11;
         if (board[pos]==ADEMP && isLegal(turn, pos)) {
@@ -232,25 +232,25 @@ class OX extends Component implements MouseListener, MouseMotionListener, Runnab
     public void mousePressed(MouseEvent e) {
         int row = e.getY()/40;
         int col = e.getX()/40;
-        if (row >= 8 || col >= 8) return; // ¶W¹LÃä¬É
-        if (thinking != null) return; // ¹qž£«äŠÒ€€
+        if (row >= 8 || col >= 8) return; // 超過邊界
+        if (thinking != null) return; // 電腦思考中
         int pos = row*10+col+11;
-        if (board[pos] == ADEMP && addMove(pos)) { // Š¹Šìžm¥i¥H€U
+        if (board[pos] == ADEMP && addMove(pos)) { // 此位置可以下
             repaint();
             if (hasLegal(turn)) {
                 if ((turn==WHITE && whoPlayWhite==COMPUTER) || (turn==BLACK && whoPlayBlack==COMPUTER)) { // let computer play
                     (thinking = new Thread(this)).start();
                 }
             } else {
-                if (!hasLegal(turn^STONE)) { // Âù€è³£€£¯à€U
+                if (!hasLegal(turn^STONE)) { // 雙方都不能下
                     new ErrorDialog(top, "Game Over");
                     return;
                 }
-                addMove(0); // ¹ï€è€£¯à€U,force pass
+                addMove(0); // 對方不能下,force pass
             }
         }
     }
-    // ŽÑ€O±j®zÃöÁäªºšD­ÈšçŒÆ
+    // 棋力強弱關鍵的求值函數
     private void eval() {
         val = diskdiff;
     }
@@ -270,10 +270,10 @@ class OX extends Component implements MouseListener, MouseMotionListener, Runnab
             if (val < -tmp.val) {
                 val = -tmp.val;
                 for (OX p = parent; p != null;) {
-                    if (val >= -p.val) { // ¹ï€â€£·|¿ïŸÜ³o±øžôªº
+                    if (val >= -p.val) { // 對手不會選擇這條路的
                         return;
                     }
-                    // ©¹€WžõšâŒh
+                    // 往上跳兩層
                     p = p.parent;
                     if (p != null) p = p.parent;
                 }
@@ -447,7 +447,7 @@ class ErrorDialog extends JDialog {
            }
         }
         col++;
-        // §Æ±æµøµ¡¥XšÓ€£­n€Ó€j©Î€Ó€p
+        // 希望視窗出來不要太大或太小
         row = (row>24) ? 24 : row;
         if (row<5) {
             row=5;
@@ -462,7 +462,7 @@ class ErrorDialog extends JDialog {
             GridBagConstraints.BOTH,
             GridBagConstraints.NORTHWEST,
             1,1,0,0,0,0);
-        Button b = new Button("œT©w");
+        Button b = new Button("確定");
         b.setFont(font);
         AddConstraint.addConstraint(this.getContentPane(), b, 0, 1, 1, 1,
             GridBagConstraints.HORIZONTAL,
