@@ -19,3 +19,5 @@
 * [河內塔](example/tower-of-hanoi.md)
 * [數獨](example/sudoku.md)
 * [堆疊資料結構](example/stack.md)
+* [多執行緒 Queue](example/queue.md)
+* [使用 Queue](example/read-write-queue.md)
