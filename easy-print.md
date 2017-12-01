@@ -2,9 +2,9 @@ JDK 對印表的支援不多，主要是以「所視即所得」的觀念，將 
 
 以下是一個提供預覽以及背景列印的程式庫，該程式庫採用 [Template Design Pattern](http://www.javacamp.org/designPattern/)，透過 abstract methods 要求子類別必須實作特定的方法。  
 
-本程式另將[GitHub](https://github.com/NCNU-CALab/EasyPrint)  
+本程式另將原始碼公開於 [GitHub](https://github.com/NCNU-CALab/EasyPrint) 歡迎指教  
 
-#### Print.java
+### Print.java
 
 ```java
 package ncnu.print;
@@ -285,7 +285,7 @@ public abstract class Print implements ActionListener {
 }
 ```
 
-#### PrintCanvas.java
+### PrintCanvas.java
 
 ```java
 package ncnu.print;
@@ -1055,3 +1055,7 @@ public class PrintYLNoticeA4 extends Print {
     }
 }
 ```
+
+#### 執行後的結果
+
+![執行後的結果](https://github.com/NCNU-CALab/java.programming.im/raw/master/images/print1.jpg)
