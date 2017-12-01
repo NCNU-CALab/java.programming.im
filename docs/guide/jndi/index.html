@@ -1,0 +1,264 @@
+<html>
+
+<head>
+
+<title>
+Java Naming and Directory Interface
+</title>
+
+</head>
+
+<BODY BGCOLOR="#FFFFFF" TEXT=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR>
+
+<TD WIDTH=60>
+
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+
+</TD>
+
+
+
+<TD>
+
+<center>
+
+<h1>Java Naming and Directory Interface<font size=4><sup>TM</sup></font>
+</h1>
+
+</center>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+
+   <font size=-1><a href="../../index.html">Documentation Contents</a></font>
+
+</TD>
+
+</TR>
+
+</TABLE>
+
+
+
+<!-- Body text begins here -->
+
+
+
+<blockquote>
+The Java Naming and Directory Interface<font size="-2"><sup>TM</sup></font> (JNDI)
+provides naming and directory functionality to applications written
+in the Java<font size="-2"><sup>TM</sup></font> programming language. It
+is designed to be independent of any specific
+naming or directory service implementation. Thus a variety of services--new,
+emerging, and already deployed ones--can be accessed in a
+common way. 
+
+<p>
+
+The JNDI architecture consists of an API (Application Programming Interface) and an
+SPI (Service Provider Interface).  Java applications use this API to access a
+variety of naming and directory services. The SPI enables a variety of naming and
+directory services to be plugged in transparently, allowing the Java application
+using the API of the JNDI technology to access their services. 
+ 
+</blockquote>
+
+<p>
+<a name=14changes></a>
+<font size="+2"><b>Enhancements in Version 1.5.0</b></font>
+<blockquote>
+
+<dl>
+   <dt><b>Support for accessing the fullname from the NameClassPair class</b><br>
+       This feature enables getting the Distinguished Name from the
+       SearchResult.
+       To support this, two new methods have been added to the
+       javax.naming.NameClassPair class:
+       <ul>    
+        <li>&nbsp;<a href="../../api/javax/naming/NameClassPair.html#getNameInNamespace()">getNameInNamespace()</a>
+         </li>
+        <li>&nbsp;<a href="../../api/javax/naming/NameClassPair.html#setNameInNamespace(java.lang.String)">setNameInNamespace()</a>
+       </li>
+       </ul>
+<p>    
+   <dt><b>Support for standard LDAP controls</b><br>
+       The necessary LDAP controls are already supported in the LDAP
+       Booster Pack extension package which is available for the JNDI/LDAP
+       service provider.
+       The LDAP controls have been recently standardized in RFCs.
+       These are made available in the javax.naming.ldap package of J2SE
+       through the following classes.
+     <ul>
+       <li>ManageReferralControl (<a href="http://www.ietf.org/rfc/rfc3296.txt">RFC 3296</a>)
+       <li>PagedResultsControl   (<a href="http://www.ietf.org/rfc/rfc2696">RFC 2696</a>)   
+       <li>PagedResultsResponseControl
+       <li>SortControl           (<a href="http://www.ietf.org/rfc/rfc2891.txt">RFC 2891</a>)  
+       <li>SortKey
+       <li>SortResponseControl
+       <li>BasicControl
+     </ul>
+<p>    
+   <dt><b> Support for manipulation of LDAP names</b><br>
+       This feature enables easy manipulation of LDAP Names to build
+       distinguished names or relative distinguished names methodically, and
+       enables formatting them into their strings representation
+       as defined by RFC 2253. To support this, two new classes have been
+       added to the javax.naming.ldap package.
+     <ul>    
+       <li><a href="../../api/javax/naming/ldap/LdapName.html">LdapName</a>
+       <li><a href="../../api/javax/naming/ldap/Rdn.html">Rdn</a>
+     </ul>
+
+</dl>
+</blockquote>
+
+<a href="enhancements.html"><b>Enhancements in Earlier Releases</b></a>
+<p>
+<font size="+2"><b>JNDI Tutorial</b></font>
+<ul>
+   <li><b><a href="http://java.sun.com/products/jndi/tutorial/index.html">
+   JNDI Tutorial</a></b> - A tutorial introduction to the
+   JNDI technology with programming examples. 
+</ul>
+
+<p>
+<font size="+2"><b>JNDI Architecture Documents</b></font>
+<ul>
+   <li><b><a href="spec/execsumm/jndiexecsumm.html">
+	Executive Summary</a></b>
+	- also available in 
+	<a href="http://java.sun.com/j2se/1.5/pdf/jndiexecsumm.pdf">
+	PDF</a>
+   <li><b><a href="spec/jndi/index.html">JNDI API</a></b> - also
+	available in
+	<a href="http://java.sun.com/j2se/1.5/pdf/jndi.pdf">PDF</a>
+   <li><b><a href="spec/spi/spicover.frame.html">JNDI SPI</a></b> - also
+	available in 
+	<a href="http://java.sun.com/j2se/1.5/pdf/jndispi.pdf">
+	PDF</a>
+</ul>
+
+<font size="+2"><b>JNDI API and SPI Specification</b></font>
+<br>(javadoc)
+<ul>
+   <li><b><a href="reference.html">JNDI API and SPI Specification</a></b>
+	- A list of the packages included in the JNDI technology.
+</ul>
+
+<a name="SP"><font size="+2"><b>JNDI Service Providers</b></font></a>
+<blockquote>
+
+To use JNDI with a particular naming or directory service, you need a
+JNDI <em>service provider</em>, which is a module that plugs in
+beneath the JNDI API to access the naming or directory service.  The
+Java Software Web site maintains a list of 
+<a href=http://java.sun.com/products/jndi/serviceproviders.html>
+service providers</a> available
+for JNDI for use with the JDK 1.1.x, the Java 2 SDK, v 1.2, v 1.3 and v 1.4.
+
+<p> 
+Java 2 SDK, v 1.4 includes the following service providers:
+
+<ul>
+   <li><a href="jndi-ldap.html">The LDAP Service Provider</a>
+
+   <li><a href="jndi-cos.html">The COS Naming Service Provider</a>
+
+   <li><a href="jndi-rmi.html">The RMI Registry Service Provider</a>
+
+   <li><a href="jndi-dns.html">The DNS Service Provider</a>
+
+</ul>
+</blockquote>
+
+<p>     
+<font size="+2"><b>For More Information</b></font></a>
+<ul>
+<li> Subscribe to the 
+<a href="http://java.sun.com/products/jndi/staytouch.html">
+JNDI-INTEREST list</a>
+
+<li> Source to a 
+<a href="http://java.sun.com/products/jndi/">
+demonstration namespace browser</a> written using
+JNDI and Swing 
+
+<li> <a href="http://java.sun.com/products/jndi/docs.html">
+Related documents</a>
+
+<li> The <a href="http://java.sun.com/products/jndi">
+JNDI Home Page</a>
+</ul>
+
+<p>
+
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH=100%>
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+<P><FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2002
+
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+
+    All Rights Reserved.</FONT></P>
+
+   <FONT SIZE="-1">
+
+   Please send comments to: <a href="mailto:jndi@java.sun.com">jndi@java.sun.com</a> 
+
+   </FONT>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT=" Sun Microsystems, Inc " BORDER=0 WIDTH=64 HEIGHT=30>
+
+   <BR>
+
+   <FONT SIZE="+1">
+
+   <i>Java Software</i>
+
+   </FONT>
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+
+
+
+</BODY>
+
+</HTML>
+

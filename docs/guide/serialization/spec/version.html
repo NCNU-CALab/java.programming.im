@@ -1,0 +1,211 @@
+<html>
+<head>
+<title> </title>
+</head>
+<body BGCOLOR=#ffffff text=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+ 
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="class.html">Prev</a> | <a href="protocol.html">Next</a> </td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<hr><br>
+ 
+
+<h1 align="left">
+  <a name="9419"> </a>Versioning of Serializable Objects</h1>
+
+
+
+
+<p>
+</p>
+
+
+<h4>
+  <a name="8121"> </a>		 Topics:</h4>
+
+<a name="8120"> </a>
+<li><a href="version.html#8130">Overview</a><a name="8162"> </a>
+<li><a href="version.html#4569">Goals</a><a name="8132"> </a>
+<li><a href="version.html#4595">Assumptions</a><a name="8133"> </a>
+<li><a href="version.html#4602">Who's Responsible for Versioning of Streams</a><a name="8288"> </a>
+<li><a href="version.html#6519">Compatible Java<font size="-1"><sup>TM</sup></font> Type Evolution</a><a name="8135"> </a>
+<li><a href="version.html#6678">Type Changes Affecting Serialization</a>
+<h2>
+  <a name="8130"> </a>	5.1	 Overview</h2>
+
+
+
+
+
+
+<p>
+When Java<font size="-1"><sup>TM</sup></font> objects use serialization to save state in files, or as blobs in databases, the potential arises that the version of a class reading the data is different than the version that wrote the data.</p>
+
+
+<p>
+Versioning raises some fundamental questions about the identity of a class, including what constitutes a compatible change. A <em>compatible change</em> is a change that does not affect the contract between the class and its callers.</p>
+
+
+<p>
+This section describes the goals, assumptions, and a solution that attempts to address this problem by restricting the kinds of changes allowed and by carefully choosing the mechanisms.</p>
+
+
+<p>
+The proposed solution provides a mechanism for "automatic" handling of classes that evolve by adding fields and adding 	 classes. Serialization will handle versioning without class-specific methods to be implemented for each version. The stream format can be traversed without invoking class-specific methods.</p>
+
+
+<h2>
+  <a name="4569"> </a>	5.2	 Goals</h2>
+
+
+
+
+
+
+<p>
+The goals are to:</p>
+
+<a name="9359"> </a>
+<li>Support bidirectional communication between different versions of a class operating in different virtual machines by:<a name="4835"> </a>
+<li>Defining a mechanism that allows Java<font size="-1"><sup>TM</sup></font> classes to read streams written by older versions of the same class.<a name="4581"> </a>
+<li>Defining a mechanism that allows Java<font size="-1"><sup>TM</sup></font> classes to write streams intended to be read by older versions of the same class.<a name="7270"> </a>
+<li>Provide default serialization for persistence and for RMI.<a name="4579"> </a>
+<li>Perform well and produce compact streams in simple cases, so that RMI can use serialization.<a name="4584"> </a>
+<li>Be able to identify and load classes that match the exact class used to write the stream.<a name="4585"> </a>
+<li>Keep the overhead low for nonversioned classes.<a name="4832"> </a>
+<li>Use a stream format that allows the traversal of the stream without having to invoke methods specific to the objects saved in the stream.
+<h2>
+  <a name="4595"> </a>	5.3	 Assumptions</h2>
+
+
+
+
+
+
+<p>
+The assumptions are that:</p>
+
+<a name="4596"> </a>
+<li>Versioning will only apply to serializable classes since it must control the stream format to achieve it goals. Externalizable classes will be responsible for their own versioning which is tied to the external format.<a name="8204"> </a>
+<li>All data and objects must be read from, or skipped in, the stream in the same order as they were written.<a name="4597"> </a>
+<li>Classes evolve individually as well as in concert with supertypes and subtypes.<a name="4601"> </a>
+<li>Classes are identified by name. Two classes with the same name may be different versions or completely different classes that can be distinguished only by comparing their interfaces or by comparing hashes of the interfaces.<a name="4605"> </a>
+<li>Default serialization will not perform any type conversions.<a name="4606"> </a>
+<li>The stream format only needs to support a linear sequence of type changes, not arbitrary branching of a type.
+<h2>
+  <a name="4602"> </a>	5.4	 Who's Responsible for Versioning of Streams</h2>
+
+
+
+
+
+
+<p>
+In the evolution of classes, it is the responsibility of the evolved (later version) class to maintain the contract established by the nonevolved class. This takes two forms. First, the evolved class must not break the existing assumptions about the interface provided by the original version, so that the evolved class can be used in place of the original. Secondly, when communicating with the original (or previous) versions, the evolved class must provide sufficient and equivalent information to allow the earlier version to continue to satisfy the nonevolved contract.</p>
+
+
+<p>
+<img src="versiona.gif" height="361" width="500" align="center" border="0" hspace="0" vspace="0">
+</p>
+
+
+<p>
+For the purposes of the discussion here, each class implements and extends the interface or contract defined by its supertype. New versions of a class, for example <code>foo'</code>, must continue to satisfy the contract for <code>foo</code> and may extend the interface or modify its implementation. </p>
+
+
+<p>
+Communication between objects via serialization is not part of the contract defined by these interfaces. Serialization is a private protocol between the implementations. It is the responsibility of the implementations to communicate sufficiently to allow each implementation to continue to satisfy the contract expected by its clients.</p>
+
+
+<h2>
+  <a name="6519"> </a>	5.5	 Compatible Java<font size="-1"><sup>TM</sup></font> Type Evolution</h2>
+
+
+
+
+
+
+<p>
+In the <em>Java<font size="-1"><sup>TM</sup></font> Language Specification</em>, Chapter 13 discusses binary compatibility of Java<font size="-1"><sup>TM</sup></font> classes as those classes evolve. Most of the flexibility of binary compatibility comes from the use of late binding of symbolic references for the names of classes, interfaces, fields, methods, and so on. </p>
+
+
+<p>
+The following are the principle aspects of the design for versioning of serialized object streams.</p>
+
+<a name="5549"> </a>
+<li>The default serialization mechanism will use a symbolic model for binding the fields in the stream to the fields in the corresponding class in the virtual machine.<a name="5550"> </a>
+<li>Each class referenced in the stream will uniquely identify itself, its supertype, and the types and names of each serializable field written to the stream. The fields are ordered with the primitive types first sorted by field name, followed by the object fields sorted by field name.<a name="7102"> </a>
+<li>Two types of data may occur in the stream for each class: required data (corresponding directly to the serializable fields of the object); and optional data (consisting of an arbitrary sequence of primitives and objects). The stream format defines how the required and optional data occur in the stream so that the whole class, the required, or the optional parts can be skipped if necessary.<a name="7097"> </a>
+<li>The required data consists of the fields of the object in the order defined by the class descriptor. <a name="7096"> </a>
+<li>The optional data is written to the stream and does not correspond directly to fields of the class. The class itself is responsible for the length, types, and versioning of this optional information.<a name="7100"> </a>
+<li>If defined for a class, the <code>writeObject</code>/<code>readObject</code> methods supersede the default mechanism to write/read the state of the class. These methods write and read the optional data for a class. The required data is written by calling <code>defaultWriteObject</code> and read by calling <code>defaultReadObject</code>.<a name="5552"> </a>
+<li>The stream format of each class is identified by the use of a Stream Unique Identifier (SUID). By default, this is the hash of the class. All later versions of the class must declare the Stream Unique Identifier (SUID) that they are compatible with. This guards against classes with the same name that might inadvertently be identified as being versions of a single class.<a name="6676"> </a>
+<li>Subtypes of <code>ObjectOutputStream</code> and <code>ObjectInputStream</code> may include their own information identifying the class using the <code>annotateClass</code> method; for example, <code>MarshalOutputStream</code> embeds the URL of the class.
+<h2>
+  <a name="6678"> </a>	5.6	 Type Changes Affecting Serialization</h2>
+
+
+
+
+
+
+<p>
+With these concepts, we can now describe how the design will cope with the different cases of an evolving class. The cases are described in terms of a stream written by some version of a class. When the stream is read back by the same version of the class, there is no loss of information or functionality. The stream is the only source of information about the original class. Its class descriptions, while a subset of the original class description, are sufficient to match up the data in the stream with the version of the class being reconstituted.</p>
+
+
+<p>
+The descriptions are from the perspective of the stream being read in order to reconstitute either an earlier or later version of the class. In the parlance of RPC systems, this is a "receiver makes right" system. The writer writes its data in the most suitable form and the receiver must interpret that information to extract the parts it needs and to fill in the parts that are not available.</p>
+
+
+<h3>
+  <a name="5172"> </a>	5.6.1	 Incompatible Changes</h3>
+
+
+<p>
+Incompatible changes to classes are those changes for which the guarantee of interoperability cannot be maintained. The incompatible changes that may occur while evolving a class are:</p>
+
+<a name="6756"> </a>
+<li>Deleting fields - If a field is deleted in a class, the stream written will not contain its value. When the stream is read by an earlier class, the value of the field will be set to the default value because no value is available in the stream. However, this default value may adversely impair the ability of the earlier version to fulfill its contract.<a name="6780"> </a>
+<li>Moving classes up or down the hierarchy - This cannot be allowed since the data in the stream appears in the wrong sequence.<a name="6796"> </a>
+<li>Changing a nonstatic field to static or a nontransient field to transient - When relying on default serialization, this change is equivalent to deleting a field from the class. This version of the class will not write that data to the stream, so it will not be available to be read by earlier versions of the class. As when deleting a field, the field of the earlier version will be initialized to the default value, which can cause the class to fail in unexpected ways.<a name="6821"> </a>
+<li>Changing the declared type of a primitive field - Each version of the class writes the data with its declared type. Earlier versions of the class attempting to read the field will fail because the type of the data in the stream does not match the type of the field.<a name="9542"> </a>
+<li>Changing the <code>writeObject</code> or <code>readObject</code> method so that it no longer writes or reads the default field data or changing it so that it attempts to write it or read it when the previous version did not. The default field data must consistently either appear or not appear in the stream.<a name="9543"> </a>
+<li>Changing a class from <code>Serializable</code> to <code>Externalizable</code> or vice versa is an incompatible change since the stream will contain data that is incompatible with the implementation of the available class.<a name="9541"> </a>
+<li>Changing a class from a non-enum type to an enum type or vice versa since the stream will contain data that is incompatible with the implementation of the available class.<a name="9352"> </a>
+<li>Removing either <code>Serializable</code> or <code>Externalizable</code> is an incompatible change since when written it will no longer supply the fields needed by older versions of the class.<a name="9412"> </a>
+<li>Adding the <code>writeReplace</code> or <code>readResolve</code> method to a class is incompatible if the behavior would produce an object that is incompatible with any older version of the class.
+<h3>
+  <a name="6754"> </a>	5.6.2	 Compatible Changes</h3>
+
+
+<p>
+The compatible changes to a class are handled as follows:</p>
+
+<a name="5174"> </a>
+<li>Adding fields - When the class being reconstituted has a field that does not occur in the stream, that field in the object will be initialized to the default value for its type. If class-specific initialization is needed, the class may provide a readObject method that can initialize the field to nondefault values.<a name="5523"> </a>
+<li>Adding classes - The stream will contain the type hierarchy of each object in the stream. Comparing this hierarchy in the stream with the current class can detect additional classes. Since there is no information in the stream from which to initialize the object, the class's fields will be initialized to the default values.<a name="5524"> </a>
+<li>Removing classes - Comparing the class hierarchy in the stream with that of the current class can detect that a class has been deleted. In this case, the fields and objects corresponding to that class are read from the stream. Primitive fields are discarded, but the objects referenced by the deleted class are created, since they may be referred to later in the stream. They will be garbage-collected when the stream is garbage-collected or reset.<a name="6785"> </a>
+<li>Adding <code>writeObject</code>/<code>readObject</code> methods - If the version reading the stream has these methods then <code>readObject</code> is expected, as usual, to read the required data written to the stream by the default serialization. It should call <code>defaultReadObject</code> first before reading any optional data. The <code>writeObject</code> method is expected as usual to call <code>defaultWriteObject</code> to write the required data and then may write optional data.<a name="6786"> </a>
+<li>Removing <code>writeObject</code>/<code>readObject</code> methods - If the class reading the stream does not have these methods, the required data will be read by default serialization, and the optional data will be discarded.<a name="5209"> </a>
+<li>Adding <code>java.io.Serializable</code> - This is equivalent to adding types. There will be no values in the stream for this class so its fields will be initialized to default values. The support for subclassing nonserializable classes requires that the class's supertype have a no-arg constructor and the class itself will be initialized to default values. If the no-arg constructor is not available, the <code>InvalidClassException</code> is thrown.<a name="6837"> </a>
+<li>Changing the access to a field - The access modifiers public, package, protected, and private have no effect on the ability of serialization to assign values to the fields.<a name="6838"> </a>
+<li>Changing a field from static to nonstatic or transient to nontransient - When relying on default serialization to compute the serializable fields, this change is equivalent to adding a field to the class. The new field will be written to the stream but earlier classes will ignore the value since serialization will not assign values to static or transient fields. <pre>
+<a name="4945"> </a>
+</pre>
+
+
+<hr>
+<!-- This inserts footnotes--><p>
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="class.html">Prev</a> | <a href="protocol.html">Next</a> </td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<p>
+<font size="-1"><i>Copyright &#169 2004 Sun Microsystems, Inc.
+All rights reserved</i>
+<br>
+</font>
+</body></html>

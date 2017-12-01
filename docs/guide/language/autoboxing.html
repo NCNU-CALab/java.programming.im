@@ -1,0 +1,195 @@
+<HTML>
+<HEAD>
+<title>Autoboxing</title>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<!--TD WIDTH=60-->
+<TD>
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+<TD>
+<center>
+<h1>Autoboxing</h1>
+</center>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="./index.html">Language Contents</a></font>
+<p>
+</TR>
+</TABLE>
+
+<!-- Body text begins here -->
+
+
+<hr size=3 noshade>
+
+<p>As any Java programmer knows, you can&#8217;t put an <code>int</code>
+(or other primitive value) into a collection. Collections can only
+hold object references, so you have to <i>box</i> primitive values
+into the appropriate wrapper class (which is 
+<a href="../../api/java/lang/Integer.html"><code>Integer</code></a>
+in the case of <code>int</code>). When you take the object out of the 
+collection, you get the <code>Integer</code> that you put in; if you need an
+<code>int</code>, you must <i>unbox</i> the <code>Integer</code> using the
+<code>intValue</code> method. All of this boxing and unboxing is a pain,
+and clutters up your code. The autoboxing and unboxing feature
+automates the process, eliminating the pain and the clutter.
+
+<p>The following example illustrates autoboxing and unboxing, along with
+<a href="generics.html">generics</a> and the 
+<a href="foreach.html">for-each</a> loop.  In a mere ten lines of code, it computes and
+prints an alphabetized frequency table of the words appearing on the command
+line.
+
+<blockquote>
+<pre>
+import java.util.*;
+
+<b>// Prints a frequency table of the words on the command line</b>
+public class Frequency {
+   public static void main(String[] args) {
+      Map&lt;String, Integer&gt; m = new TreeMap&lt;String, Integer&gt;();
+      for (String word : args) {
+          Integer freq = m.get(word);
+          m.put(word, (freq == null ? <font color="#009900">1 : freq + 1</font>));
+      }
+      System.out.println(m);
+   }
+}
+
+java Frequency if it is to be it is up to me to do the watusi
+{be=1, do=1, if=1, is=2, it=2, me=1, the=1, to=3, up=1, watusi=1}
+</pre>
+</blockquote>
+
+<p>The program first declares a map from <code>String</code> to <code>Integer</code>,
+associating the number of times a word occurs on the command line with
+the word.  Then it iterates over each word on the command line.  For
+each word, it looks up the word in the map.  Then it puts a revised
+entry for the word into the map.  The line that does this (highlighted
+in green) contains both autoboxing and unboxing.  To compute the new
+value to associate with the word, first it looks at the current value
+(<code>freq</code>). If it is null, this is the first occurrence of the
+word, so it puts 1 into the map.  Otherwise, it adds 1 to the number
+of prior occurrences and puts that value into the map.  But of course
+you cannot put an <code>int</code> into a map, nor can you add one to an
+<code>Integer</code>. What is really happening is this: In order to add 1
+to <code>freq</code>, it is automatically unboxed, resulting in an
+expression of type <code>int</code>. Since both of the alternative
+expressions in the conditional expression are of type <code>int</code>, so
+too is the conditional expression itself.  In order to put this
+<code>int</code> value into the map, it is automatically boxed into an
+<code>Integer</code>.
+
+<p>The result of all this magic is that you can largely ignore the
+distinction between <code>int</code> and <code>Integer</code>, with a few
+caveats. An <code>Integer</code> expression can have a <code>null</code>
+value. If your program tries to autounbox null, it will throw a
+<code>NullPointerException</code>. The <code>==</code> operator performs
+reference identity comparisons on <code>Integer</code> expressions and
+value equality comparisons on <code>int</code> expressions. Finally, there
+are performance costs associated with boxing and unboxing, even if
+it is done automatically.
+
+<p>Here is another sample program featuring autoboxing and unboxing.  It is a
+static factory that takes an <code>int</code> array and returns a 
+<a href="../../api/java/util/List.html"><code>List</code></a> of
+<code>Integer</code> backed by the array.  In a mere ten lines of code this 
+method provides the full richness of the <code>List</code> interface atop an
+<code>int</code> array.  All changes to the list write through to the array and
+vice-versa.  The lines that use autoboxing or unboxing are highlighted in
+green:
+<blockquote>
+<pre><b>// List adapter for primitive int array</b>
+public static List&lt;Integer&gt; asList(final int[] a) {
+    return new AbstractList&lt;Integer&gt;() {
+        public Integer get(int i) { <font color="#009900">return a[i];</font> }
+        // Throws NullPointerException if val == null
+        public Integer set(int i, Integer val) {
+            <font color="#009900">Integer oldVal = a[i];
+            a[i] = val;</font>
+            return oldVal;
+        }
+        public int size() { return a.length; }
+    };
+}
+</pre>
+</blockquote>
+
+<p>The performance of the resulting list is likely to be poor,
+as it boxes or unboxes on every <code>get</code> or <code>set</code>
+operation.  It is plenty fast enough for occasional use, but it would
+be folly to use it in a performance critical inner loop.
+
+<p>So when should you use autoboxing and unboxing? Use them
+<i>only</i> when there is an &#8220;impedance mismatch&#8221; between
+reference types and primitives, for example, when you have to put
+numerical values into a collection.  It is <i>not</i> appropriate to
+use autoboxing and unboxing for scientific computing, or other
+performance-sensitive numerical code.  An <code>Integer</code> is
+<i>not</i> a substitute for an <code>int</code>; autoboxing and unboxing
+blur the distinction between primitive types and reference types, but
+they do not eliminate it.
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+
+<TD>
+   <FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+   All Rights Reserved.
+
+   </FONT>
+   <P>
+
+   <FONT SIZE="-1">
+   Please <a href="../../relnotes/contacts.html">send us comments and suggestions</a><BR>
+   </FONT>
+</TD>
+
+<TD ALIGN=RIGHT>
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+   <BR><BR>
+   <FONT SIZE="+1">
+   <i>Java Software</i>
+   </FONT>
+</TD>
+
+</TR>
+</TABLE>
+
+
+<PRE>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+
+</BODY>
+</HTML>

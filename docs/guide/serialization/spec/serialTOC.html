@@ -1,0 +1,232 @@
+<html>
+<head>
+<title> </title>
+</head>
+<body BGCOLOR=#ffffff text=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+ 
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="changelog.html">Prev</a> | <a href="serial-arch.html">Next</a></td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<hr><br>
+ 
+
+<h1 align="left">
+  <a name="1322"> </a>Table of Contents</h1>
+
+
+
+<dl>
+<dt><dd>
+<a href="serial-arch.html#5800">
+1	 System Architecture
+</a><dl>
+<dt><dd>
+<a href="serial-arch.html#6428">
+1.1	 Overview	 	 
+</a><dt><dd>
+<a href="serial-arch.html#4176">
+1.2	 Writing to an Object Stream	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#4188">
+1.3	 Reading from an Object Stream	 	 	 	
+</a><dt><dd>
+<a href="serial-arch.html#962">
+1.4	 Object Streams as Containers	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#6250">
+1.5	 Defining Serializable Fields for a Class	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#5251">
+1.6	 Documenting Serializable Fields and Data for a Class	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#5253">
+1.7	 Accessing Serializable Fields of a Class	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#4542">
+1.8	 The ObjectOutput Interface	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#4548">
+1.9	 The ObjectInput Interface	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#4539">
+1.10	 The Serializable Interface	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#7185">
+1.11	 The Externalizable Interface	 	 	 	 
+</a><dt><dd>
+<a href="serial-arch.html#6469">
+1.12	 Serialization of Enum Constants	 	 	 	
+</a><dt><dd>
+<a href="serial-arch.html#7231">
+1.13	 Protecting Sensitive Information	 	 	 	
+</a></dl>
+<dt><dd>
+<a href="output.html#60">
+2	 Object Output Classes	 	 	 	 
+</a><dl>
+<dt><dd>
+<a href="output.html#933">
+2.1	 The ObjectOutputStream Class	 	 	 	
+</a><dt><dd>
+<a href="output.html#5068">
+2.2	 The ObjectOutputStream.PutField Class	 	 	 	 
+</a><dt><dd>
+<a href="output.html#861">
+2.3	 The writeObject Method	 	 	 	 
+</a><dt><dd>
+<a href="output.html#3146">
+2.4	 The writeExternal Method	 	 	
+</a><dt><dd>
+<a href="output.html#5324">
+2.5	 The writeReplace Method	 	 	 	
+</a><dt><dd>
+<a href="output.html#4787">
+2.6	 The useProtocolVersion Method	 	 	 	
+</a></dl>
+<dt><dd>
+<a href="input.html#60">
+3	 Object Input Classes	 	 	 	 
+</a><dl>
+<dt><dd>
+<a href="input.html#961">
+3.1	 The ObjectInputStream Class	 	 	 	 
+</a><dt><dd>
+<a href="input.html#4936">
+3.2	 The ObjectInputStream.GetField Class	 	 	 	 
+</a><dt><dd>
+<a href="input.html#3403">
+3.3	 The ObjectInputValidation Interface	 	 	 	
+</a><dt><dd>
+<a href="input.html#2971">
+3.4	 The readObject Method	 	 	 	 
+</a><dt><dd>
+<a href="input.html#6053">
+3.5	 The readObjectNoData Method	 		 	 
+</a><dt><dd>
+<a href="input.html#6014">
+3.6	 The readExternal Method	 	 	 	 
+</a><dt><dd>
+<a href="input.html#5903">
+3.7	 The readResolve Method	 	 	 	 
+</a></dl>
+<dt><dd>
+<a href="class.html#60">
+4	 Class Descriptors	 	 	 	 
+</a><dl>
+<dt><dd>
+<a href="class.html#5082">
+4.1	 The ObjectStreamClass Class	 	 	 	 
+</a><dt><dd>
+<a href="class.html#5419">
+4.2	 Dynamic Proxy Class Descriptors	 	 	 	 
+</a><dt><dd>
+<a href="class.html#5421">
+4.3	 Serialized Form	 	 	 	
+</a><dt><dd>
+<a href="class.html#3127">
+4.4	 The ObjectStreamField Class	 	 	 	 
+</a><dt><dd>
+<a href="class.html#5023">
+4.5	 Inspecting Serializable Classes	 	 	 	 
+</a><dt><dd>
+<a href="class.html#4100">
+4.6	 Stream Unique Identifiers	 	 	 	 
+</a></dl>
+<dt><dd>
+<a href="version.html#9419">
+5	 Versioning of Serializable Objects	 	 	 	
+</a><dl>
+<dt><dd>
+<a href="version.html#8130">
+5.1	 Overview	 	 	 	 
+</a><dt><dd>
+<a href="version.html#4569">
+5.2	 Goals	 	 	 	 
+</a><dt><dd>
+<a href="version.html#4595">
+5.3	 Assumptions	 	 	 	
+</a><dt><dd>
+<a href="version.html#4602">
+5.4	 Who's Responsible for Versioning of Streams	 	 	 	
+</a><dt><dd>
+<a href="version.html#6519">
+5.5	 Compatible Java<font size="-1"><sup>TM</sup></font> Type Evolution	 	 	 	 
+</a><dt><dd>
+<a href="version.html#6678">
+5.6	 Type Changes Affecting Serialization	 	 	 	 
+</a></dl>
+<dt><dd>
+<a href="protocol.html#8101">
+6	 Object Serialization Stream Protocol	 	 	 	 
+</a><dl>
+<dt><dd>
+<a href="protocol.html#8130">
+6.1	 Overview	 	 	 	 
+</a><dt><dd>
+<a href="protocol.html#8299">
+6.2	 Stream Elements	 	 	 	 
+</a><dt><dd>
+<a href="protocol.html#5849">
+6.3	 Stream Protocol Versions	 	 	 	 
+</a><dt><dd>
+<a href="protocol.html#10258">
+6.4	 Grammar for the Stream Format	 	 	 	 
+</a></dl>
+<dt><dd>
+<a href="security.html#2527">
+A	 Security in Object Serialization	 	 	 	 
+</a><dl>
+<dt><dd>
+<a href="security.html#4138">
+A.1	 Overview	 	 	 	 
+</a><dt><dd>
+<a href="security.html#2630">
+A.2	 Design Goals	 	 	 	 
+</a><dt><dd>
+<a href="security.html#4169">
+A.3	 Security Issues	 	 	 	 
+</a><dt><dd>
+<a href="security.html#4214">
+A.4	 Preventing Serialization of Sensitive Data	 	 	 	
+</a><dt><dd>
+<a href="security.html#4229">
+A.5	 Writing Class-Specific Serializing Methods	 	 	 
+</a><dt><dd>
+<a href="security.html#4271">
+A.6	 Guarding Unshared Deserialized Objects	 	 	 	
+</a><dt><dd>
+<a href="security.html#4324">
+A.7	 Preventing Overwriting of Externalizable Objects	 	 	 	
+</a><dt><dd>
+<a href="security.html#4346">
+A.8	 Encrypting a Bytestream	 	 	 	 
+</a></dl>
+<dt><dd>
+<a href="exceptions.html#3601">
+B	 Exceptions In Object Serialization	 	 	 	 
+</a><dt><dd>
+<a href="examples.html#3601">
+C	 Example of Serializable Fields	 	 	 	 
+</a><dl>
+<dt><dd>
+<a href="examples.html#4420">
+C.1	 	 Example Alternate Implementation of java.io.File	 	
+</a></dl>
+</dl>
+
+
+<hr>
+<!-- This inserts footnotes--><p>
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="changelog.html">Prev</a> | <a href="serial-arch.html">Next</a></td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<p>
+<font size="-1"><i>Copyright &#169 2004 Sun Microsystems, Inc.
+All rights reserved</i>
+<br>
+</font>
+</body></html>

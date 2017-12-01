@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<HTML>
+
+<HEAD>
+
+     <TITLE>Java(TM) Virtual Machines</TITLE>
+
+</HEAD>
+
+
+
+<BODY BGCOLOR="#FFFFFF">
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR>
+
+<TD WIDTH="60">
+
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+
+</TD>
+
+
+
+<TD>
+
+<center>
+
+           <h1>Java<sup><font size="-2">TM</font></sup> Virtual Machines</h1>
+
+</center>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT VALIGN=TOP WIDTH="60">
+
+   <font size="-1"><a href="../../index.html">Documentation Contents</a></font>
+
+</TD>
+
+</TR>
+
+</TABLE>
+
+
+
+<!-- Body text begins here -->
+<blockquote>
+  <p>The J2SE Development Kit (JDK) provides one or more implementations of 
+    the Java virtual machine (VM):</p>
+  <ul>
+    <li>
+      <p> On platforms typically used for client applications, the JDK comes with 
+        a VM implementation called the <b>Java HotSpot Client VM</b> (<i>client 
+        VM</i>). The client VM is tuned for reducing start-up time and memory 
+        footprint. It can be invoked by using the <code>-client</code> command-line 
+        option when launching an application.<br>
+      </p>
+    </li>
+    <li>
+      <p>On all platforms, the JDK comes with an implementation of the Java virtual 
+        machine called the <b>Java HotSpot Server VM</b> (<i>server VM</i>). The 
+        server VM is designed for maximum program execution speed. It can be invoked 
+        by using the <code>-server</code> command-line option when launching an 
+        application.<br>
+      </p>
+    </li>
+  </ul>
+  <p>Some features of Java HotSpot technology, common to both VM implementations, 
+    are the following. </p>
+  <ul>
+    <li><em>Adaptive compiler</em> - Applications are launched using a standard 
+      interpreter, but the code is then analyzed as it runs to detect performance 
+      bottlenecks, or "hot spots". The Java HotSpot VMs compile those performance-critical 
+      portions of the code for a boost in performance, while avoiding unnecessary 
+      compilation of seldom-used code (most of the program). The Java HotSpot 
+      VMs also uses the adaptive compiler to decide, on the fly, how best to optimize 
+      compiled code with techniques such as in-lining. The runtime analysis performed 
+      by the compiler allows it to eliminate guesswork in determining which optimizations 
+      will yield the largest performance benefit. 
+      <p> 
+    <li><em>Rapid memory allocation and garbage collection</em> - Java HotSpot 
+      technology provides for rapid memory allocation for objects, and it offers 
+      a choice of fast, efficient, state-of-the-art garbage collectors. 
+      <p> 
+    <li><em>Thread synchronization</em> - The Java programming language allows 
+      for use of multiple, concurrent paths of program execution (called "threads"). 
+      Java HotSpot technology provides a thread-handling capability that is designed 
+      to scale readily for use in large, shared-memory multiprocessor servers. 
+  </ul>
+</blockquote>
+<a name="features"></a>
+<h2>New Features and Changes</h2>
+<blockquote>
+The following are some of the recently added features in the 
+Java HotSpot VMs.
+<p>
+Enhancements in J2SE 1.5.0:
+  <ul>
+    <li><a href="class-data-sharing.html">Class Data Sharing</a> 
+    <li><a href="server-class.html">Server-Class Machine Detection</a> 
+    <li><a href="gc-ergonomics.html">Garbage Collection Ergonomics</a> 
+    <li><a href="thread-priorities.html">Thread Priority Changes</a> 
+  </ul>
+  Enhancements in J2SE 1.4.x: 
+  <ul>
+<li><a href="enhancements.html">Virtual Machine Enhancements in J2SE 1.4.2, 1.4.1 and 1.4.0</a>
+</ul>
+
+</blockquote>
+
+<h2>Command-Line Options</h2>
+<blockquote>
+Some operating characteristics of the Java HotSpot VM can be 
+controlled by the use of command-line flags. 
+The command-line options supported by the Java HotSpot VMs are 
+described on the reference pages for the Java application launcher 
+(<a href="../../tooldocs/windows/java.html">Microsoft&nbsp;Windows</a>&nbsp;|&nbsp;<a href="../../tooldocs/solaris/java.html">Solaris&nbsp;Operating&nbsp;Environment&nbsp;|&nbsp;</a><a href="../../tooldocs/linux/java.html">Linux</a>).  Non-standard options recognized by the current 
+implementations of the VMs, but not necessarily by future or non-Sun 
+implementations, are described on the <a href="http://java.sun.com/docs/hotspot/VMOptions.html">Java HotSpot VM Options</a> web page.
+<p>
+
+</blockquote>
+
+
+<h2>See Also</h2> 
+
+<blockquote>
+The following additional documentation is available on the 
+Sun web site.
+<ul>
+    <li><a href="http://java.sun.com/docs/hotspot/index.html">Performance Documentation</a>
+        <li><a href="http://java.sun.com/docs/hotspot/PerformanceFAQ.html">FAQ for Java 
+      HotSpot Technology</a>
+        <li><a href="http://java.sun.com/docs/hotspot/VMOptions.html">Java HotSpot VM 
+      Options</a>
+        <li><a href="http://www.sun.com/solaris/java/wp-hotspot/">Java HotSpot Architecture 
+      white paper</a>
+    <li><a href="http://java.sun.com/products/hotspot/docs/general/hs2.html">The 
+      Java HotSpot Server VM: The Solution for Reliable, Secure Performance for 
+      the Enterprise</a>
+    <li><a href="http://bugs.sun.com/services/bugreport/crash.jsp">HotSpot Error Page</a>
+  </ul>
+</blockquote>
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+      <P><FONT SIZE="-2"> <A HREF="../../relnotes/SMICopyright.html">Copyright 
+        &#169;</A> 2002-2004 <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A> 
+        All Rights Reserved.</FONT></P>
+
+   <br>
+
+
+<!--
+<FONT SIZE="-1">
+Please send comments to:
+</FONT>
+-->
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+
+
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+
+
+
+</BODY>
+
+</HTML>
+
+
+

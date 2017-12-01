@@ -1,0 +1,249 @@
+<html>
+<head>
+     <title>Java Management Extensions Examples</title>
+</head>
+
+<body bgcolor=white>
+
+<!-- document header is table row with 3 cells-->
+<table summary="layout" border=0 width=100%>
+<tr>
+    <!-- Left cell: Java logo -->
+    <td width=60>
+       <img src="../../images/javalogo52x88.gif" alt="Java (tm)" width=52 height=88>
+
+    </td>
+
+
+    <!-- Center cell: Title -->
+    <td align=center>
+       <h1>Java<sup><font size="-2">TM</font></sup> Management Extensions (JMX<sup><font size="-2">TM</font></sup>) Examples</h1>
+    </td>
+
+    <!-- Right cell: Up references -->
+    <td align=right valign=top>
+       <font size=-1><a href="../../index.html">Documentation Contents</a></font>
+    </td>
+</tr>
+</table>
+
+<!-- ====================== Body text begins here ====================== -->
+
+<blockquote>
+The files listed below are code examples demonstrating some of the main features of JMX technology. You can use these
+examples to develop more complex MBeans and full-featured JMX agents to fit your management solution.<p>
+
+Each example consists of Java source files and a README file. The README file explains the topics
+covered by the example and instructions for compiling and running the classes.<p>
+
+You can also download a <a href="examples/jmx_examples.zip">Zip file of all the JMX technology examples</a>.
+
+For more complete descriptions of how to run the examples, see the <a href="tutorial/tutorialTOC.html">JMX Technology Tutorial</a>.<p>
+
+The following JMX technology examples are provided:<p>
+
+</blockquote>
+
+
+<blockquote>
+
+  <b><font SIZE=+1>JMX Essentials</font></b><br>
+
+<p>This example introduces the fundamental notion of the JMX API, namely managed beans, or MBeans.
+
+<p>View the <a HREF="examples/Essential/README">README file</a> or
+the source code for the Java classes used:
+
+
+<ul>
+<li><a HREF="examples/Essential/com/example/mbeans/Hello.java">Hello</a></li>
+<li><a HREF="examples/Essential/com/example/mbeans/HelloMBean.java">HelloMBean</a></li>
+<li><a HREF="examples/Essential/com/example/mbeans/Main.java">Main</a></li>
+
+</ul>
+</blockquote>
+
+
+<blockquote>
+
+  <b><font SIZE=+1>JMX MBean Notifications</font></b><br>
+
+<p>This example implements MBean notifications.
+
+<p>View the <a HREF="examples/Notification/README">README file</a> or
+the source code for the Java classes used:
+
+
+<ul>
+<li><a HREF="examples/Notification/com/example/mbeans/Hello.java">Hello</a></li>
+<li><a HREF="examples/Notification/com/example/mbeans/HelloMBean.java">HelloMBean</a></li>
+<li><a HREF="examples/Notification/com/example/mbeans/Main.java">Main</a></li>
+
+</ul>
+</blockquote>
+
+<blockquote>
+
+  <b><font SIZE=+1>JMX Connectors</font></b><br>
+
+<p>This example provides a sample implementation of how to connect to MBeans and perform operations on
+them remotely.
+
+<p>View the <a HREF="examples/Basic/README">README file</a> or
+the source code for the Java classes used:
+
+
+<ul>
+<li><a HREF="examples/Basic/Server.java">Server</a></li>
+<li><a HREF="examples/Basic/SimpleStandardMBean.java">SimpleStandardMBean</a></li>
+<li><a HREF="examples/Basic/SimpleStandard.java">SimpleStandard</a></li>
+<li><a HREF="examples/Basic/SimpleDynamic.java">SimpleDynamic</a></li>
+<li><a HREF="examples/Basic/ClientListener.java">ClientListener</a></li>
+<li><a HREF="examples/Basic/Client.java">Client</a></li>
+</ul>
+</blockquote>
+
+
+
+<blockquote>
+  <b><font SIZE=+1>Lookup Services</font></b><br>
+
+<p>The JMX API defines three bindings to lookup services, using existing lookup
+technologies
+
+These examples provide a sample implementation of each type of lookup service.<p>
+
+<ul>
+<li><b>Service Location Protocol (SLP) Lookup Service</b> 
+<br>View the <a HREF="examples/Lookup/slp/README">README file</a> or
+the source code for the Java classes used:
+	<ul>
+	<li><a HREF="examples/Lookup/slp/Server.java">Server</a></li>
+	<li><a HREF="examples/Lookup/slp/Client.java">Client</a></li>
+	</ul>
+</li>
+<li><b>Jini Lookup Service</b>.
+<br>View the <a HREF="examples/Lookup/jini/README">README file</a> or
+the source code for the Java classes used:
+	<ul>
+	<li><a HREF="examples/Lookup/jini/Server.java">Server</a></li>
+	<li><a HREF="examples/Lookup/jini/Client.java">Client</a></li>
+	<li><a HREF="examples/Lookup/jini/java.policy">java.policy</a></li>
+	<li><a HREF="examples/Lookup/jini/jini.properties.template">jini.properties.template</a></li>
+	</ul>
+</li>
+<li><b>Java Naming and Directory Interface (JNDI)/LDAP Lookup Service</b>
+<br>View the <a HREF="examples/Lookup/ldap/README">README file</a> or
+the source code for the Java classes used:
+	<ul>
+	<li><a HREF="examples/Lookup/ldap/Server.java">Server</a></li>
+	<li><a HREF="examples/Lookup/ldap/Client.java">Client</a></li>
+	<li><a HREF="examples/Lookup/ldap/jmx-schema.txt">jmx-schema.txt</a></li>
+	<li><a HREF="examples/Lookup/ldap/60jmx-schema.ldif">60jmx-schema.ldif</a></li>
+	</ul>
+</li>
+</ul>
+
+
+</blockquote>
+
+<blockquote>
+  <b><font SIZE=+1>Security</font></b><br>
+
+<p>The JMX API implements existing security protocols to secure your connections.
+<p>These examples provide a sample secure implementations
+<ul>
+<li><b>Simple Security</b>
+<br>View the <a HREF="examples/Security/simple/README">README file</a> or
+the source code for the Java classes used:
+	<ul>
+	<li><a HREF="examples/Security/simple/server/Server.java">Server</a></li>
+	<li><a HREF="examples/Security/simple/client/Client.java">Client</a></li>
+	<li><a HREF="examples/Security/simple/client/ClientListener.java">ClientListener</a></li>
+	<li><a HREF="examples/Security/simple/config/access.properties">access.properties</a></li>
+	<li><a HREF="examples/Security/simple/config/keystore">keystore</a></li>
+	<li><a HREF="examples/Security/simple/config/password.properties">password.properties</a></li>
+	<li><a HREF="examples/Security/simple/config/truststore">truststore</a></li>
+	<li><a HREF="examples/Security/simple/mbeans/SimpleStandard.java">SimpleStandard</a></li>
+	<li><a HREF="examples/Security/simple/mbeans/SimpleStandardMBean.java">SimpleStandardMBean</a></li>
+	</ul>
+</li>
+
+<li><b>Security with Subject Delegation</b>
+<br>View the <a HREF="examples/Security/subject_delegation/README">README file</a> or
+the source code for the Java classes used:
+	<ul>
+	<li><a HREF="examples/Security/subject_delegation/server/Server.java">Server</a></li>
+	<li><a HREF="examples/Security/subject_delegation/client/Client.java">Client</a></li>
+	<li><a HREF="examples/Security/subject_delegation/client/ClientListener.java">ClientListener</a></li>
+	<li><a HREF="examples/Security/subject_delegation/config/access.properties">access.properties</a></li>
+	<li><a HREF="examples/Security/subject_delegation/config/password.properties">password.properties</a></li>
+	<li><a HREF="examples/Security/subject_delegation/config/java.policy">java.policy</a></li>
+	<li><a HREF="examples/Security/subject_delegation/mbeans/SimpleStandard.java">SimpleStandard</a></li>
+	<li><a HREF="examples/Security/subject_delegation/mbeans/SimpleStandardMBean.java">SimpleStandardMBean</a></li>
+	</ul>
+</li>
+
+<li><b>Fine-Grained Security</b> 
+<br>View the <a HREF="examples/Security/fine_grained/README">README file</a> or
+the source code for the Java classes used:
+	<ul>
+	<li><a HREF="examples/Security/fine_grained/server/Server.java">Server</a></li>
+	<li><a HREF="examples/Security/fine_grained/client/Client.java">Client</a></li>
+	<li><a HREF="examples/Security/fine_grained/client/ClientListener.java">ClientListener</a></li>
+	<li><a HREF="examples/Security/fine_grained/config/keystore">keystore</a></li>
+	<li><a HREF="examples/Security/fine_grained/config/password.properties">password.properties</a></li>
+	<li><a HREF="examples/Security/fine_grained/config/truststore">truststore</a></li>
+	<li><a HREF="examples/Security/fine_grained/config/java.policy">java.policy</a></li>
+	<li><a HREF="examples/Security/fine_grained/mbeans/SimpleStandard.java">SimpleStandard</a></li>
+	<li><a HREF="examples/Security/fine_grained/mbeans/SimpleStandardMBean.java">SimpleStandardMBean</a></li>
+	</ul>
+</li>
+
+</ul>
+
+
+</blockquote>
+<!-- Body text ends here -->
+<!-- ============================================================== -->
+<hr SIZE=3 NOSHADE>
+
+<table summary="layout" BORDER="0" WIDTH="100%">
+<tr VALIGN=TOP>
+
+<td>
+<font SIZE="-2">
+   <a HREF="../../relnotes/SMICopyright.html">Copyright</a> &#169; 2004
+   <a HREF="http://www.sun.com/">Sun Microsystems, Inc.</a>
+
+    All Rights Reserved.</font>
+   <br>
+   <br>
+
+   <font SIZE="-1">
+   Please send comments to: <a href="mailto:jmx@sun.com">jmx@sun.com</a> 
+   </font>
+</td>
+
+<td ALIGN=RIGHT>
+   <img SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+   <br>
+   <br>
+   <font SIZE="+1">
+   <i>Java Software</i>
+   </font>
+</td>
+
+</tr>
+
+</table>
+
+
+
+
+
+
+
+
+</body>
+</html>

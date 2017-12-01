@@ -1,0 +1,134 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="GENERATOR" content="Quadralay WebWorks Publisher Professional Edition 7.0.5.1025" />
+    <meta name="TEMPLATEBASE" content="book-no-index" />
+    <meta name="LASTUPDATED" content="Wed Jul 21 15:00:35 2004" />
+    <title>Using JMX Agents</title>
+	<link rel="StyleSheet" href="document.css" type="text/css" />
+	<link rel="StyleSheet" href="catalog.css" type="text/css" />
+    <link rel="Table of Contents" href="JMXoverviewTOC.html" />
+    <link rel="Previous" href="instrumentation.html" />
+    <link rel="Next" href="connectors.html" />
+    <link rel="Index" href="appendixA.html" />
+  </head>
+
+  <body>
+<a href="#skip" title="Skip navigation bar"></a>
+    <table width="100%" summary="layout">
+      <tr><td align="left">
+        <a accesskey="c" href="JMXoverviewTOC.html">Contents</a> | 
+	<a accesskey="p" href="instrumentation.html">Previous</a> | 
+        <a accesskey="n" href="connectors.html">Next</a>
+       </td>
+	   <td align="right"><i>Java Management Extensions (JMX) Technology Overview</i></td>
+      </tr>
+    </table>
+<hr size="8" width="35%" align="left" noshade>
+<a name="skip"></a>
+<a name="wp996881"> </a><h2 class="pChapNum">
+Chapter &#160; 4
+</h2>
+<a name="wp996882"> </a><h2 class="pChapTitle">
+Using JMX Agents
+</h2>
+<a name="wp998063"> </a><p class="pBody">
+A Java Management Extensions (JMX) agent is a management entity that runs in a Java Virtual Machine (JVM) and acts as the liaison between the MBeans and the management application. The various components of a JMX agent are outlined in the following sections:
+</p>
+<ul class="pBullet1"><a name="wp998701"> </a><div class="pBullet1"><li><a  href="agent.html#wp998096"><span style="color: #3366CC">&quot;MBean Server&quot;</span></a></li></div>
+<a name="wp998705"> </a><div class="pBullet1Plus"><li><a  href="agent.html#wp998098"><span style="color: #3366CC">&quot;Agent Services&quot;</span></a></li></div>
+<a name="wp998706"> </a><div class="pBullet1Last"><li><a  href="agent.html#wp998862"><span style="color: #3366CC">&quot;Protocol Adaptors and Connectors&quot;</span></a></li></div>
+</ul>
+<a name="wp998096"> </a><h2 class="pHeading1">
+	MBean Server
+</h2>
+<a name="wp998097"> </a><p class="pBody">
+The MBean server is the core component of a JMX agent. It is a registry for objects that are exposed to management operations in an agent. Any object registered with the MBean server becomes visible to management applications. However, the MBean server only exposes the management interface of an MBean, never its direct object reference.
+</p>
+<a name="wp998801"> </a><p class="pBody">
+Any resource that you want to manage from outside the agent&#8217;s JVM must be registered as an MBean in the server. The MBean server also provides a standardized interface for accessing MBeans within the same JVM, giving local objects all the benefits of manipulating manageable resources. MBeans can be instantiated and registered by:
+</p>
+<ul class="pBullet1"><a name="wp998826"> </a><div class="pBullet1"><li>Another MBean</li></div>
+<a name="wp998827"> </a><div class="pBullet1Plus"><li>The agent itself</li></div>
+<a name="wp998828"> </a><div class="pBullet1Last"><li>A remote management application</li></div>
+</ul>
+<a name="wp998810"> </a><p class="pBody">
+When you register an MBean, you must assign it a unique object name. A management application uses the object name to identify the object on which it is to perform a management operation. The operations available on MBeans include:
+</p>
+<ul class="pBullet1"><a name="wp998813"> </a><div class="pBullet1"><li>Discovering the management interface of MBeans</li></div>
+<a name="wp998814"> </a><div class="pBullet1Plus"><li>Reading and writing their attribute values</li></div>
+<a name="wp998815"> </a><div class="pBullet1Plus"><li>Performing operations defined by the MBeans</li></div>
+<a name="wp998816"> </a><div class="pBullet1Plus"><li>Getting notifications emitted by MBeans</li></div>
+<a name="wp998817"> </a><div class="pBullet1Last"><li>Querying MBeans based on their object name or their attribute values</li></div>
+</ul>
+<a name="wp998098"> </a><h2 class="pHeading1">
+	Agent Services
+</h2>
+<a name="wp998037"> </a><p class="pBody">
+Agent services are objects that can perform management operations on the MBeans registered in the MBean server. By including management intelligence into the agent, JMX helps you build more powerful management solutions. Agent services are often MBeans as well, allowing them and their functionality to be controlled through the MBean server. The JMX specification defines the following agent services:
+</p>
+<ul class="pBullet1"><a name="wp998720"> </a><div class="pBullet1"><li>Dynamic class loading through the management applet (m-let) service retrieves and instantiates new classes and native libraries dynamically downloaded from the network.</li></div>
+<a name="wp998724"> </a><div class="pBullet1Plus"><li>Monitors observe the numerical or string value of MBean attributes and can notify other objects of several types of changes.</li></div>
+<a name="wp998727"> </a><div class="pBullet1Plus"><li>Timers provide a scheduling mechanism and can send notifications at predetermined intervals.</li></div>
+<a name="wp998730"> </a><div class="pBullet1Last"><li>The relation service defines associations between MBeans and maintains the consistency of the relation.</li></div>
+</ul>
+<a name="wp1000715"> </a><p class="pBody">
+All these agent services are available in version 5.0 of the J2SE platform.
+</p>
+<a name="wp998862"> </a><h2 class="pHeading1">
+	Protocol Adaptors and Connectors
+</h2>
+<a name="wp998864"> </a><p class="pBody">
+Protocol adaptors and connectors make the agent accessible from remote management applications. They provide a view through a specific protocol of the MBeans instantiated and registered in the MBean server. They enable a management application outside the JVM to:
+</p>
+<ul class="pBullet1"><a name="wp998870"> </a><div class="pBullet1"><li>Get or set attributes of existing MBeans</li></div>
+<a name="wp998871"> </a><div class="pBullet1Plus"><li>Perform operations on existing MBeans</li></div>
+<a name="wp998872"> </a><div class="pBullet1Plus"><li>Instantiate and register new MBeans</li></div>
+<a name="wp998873"> </a><div class="pBullet1Last"><li>Register for and receive notifications emitted by MBeans</li></div>
+</ul>
+<a name="wp998894"> </a><p class="pBody">
+Consequently, for a JMX agent to be manageable, it must include at least one protocol adaptor or connector. The J2SE platform includes the standard RMI connector. An agent can include any number of protocol adaptors and connectors, allowing it to be managed and monitored remotely through different protocols simultaneously.
+</p>
+<a name="wp998892"> </a><h3 class="pHeading2">
+	Protocol Adaptors
+</h3>
+<a name="wp998900"> </a><p class="pBody">
+Protocol adaptors provide a management view of the JMX agent through a given protocol. They adapt the operations of MBeans and the MBean server into a representation in the given protocol, and possibly into a different information model, for example SNMP. The J2SE platform does not include any protocol adaptors as standard.
+</p>
+<a name="wp998905"> </a><p class="pBody">
+Management applications that connect to a protocol adaptor are usually specific to the given protocol. This is typically the case for legacy management solutions that rely on a specific management protocol. They access the JMX agent not through a remote representation of the MBean server, but through operations that are mapped to those of the MBean server.
+</p>
+<a name="wp998899"> </a><h3 class="pHeading2">
+	Connectors
+</h3>
+<a name="wp998928"> </a><p class="pBody">
+Connectors are used to connect an agent with a remote management application enabled for JMX technology, namely, a management application developed using the distributed services of the JMX specification. This kind of communication involves a connector server in the agent and a connector client in the manager.
+</p>
+<a name="wp998933"> </a><p class="pBody">
+These components convey management operations transparently point-to-point over a specific protocol. The JMX Remote API provides a remote interface to the MBean server through which the management application can perform operations. A connector is specific to a given protocol, but the management application can use any connector indifferently because they have the same remote interface.
+</p>
+<a name="wp998955"> </a><p class="pBody">
+See <a  href="connectors.html#wp5529"><span style="color: #3366CC">Chapter&#160;5, &quot;Using JMX Connectors to Manage Resources Remotely&quot;</span></a> for more information on standard JMX connectors.
+</p>
+
+    <p>&#160;</p>
+    <hr class="pHr" />
+    <table width="100%" summary="layout">
+      <tr><td align="left">
+        <a accesskey="c" href="JMXoverviewTOC.html">Contents</a> | 
+	<a accesskey="p" href="instrumentation.html">Previous</a> | 
+        <a accesskey="n" href="connectors.html">Next</a>
+       </td>
+        <td align="right">
+          <span class="copyright">Java Management Extensions (JMX) Technology Overview <br /> Java Management Extensions (JMX), Java 2 Platform, Standard Edition 5.0 </span>
+        </td>
+      </tr>
+    </table>
+
+    <p>&#160;</p>
+    <p class="copyright"><a 
+       href="../../../relnotes/SMICopyright.html">Copyright</a> &#169;
+       2004 Sun Microsystems, Inc. All rights reserved.</p>
+  </body>
+</html>

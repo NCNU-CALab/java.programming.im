@@ -1,0 +1,192 @@
+<html>
+<head>
+<title> </title>
+</head>
+<body BGCOLOR=#ffffff text=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+ 
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="security.html">Prev</a> | <a href="examples.html">Next</a> </td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<hr><br>
+ 
+
+<h1 align="left">
+  <a name="3601"> </a>Exceptions In Object Serialization	 	 </h1>
+
+
+
+<div align="right">
+<h1 align="left">
+  <a name="3616"> </a>Chapter B </h1>
+</div>
+
+<p>
+	 All exceptions thrown by serialization classes are subclasses of <code>ObjectStreamException</code> which is a subclass of <code>IOException</code>.<p>
+<table border="1" bordercolorlight="#FFFFFF" bordercolordark="#000000"
+       cellpadding="5" cellspacing="0">
+  <caption ALIGN="left"><b><font face="Arial, Verdana, Helvetica, sans-serif" size="-1"></font></b></caption>
+  <tr bgcolor="#CCCCCC"><div align="center">
+    <th><font face="Arial, Verdana, Helvetica, sans-serif" color="#663300"><a name="4249"> </a>Exception</font></th>
+    <th><font face="Arial, Verdana, Helvetica, sans-serif" color="#663300"><a name="4251"> </a>Description</font></th>
+  </div></tr>
+  <tr>
+    <td>
+
+<p>
+<code>ObjectStreamException</code></p>
+
+</td>
+    <td>
+
+<p>
+Superclass of all serialization exceptions.</p>
+
+</td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>InvalidClassException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown when a class cannot be used to restore objects for any of these reasons:</p>
+
+<a name="4288"> </a>
+<li>The class does not match the serial version of the class in the stream.<a name="4293"> </a>
+<li>The class contains fields with invalid primitive data types.<a name="4296"> </a>
+<li>The <code>Externalizable</code> class does not have a public no-arg constructor.<a name="4342"> </a>
+<li>The <code>Serializable</code> class can not access the no-arg constructor of its closest non-Serializable superclass.</td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>NotSerializableException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown by a <code>readObject</code> or <code>writeObject</code> method to terminate serialization or deserialization.</p>
+
+</td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>StreamCorruptedException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown:</p>
+
+<a name="4335"> </a>
+<li>If the stream header is invalid.<a name="4327"> </a>
+<li>If control information not found. <a name="4333"> </a>
+<li>If control information is invalid.<a name="4334"> </a>
+<li>JDK<font size="-1"><sup>TM</sup></font> 1.1.5 or less attempts to call <code>readExternal</code> on a <em>PROTOCOL_VERSION_2</em> stream.</td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>NotActiveException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown if <code>writeObject</code> state is invalid within the following <code>ObjectOutputStream</code> methods:</p>
+
+<a name="4363"> </a>
+<li><code>defaultWriteObject</code><a name="4364"> </a>
+<li><code>putFields</code><a name="4359"> </a>
+<li><code>writeFields</code>
+<p>
+</p>
+
+
+<p>
+Thrown if <code>readObject</code> state is invalid within the following <code>ObjectInputStream</code> methods:</p>
+
+<a name="4369"> </a>
+<li><code>defaultReadObject</code><a name="4367"> </a>
+<li><code>readFields</code><a name="4368"> </a>
+<li><code>registerValidation</code></td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>InvalidObjectException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown when a restored object cannot be made valid.</p>
+
+</td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>OptionalDataException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown by <code>readObject</code> when there is primitive data in the stream and an object is expected. The length field of the exception indicates the number of bytes that are available in the current block.</p>
+
+</td>
+  </tr>
+  <tr>
+    <td>
+
+<p>
+<code>WriteAbortedException</code></p>
+
+</td>
+    <td>
+
+<p>
+Thrown when reading a stream terminated by an exception that occurred while the stream was being written.</p>
+
+</td>
+  </tr>
+</table>
+
+
+</p>
+<br></p>
+
+
+<p>
+</p>
+
+
+
+<hr>
+<!-- This inserts footnotes--><p>
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="security.html">Prev</a> | <a href="examples.html">Next</a> </td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<p>
+<font size="-1"><i>Copyright &#169 2004 Sun Microsystems, Inc.
+All rights reserved</i>
+<br>
+</font>
+</body></html>

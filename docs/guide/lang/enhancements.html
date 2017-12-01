@@ -1,0 +1,336 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Enhancements in java.lang and java.util.*</title>
+<link rel="stylesheet" href="doc.css" type="text/css">
+  </head>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR>
+<TD WIDTH="60">
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+<TD>
+
+<center>
+           <h1>Enhancements in<br> Packages java.lang.* and java.util.*</h1>
+</center>
+
+</TD>
+<TD ALIGN=RIGHT VALIGN=TOP>
+   <font size="-1"><a href="index.html">Contents</a></font>
+</TD>
+</TR>
+</TABLE>
+
+<UL>
+<LI><a href="#5.0">Enhancements in JDK 5.0</a>
+<LI><a href="#1.4">Enhancements in J2SDK 1.4</a>
+<LI><a href="#1.3">Enhancements in J2SDK 1.3</a>
+</UL>
+<hr>
+
+<a name="5.0"></a><h2>Enhancements in JDK 5.0</h2>
+<P>
+J2SE Development Kit 5.0 has several enhancments in the
+<code>java.lang.*</code> and <code>java.util.*</code> packages, including:
+<UL>
+<LI><b><a href="../../api/java/lang/ProcessBuilder.html">ProcessBuilder</a> </b> -
+The new <code>ProcessBuilder</code> class provides a more convenient way to
+invoke subprocesses than does
+<a href="../../api/java/lang/Runtime.html#exec(java.lang.String, java.lang.String[], java.io.File)">Runtime.exec</a>.
+In particular, ProcessBuilder makes it easy to start a subprocess
+with a modified process environment (that is, one based on the parent's
+process environment, but with a few changes).
+<LI><b><a href="../../api/java/util/Formatter.html">Formatter</a></b> -
+An interpreter for printf-style format strings, the <code>Formatter</code>
+class provides support for layout justification and alignment, common
+formats for numeric, string, and date/time data, and locale-specific
+output.  Common Java types such as <code>byte</code>,
+<a href="../../api/java/math/BigDecimal.html"><code>java.math.BigDecimal</code></a>
+, and
+<a href="../../api/java/util/Calendar.html"><code>java.util.Calendar</code></a>
+are supported.  Limited formatting customization for arbitrary user types
+is provided through the
+<a href="../../api/java/util/Formattable.html"><code>java.util.Formattable</code></a> interface.
+
+<LI><b><a href="../../api/java/util/Scanner.html">Scanner</a></b> -
+The <code>java.util.Scanner</code> class
+can be used to convert text into primitives or <code>String</code>s.
+Since it is based on the
+<a href="../../api/java/util/regex/package-summary.html"><code>java.util.regex</code></a>
+package, it also offers a way to conduct regular expression based searches
+on streams, file data, strings, or implementors of the
+<a href="../../api/java/lang/Readable.html"><code>Readable</code></a> interface.
+
+<LI><b><a href="../concurrency/index.html">Concurrency Utilities</a></b>
+The <a href="../../api/java/util/concurrent/package-summary.html"><code>java.util.concurrent</code></a>,
+<a href="../../api/java/util/concurrent/atomic/package-summary.html"><code>java.util.concurrent.atomic</code></a>,
+and <a href="../../api/java/util/concurrent/locks/package-summary.html"><code>java.util.concurrent.locks</code></a>
+packages provide a extensible framework of high-performance, scalable, thread-safe building
+blocks for developing concurrent classes and applications, including thread
+pools, thread-safe collections, semaphores, a task scheduling framework,
+task synchronization utilities, atomic variables, and locks.  Additionally, these packages
+provide low-level primitives for advanced concurrent programming which take
+advantage of concurrency support provided by the processor, enabling
+you to implement high-performance, highly scalable concurrent
+algorithms in Java to a degree not previously possible without using native code.
+For more information, refer to <a href="http://jcp.org/en/jsr/detail?id=166">JSR 166 </a>.
+
+<LI><b><a href="../collections/index.html">Collections Framework Enhancements</a></b> -
+There are many enhancements to the Collections framework.
+
+<LI><b><a name=instrument>Instrumentation</a></b> -
+The new <a href="../../api/java/lang/instrument/package-summary.html">
+<code>java.lang.instrument</code></a> package provides services that allow Java
+programming agents to instrument programs running on the Java virtual
+machine by modifying methods' bytecodes at runtime.
+
+<LI><b>Threads</b> -
+The <code>java.lang.Thread</code> class has the following enhancements:
+<ul>
+<li><a href="../vm/thread-priorities.html">Thread priority</a> handling has changed.
+</li>
+  <li><a href="../../api/java/lang/Thread.State.html"><code>Thread.State</code></a>
+      enum class and the new
+      <a href="../../api/java/lang/Thread.html#getState()"><code>getState()</code></a>
+
+      API are provided for querying the execution state of a thread.</li>
+  <li>The new thread dump API - the
+      <a href="../../api/java/lang/Thread.html#getStackTrace()">
+      <code>getStackTrace</code></a> and
+      <a href="../../api/java/lang/Thread.html#getAllStackTraces()">
+      <code>getAllStackTraces</code></a> methods
+      in the <code>Thread</code> class - provides
+      a programmatic way to obtain the stack trace of a thread or all threads.</li>
+
+  <li>The <a href="../../api/java/lang/Thread.html#setUncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)"><code>uncaughtExceptionHandler</code></a>
+      mechanism, previously available only through the ThreadGroup
+      class, is now available directly through the Thread class.</li>
+  <li>A new form of the <code>sleep()</code> method is provided which allows
+      for sleep times smaller than one millisecond. </li>
+</ul>
+</UL>
+
+<a name="1.4"></a><h2>Enhancements in Java 2 SDK v1.4</h2>
+<P>
+Java 2 SDK v1.4 offered several significant enhancements to the
+functionality in the <code>java.lang.*</code> and <code>java.util.*</code>
+packages, including
+<ul>
+<li><b><a href="../preferences/index.html">Preferences API</a></b> -
+The preferences API, implemented by package <code><a href="../../api/java/util/prefs/package-summary.html">java.util.prefs</a></code>, allows applications
+to store and retrieve user and system preference and configuration data.
+This data is stored persistently in an implementation-dependent backing store.
+The Preferences API is intended to replace most common uses of class
+<code>java.util.Properties</code>, rectifying many of its deficiencies, while
+retaining its light weight.
+<li><b><a href="../logging/index.html">Logging API</a></b> -
+The Java Logging API facilitates software servicing and
+      maintenance at customer sites by producing log reports suitable
+      for analysis by end users, system administrators, field service
+      engineers, and software development teams. The Logging APIs
+      capture information such as security failures, configuration
+      errors, performance bottlenecks, and/or bugs in the application
+      or platform. The core package includes support for delivering
+      plain text or XML formatted log records to memory, output
+      streams, consoles, files, and sockets. In addition, the logging
+      APIs are capable of interacting with logging services that
+      already exist on the host operating system.
+<li><b>Regular Expressions</b> - New package <a href="../../api/java/util/regex/package-summary.html"><code>java.util.regex</code></a>
+contains classes for matching character sequences against patterns
+specified by regular expressions.
+<li><b><a href="chained-exceptions.html">Chained Exception Facility</a></b>
+- This is a new facility that provides
+a common API to record the fact that one exception caused
+another, to access causative exceptions, and to acess the
+entire "causal chain" as part of the standard stack backtrace, ensuring that
+preexisting programs will provide this information with no additional effort
+on the part of their authors.
+</ul>
+
+<a name="1.3"></a><h2>Enhancements in Java 2 SDK 1.3</h2>
+<p>
+Version 1.3 of the Java 2 SDK includes the following enhancements:
+</p>
+<UL>
+<LI><a href=#math>Classes <tt>java.lang.Math</tt> and <tt>java.lang.StrictMath</tt></a><br>
+<LI><a href=#timer>New Timer API</a><br>
+<LI><a href=#collections>Enhanced Collections Framework</a><br>
+<LI><a href=#hooks>Virtual Machine Shutdown Hooks</a><br>
+<LI><a href=#caching>New URL JAR File Caching</a>
+</ul>
+
+<a name=math></a><h3>Classes <tt>java.lang.Math</tt> and <tt>java.lang.StrictMath</tt></b></h3>
+<p>
+The Java 2 Platform now contains two clases which provide API for 
+performing general numeric operations.
+</p>
+<ul>
+   <li><tt><a href=../../api/java/lang/StrictMath.html>java.lang.StrictMath</a></tt> - Class <tt>java.lang.StrictMath</tt> has the same API as old class  
+<tt>java.lang.Math</tt>, which was present in previous versions of the Java platform. 
+Unlike class <tt>Math</tt>, however, <tt>StrictMath</tt> is defined to 
+return bit-for-bit reproducible results in all implementations.
+   <li><tt><a href=../../api/java/lang/Math.html>java.lang.Math</a></tt> - 
+Class <tt>java.lang.Math</tt> provides the same set of API as does 
+class <tt>StrictMath</tt>. However, unlike some of the numeric functions of 
+class <tt>StrictMath</tt>, all implementations of the equivalent functions 
+of class <tt>Math</tt> are not defined to return the bit-for-bit same results, 
+but can vary within specified constraints. 
+This permits better-performing implementations where strict
+reproducibility is not required.
+</ul>
+
+<a name=timer></a><h3>New Timer API</h3>
+<p>
+Two new classes have been added to the Java 2 Platform to provide 
+an API for a timer facility which can be used for purposes such as 
+animations, human interaction timeouts, on-screen clocks and calendars,
+work-scheduling routines, reminder facilities, and more.
+</p>
+<ul>
+   <li><tt><a href=../../api/java/util/Timer.html>java.util.Timer</a></tt>
+   <li><tt><a href=../../api/java/util/TimerTask.html>java.util.TimerTask</a></tt>
+</ul>
+<p>
+<tt><a href=Countdown.java>Countdown.java</a></tt> is a simple demo 
+application that uses the new Timer API.
+</p>
+
+<a name=collections></a><h3>Enhanced Collections Framework</h3>
+<p>
+The Collections Framework has these new convenience APIs:
+</p>
+<ul>
+<li><strong>Added <a
+href="../../api/java/util/Collections.html#singletonList(java.lang.Object)">java.util.Collections.singletonList</a> and <a
+href="../../api/java/util/Collections.html#singletonMap(K, V)">java.util.Collections.singletonMap</a>.</strong>
+Previously, there was a convenience implementation for singleton Set, but no
+corresponding implementation for List and Map.  Both of these
+implementations proved desirable in practice.
+<li><strong>Added <a
+href="../../api/java/util/Collections.html#EMPTY_MAP">java.util.Collections.EMPTY_MAP</a>.</strong>
+Previously, there were constant convenience implementations for the empty Set
+and List, but no corresponding implementation for Map.
+</ul>
+<p>
+The following special-purpose implementation has also been added:
+</p>
+<ul>
+<li>
+<strong>Added <a href="../../api/java/util/WeakHashMap.html#WeakHashMap(java.util.Map)">Map
+constuctor</a> for WeakHashMap</strong>.  The 
+<a href="../../api/java/util/Map.html">Map</a> interface dictates that most
+Map implementations should have a "copy constructor" that takes a Map
+argument.  WeakHashMap lacked such a constructor in the 1.2 release.
+
+</ul>
+
+<p><a name=hooks></a><h3>Virtual Machine Shutdown Hooks</h3>
+<p>
+Sophisticated applications often require the ability to perform 
+specific actions when the virtual machine shuts down, whether due to 
+voluntary exit or involuntary termination.  Typical actions include 
+cleanly closing down network connections, saving session state, 
+and deleting temporary files.  Every major operating system provides 
+the means for native applications to do this, though of course the 
+details vary from platform to platform. Three methods have been 
+added to <tt>java.lang.Runtime</tt> to provide a simple and portable 
+interface to these facitilies. The new methods are:
+</p>
+<ul>
+<li><tt><a href=../../api/java/lang/Runtime.html#addShutdownHook(java.lang.Thread)>addShutdownHook</a></tt>
+<li><tt><a href=../../api/java/lang/Runtime.html#removeShutdownHook(java.lang.Thread)>removeShutdownHook</a></tt>
+<li><tt><a href=../../api/java/lang/Runtime.html#halt(int)>halt</a></tt>
+</ul>
+<p>
+In addition, the <tt><a href=../../api/java/lang/Runtime.html#exit(int)>Runtime.exit</a></tt> method has been revised.  For more information, see 
+<a href=hook-design.html>Design of the Shutdown Hooks API</a>.
+</p>
+<p>
+<a name=caching></a><h3>New URL JAR File Caching</h3>
+<p>
+The API of classes <tt>java.util.zip</tt> and <tt>java.util.jar</tt> 
+have been enhanced with the addition of the following:
+</p>
+<ul>
+<li><tt><a href=../../api/java/util/zip/ZipFile.html#OPEN_READ>java.util.zip.OPEN_READ</a></tt>
+<li><tt><a href=../../api/java/util/zip/ZipFile.html#OPEN_DELETE>java.util.zip.OPEN_DELETE</a></tt>
+<li><tt><a href="../../api/java/util/zip/ZipFile.html#ZipFile(java.io.File, int)">java.util.zip.ZipFile(File file, int mode)</a></tt>
+<li><tt><a href="../../api/java/util/jar/JarFile.html#JarFile(java.io.File, boolean, int)">java.util.jar.JarFile(File file, boolean verify, int mode)</a></tt>
+</ul>
+<p>
+The previous implementation of caching downloaded Jar files 
+created problems for long-running server application and for RMI. 
+Each open JarURLConnection creates a temporary local file that 
+holds Jar-file date, and a JarFile object is created on top of the 
+temporary file.  Because the open file handle/descriptor on 
+each temporary file was never closed, the files could quickly 
+take up disk space for long-running server applications.  The 
+new API provides a solution for this problem by supporting 
+a new "delete-on-close" mode for opening Zip and Jar files.
+</p>
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+<TD>
+<FONT SIZE="-2">
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 1999-2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+    All Rights Reserved.</FONT></P>
+   <br>
+<!--
+<FONT SIZE="-1">
+Please send comments to:
+</FONT>
+-->
+
+</TD>
+<TD ALIGN=RIGHT>
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+</TD>
+</TR>
+</TABLE>
+<pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+  </body>
+</html>

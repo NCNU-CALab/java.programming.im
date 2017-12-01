@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>pack200 - JAR Packing tool</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+
+<h1>pack200 - JAR Packing tool</h1>
+
+<ul>
+  <li><a href="#synopsis">Synopsis</a>
+  <li><a href="#description">Description</a>
+  <li><a href="#options">Options</a>
+  <li><a href="#exitstatus">Exit Status</a>
+  <li><a href="#seealso">See Also</a>
+  <li><a href="#notes">Notes</a>
+</ul>
+
+<!-- ---------------------------------------------- -->
+
+<a name="synopsis"></a>
+<h2>SYNOPSIS</h2>
+
+<blockquote>
+  <p><code><strong>pack200</strong> [ <em>options</em> ] <em>output-file</em> <em>JAR-file</em></code></p>
+
+  <p>Options may be in any order. The last option on the command line or in a properties 
+    file supersedes all previously specified options. </p>
+
+  <blockquote>
+    <dl>
+    <dt><a href="#options"><code><em>options</em></code></a></dt>
+      <dd>Command-line options.</dd>
+
+    <dt><code><em>output-file</em></code></dt>
+      <dd>Name of the output file.</dd>
+
+    <dt><code><em>JAR-file</em></code></dt>
+      <dd>Name of the input file. </dd>
+    </dl>
+  </blockquote>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="description"></a>
+<h2>DESCRIPTION</h2>
+
+<blockquote> 
+  <p>The <code>pack200</code> tool is a Java application that transforms a JAR file into 
+    a compressed <code>pack200</code> file using the Java <code>gzip</code> compressor. 
+    The <code>pack200</code> files are highly compressed files that can be directly 
+    deployed, saving bandwidth and reducing download time.</p>
+  <p>The <code>pack200</code> tool uses several options to fine-tune and set the compression 
+    engine.</p>
+  <h3> Typical usage:</h3>
+  <blockquote> 
+    <p> <code>% pack200 myarchive.pack.gz myarchive.jar</code></p>
+  </blockquote>
+  <p> In this example, <code>myarchive.pack.gz</code> is produced using the default 
+    <code>pack200</code> settings.</p>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="options"></a>
+<h2>OPTIONS</h2>
+
+<blockquote> 
+  <p><strong><code>-r --repack</code></strong></p>
+  <blockquote> 
+    <p>Produces a JAR file by packing the file <code>myarchive.jar</code> and 
+      unpacking it. The resulting file can be used as an input to the <code>jarsigner(1)</code> 
+      tool.</p>
+    <blockquote> 
+      <p><code>% pack200 --repack myarchive-packer.jar myarchive.jar</code></p>
+      <p><code>% pack200 --repack myarchive.jar</code></p>
+    </blockquote>
+  </blockquote>
+  <p><strong><code>-g --no-gzip</code></strong></p>
+  <blockquote> 
+    <p>Produces a <code>pack200</code> file. With this option a suitable compressor 
+      must be used, and the target system must use a corresponding decompresser.</p>
+    <blockquote>
+      <p><code>% pack200 --no-gzip myarchive.pack myarchive.jar</code></p>
+    </blockquote>
+  </blockquote>
+  <p><strong><code>-G --strip-debug</code></strong></p>
+  <blockquote> 
+    <p>Strips attributes used for debugging from the output. These include <code>SourceFile</code>, 
+      <code>LineNumberTable</code>, <code>LocalVariableTable</code> and
+      <code>LocalVariableTypeTable</code>. Removing 
+      these attributes reduces the size of both downloads and installations but 
+      reduces the usefulness of debuggers.</p>
+  </blockquote>
+  <p><strong><code>-O --no-keep-file-order</code> </strong></p>
+  <blockquote> 
+    <p>The packer will reorder and transmit all elements. Additionally, the packer 
+      may remove JAR directory names. This will reduce the download size; however, 
+      certain JAR file optimizations, such as indexing, may not work correctly. 
+    </p>
+  </blockquote>
+  <p><code><strong>-Svalue --segment-limit=</strong><em>value</em></code></p>
+  <blockquote> 
+    <p>The value is the estimated target size N (in bytes) of each archive segment. 
+      If a single input file requires<br>
+      more than N bytes, it will be given its own archive segment. As a special 
+      case, a value of <code>-1</code> will produce a single large segment with 
+      all input files, while a value of <code>0</code> will produce one segment 
+      for each class. Larger archive segments result in less fragmentation and 
+      better compression, but processing them requires more memory.</p>
+    <p>The size of each segment is estimated by counting the size of each input 
+      file to be transmitted in the segment, along with the size of its name and 
+      other transmitted properties.</p>
+    <p>The default is <code>1000000</code> (a million bytes). This allows input 
+      JAR files of moderate size to be transmitted in one segment. It also puts 
+      a limit on memory requirements for packers and unpackers.</p>
+    <p>A 10MB JAR packed without this limit will typically pack about 10% smaller, 
+      but the packer may require a larger Java heap (about ten times the segment 
+      limit).</p>
+  </blockquote>
+  <p><code><strong>-Evalue --effort=</strong><em>value</em></code></p>
+  <blockquote> 
+    <p>If the value is set to a single decimal digit, the packer will use the 
+      indicated amount of effort in compressing the archive. Level <code>1</code> 
+      may produce somewhat larger size and faster compression speed, while level 
+      <code>9</code> will take much longer but may produce better compression. 
+      The special value <code>0</code> instructs the packer to copy through the 
+      original JAR file directly with no compression. The JSR 200 standard requires 
+      any unpacker to understand this special case as a pass-through of the entire 
+      archive.</p>
+    <p>The default is <code>5</code>, investing a modest amount of time to produce 
+      reasonable compression.</p>
+  </blockquote>
+  <p><code><strong>-Hvalue --deflate-hint=</strong><em>value</em></code></p>
+  <blockquote> 
+    <p>Overrides the default, which preserves the input information, but may cause 
+      the transmitted archive to be larger. The possible values are:</p>
+    <dl>
+
+    <dt><code>true</code></dt>
+
+    <dt><code>false</code> </dt>
+      <dd>In either case, the packer will set the deflation hint accordingly in 
+          the output archive, and will not transmit the individual deflation hints 
+          of archive elements.</dd>
+    </dl>
+    <p></p>
+
+    <dl>
+    <dt><code>keep</code> </dt>
+      <dd>Preserve deflation hints observed in the input JAR. (This is the default.)</dd>
+    </dt>
+	</dl>
+  </blockquote>
+
+  <p><code><strong>-mvalue --modification-time=</strong><em>value</em></code></p>
+  <blockquote> 
+    <p>The possible values are:</p>
+    <dl>
+
+    <dt><code>latest</code></dt>
+    <dd>The packer will attempt to determine the latest modification time, among 
+        all the available entries in the original archive, or the latest modification 
+        time of all the available entries in that segment. This single value will 
+        be transmitted as part of the segment and applied to all the entries in 
+        each segment. This can marginally decrease the transmitted size of the 
+        archive at the expense of setting all installed files to a single date.</dd>
+    <p></p>
+
+    <dt><code>keep</code></dt>
+    <dd>Preserves modification times observed in the input JAR. (This is the 
+        default.)</dd>
+    </dl>
+
+  </blockquote>
+  <p><code><strong>-Pfile --pass-file=</strong><em>file</em></code></p>
+  <blockquote> 
+    <p>Indicates that a file should be passed through bytewise with no compression. 
+      By repeating the option, multiple files may be specified. There is no pathname 
+      transformation, except that the system file separator is replaced by the 
+      JAR file separator &quot;<code>/</code>&quot;. The resulting file names 
+      must match exactly as strings with their occurrences in the JAR file. If 
+      file is a directory name, all files under that directory will be passed.</p>
+  </blockquote>
+  <p><code><strong>-Uaction --unknown-attribute=</strong><em>action</em></code></p>
+  <blockquote> 
+    <p>Overrides the default behavior; i.e., the classfile containing the unknown 
+      attribute will be passed through with the specified action. The possible 
+      values for actions are: </p>
+    <dl>
+
+    <dt><code>error</code> </dt>
+    <dd>The <code>pack200</code> operation as a whole will fail with a suitable 
+        explanation.</dd>
+    <p></p>
+
+    <dt><code>strip</code> </dt>
+    <dd>The attribute will be dropped. Note: Removing the required VM attributes 
+        may cause Class Loader failures.</p>
+    <p></p>
+
+    <dt><code>pass</code> </dt>
+    <dd>Upon encountering this attribute, the entire class will be transmitted 
+        as though it is a resource.</dd>
+    </dl>
+  </blockquote>
+  <p><code><strong>-Cattribute-name=</strong><em>layout</em><strong> --class-attribute=</strong><em>attribute-name=action</em></code><br>
+  <code><strong>-Fattribute-name=</strong><em>layout</em><strong> --field-attribute=</strong><em>attribute-name=action</em></code><br>
+  <code><strong>-Mattribute-name=</strong><em>layout</em><strong> --method-attribute=</strong><em>attribute-name=action</em></code><br>
+  <code><strong>-Dattribute-name=</strong><em>layout</em><strong> --code-attribute=</strong><em>attribute-name=action</em></code></p>
+  <blockquote>
+
+    <p>With the above four options, the attribute layout can be specified for a class entity, such as Class attribute, Field attribute, Method attribute, and Code attribute. The attribute-name is the name of the attribute for which the layout or action is being defined. The possible values for action are:</p>
+    <dl>
+
+    <dt> <code><em>some-layout-string</em></code></dt>
+    <dd> The layout language is defined in the JSR 200 specification.
+      <p>Example: <code>--class-attribute=SourceFile=RUH</code></p></dd>
+    <p></p>
+
+    <dt><code>error</code> </dt>
+    <dd>Upon encountering this attribute, the pack200 operation will fail with a suitable explanation.</dd>
+    <p></p>
+
+    <dt><code>strip</code> </dt>
+    <dd>Upon encountering this attribute, the attribute will be removed from the output. Note: removing VM-required attributes may cause Class Loader failures.</dd>
+
+    </dl>
+
+    <p>Example: <code>--class-attribute=CompilationID=pass</code> will cause the class file containing this attribute to be passed through without further action by the packer.</p>
+
+  </blockquote>
+  <p><code><strong>-f</strong> <em>pack.properties</em> <strong>--config-file=</strong><em>pack.properties</em></code></p>
+  <blockquote> 
+    <p>A configuration file, containing Java properties to initialize the packer, 
+      may be specified on the command line.</p>
+    <blockquote>
+    <p><code>% pack200 -f pack.properties myarchive.pack.gz myarchive.jar<br>
+       % more pack.properties<br>
+      # Generic properties for the packer.<br>
+      modification.time=latest<br>
+      deflate.hint=false<br>
+      keep.file.order=false<br>
+      # This option will cause the files bearing new attributes to<br>
+      # be reported as an error rather than passed uncompressed.<br>
+      unknown.attribute=error<br>
+      # Change the segment limit to be unlimited.<br>
+      segment.limit=-1</code></p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<blockquote> 
+  <p><strong><code>-v --verbose</code></strong></p>
+  <blockquote> 
+    <p>Outputs minimal messages. Multiple specification of this option will output 
+      more verbose messages.</p>
+  </blockquote>
+  <p><strong><code>-q --quiet</code></strong></p>
+  <blockquote> 
+    <p>Specifies quiet operation with no messages.</p>
+  </blockquote>
+  <p><code><strong>-lfilename --log-file=</strong><em>filename</em></code></p>
+  <blockquote> 
+    <p>Specifies a log file to output messages.</p>
+  </blockquote>
+  <p><strong><code>-Joption</code></strong></p>
+  <blockquote>
+    <p>Passes option to the Java launcher called by <code>pack200</code>. For 
+      example, <code>-J-Xms48m</code> sets the startup memory to 48 megabytes. 
+      Although it does not begin with <code>-X</code>, it is not a standard option 
+      of <code>pack200</code>. It is a common convention for <code>-J </code>to 
+      pass options to the underlying VM executing applications written in Java.</p>
+  </blockquote>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="exitstatus"></a>
+<h2>EXIT STATUS</h2>
+
+<blockquote>
+  <p>The following exit values are returned:</p>
+  <blockquote> 
+    <p><code>&nbsp;0</code> for successful completion;</p>
+    <p><code>&gt;0</code> if an error occurs.</p>
+  </blockquote>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="seealso"></a>
+<h2>SEE ALSO</h2>
+
+<ul>
+  <li> <a href="unpack200.html">unpack200 - JAR Unpacking Tool</a></li>
+  <li> <code>unpack200(1)</code>, <code>jar(1)</code>, <code>jarsigner(1)</code>, 
+       <code>attributes(5)</code> man pages</li>
+  <li> <a href="../../index.html">J2SE Documentation</a></li>
+  <li> <a href="../../guide/deployment/deployment-guide/pack200.html">Java 
+       Deployment Guide - Pack200</a></li>
+  <li> <a href="../index.html#basic"><code>jar</code> - Java Archive Tool</a></li>
+  <li> <a href="../solaris/jarsigner.html"><code>jarsigner</code> - JAR Signer tool</a></li>
+</ul>
+
+<!-- ---------------------------------------------- -->
+
+<a name="notes"></a>
+<h2>NOTES</h2>
+
+<blockquote>
+  <p>This command should not be confused with <code>pack(1)</code>. They are 
+     distinctly separate products.</p>
+  <p>The J2SE API Specification provided with the SDK is the superseding 
+    authority, in case of discrepancies.</p>
+</blockquote>
+<p><br>
+</p>
+</body>
+</html>

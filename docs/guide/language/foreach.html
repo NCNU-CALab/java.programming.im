@@ -1,0 +1,189 @@
+<HTML>
+<HEAD>
+<title>The For-Each Loop</title>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<!--TD WIDTH=60-->
+<TD>
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+<TD>
+<center>
+<h1>The For-Each Loop</h1>
+</center>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="index.html">Language Contents</a></font>
+<p>
+</TR>
+</TABLE>
+
+<!-- Body text begins here -->
+
+
+<hr size=3 noshade>
+Iterating over a collection is uglier than it needs to be.  Consider the
+following method, which takes a collection of timer tasks and cancels them:
+<blockquote>
+<pre>void cancelAll(Collection&lt;TimerTask&gt; c) {
+    for (<font color="#cc0000">Iterator&lt;TimerTask&gt; i = c.iterator(); i.hasNext(); </font>)
+        <font color="#cc0000">i.next()</font>.cancel();
+}
+</pre>
+</blockquote>
+
+<p>The iterator is just clutter. Furthermore, it is an opportunity for
+error.  The iterator variable occurs three times in each loop: that is
+two chances to get it wrong. The for-each construct gets rid of the
+clutter and the opportunity for error. Here is how the example looks
+with the for-each construct:
+
+<blockquote>
+<pre>void cancelAll(Collection&lt;TimerTask&gt; c) {
+    for (<font color="#009900">TimerTask t : c</font>)
+        t.cancel();
+}
+</pre>
+</blockquote>
+
+<p>When you see the colon (<code>:</code>) read it as &#8220;in.&#8221;
+The loop above reads as &#8220;for each <code>TimerTask t</code> in <code>c</code>.&#8221; As
+you can see, the for-each construct combines beautifully with
+<a href="generics.html">generics</a>. It preserves all of the type safety,
+while removing the remaining clutter. Because you don't have to declare the
+iterator, you don't have to provide a generic declaration for it. (The
+compiler does this for you behind your back, but you need not concern yourself
+with it.)
+
+<p>
+Here is a common mistake people make when they are trying to do nested
+iteration over two collections:
+
+<blockquote>
+<pre>List suits = ...;
+List ranks = ...;
+List sortedDeck = new ArrayList();
+
+<b><font color="#cc0000">// BROKEN - throws NoSuchElementException!</font></b>
+for (Iterator i = suits.iterator(); i.hasNext(); )
+    for (Iterator j = ranks.iterator(); j.hasNext(); )
+        sortedDeck.add(new Card(i.next(), j.next()));
+</pre>
+</blockquote>
+
+<p>Can you spot the bug? Don't feel bad if you can't. Many expert programmers
+have made this mistake at one time or another.  The problem is that the
+<code>next</code> method is being called too many times on the &#8220;outer&#8221;
+collection (<code>suits</code>).  It is being called in the inner loop for both
+the outer and inner collections, which is wrong. In order to fix it, you have
+to add a variable in the scope of the outer loop to hold the suit:
+
+<blockquote>
+<pre><b>// Fixed, though a bit ugly</b>
+for (Iterator i = suits.iterator(); i.hasNext(); ) {
+    <font color="#009900">Suit suit = (Suit) i.next();</font>
+    for (Iterator j = ranks.iterator(); j.hasNext(); )
+        sortedDeck.add(new Card(suit, j.next()));
+}
+</pre>
+</blockquote>
+<p>So what does all this have to do with the for-each construct?  It is
+tailor-made for nested iteration!  Feast your eyes:
+<blockquote>
+<pre>for (Suit suit : suits)
+    for (Rank rank : ranks)
+        sortedDeck.add(new Card(suit, rank));
+</pre>
+</blockquote>
+
+<p>The for-each construct is also applicable to arrays, where it hides
+the index variable rather than the iterator. The following method
+returns the sum of the values in an <code>int</code> array:
+
+<blockquote>
+<pre><b>// Returns the sum of the elements of a</b>
+int sum(<font color="#009900">int[] a</font>) {
+    int result = 0;
+    for (<font color="#009900">int i : a</font>)
+        result += i;
+    return result;
+}
+</pre>
+</blockquote>
+
+<p>So when should you use the for-each loop? Any time you can. It really
+beautifies your code.  Unfortunately, you cannot use it everywhere.  Consider,
+for example, the <a href="generics.html#expurgate"><code>expurgate</code></a>
+method. The program needs access to the iterator in order to remove the
+current element.  The for-each loop hides the iterator, so you cannot
+call <code>remove</code>.  Therefore, the for-each loop is not usable for
+filtering.  Similarly it is not usable for loops where you need to
+replace elements in a list or array as you traverse it.  Finally, it is
+not usable for loops that must iterate over multiple collections in
+parallel.  These shortcomings were known by the designers, who made a
+conscious decision to go with a clean, simple construct that would
+cover the great majority of cases.
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+
+<TD>
+   <FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+   All Rights Reserved.
+
+   </FONT>
+   <P>
+
+   <FONT SIZE="-1">
+   Please <a href="../../relnotes/contacts.html">send us comments and suggestions</a><BR>
+   </FONT>
+</TD>
+
+<TD ALIGN=RIGHT>
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+   <BR><BR>
+   <FONT SIZE="+1">
+   <i>Java Software</i>
+   </FONT>
+</TD>
+
+</TR>
+</TABLE>
+
+
+<PRE>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+
+</BODY>
+</HTML>

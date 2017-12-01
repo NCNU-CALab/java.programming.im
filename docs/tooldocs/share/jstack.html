@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>jstack - Stack Trace</title>
+</head>
+<body style="background-color: white;">
+<h1>jstack - Stack Trace<br>
+</h1>
+<ul>
+<li><a href="#synopsis">Synopsis</a></li>
+<li><a href="#parameters">Parameters</a><br>
+</li>
+<li><a href="#description">Description</a> </li>
+<li><a href="#options">Options</a> </li>
+<li><a href="#seealso">See Also</a></li>
+<li><a href="#KNOWN_BUGS">Known Bugs</a><br>
+</li>
+</ul>
+
+<a name="synopsis">
+<h2>SYNOPSIS</h2>
+</a>
+<blockquote>
+<pre>
+<b>jstack</b> [ option ] pid
+<b>jstack</b> [ option ] executable core
+<b>jstack</b> [ option ] [server-id@]remote-hostname-or-IP
+</pre>
+</blockquote>
+
+<a name="parameters">
+<h2>PARAMETERS</h2>
+</a>
+<blockquote>
+Options are mutually exclusive. Option, if used, should follow
+immediately after the command name.
+See <a href="#options">OPTIONS</a>.
+
+<dl>
+<dt><span style="font-weight: bold;">pid</span></dt>
+<dd>process id for which the stack trace is to be printed.
+The process must be a Java process. To get a list of Java processes
+running on a machine,
+<a href="./jps.html">jps</a>
+may be used.
+</dd>
+</dl>
+
+<dl>
+<dt><span style="font-weight: bold;">executable</span><br>
+</dt>
+  <dd>Java executable from which the core dump was produced.</dd>
+<br>
+<dt><span style="font-weight: bold;">core</span><br>
+</dt>
+  <dd>core file for which the stack trace is to be printed.</dd>
+<dt><span style="font-weight: bold;"><br>remote-hostname-or-IP</span><br>
+  <dd>remote debug server's (see
+<a href="./jsadebugd.html">jsadebugd</a>) hostname or IP address.</dd>
+<br>
+<dt><span style="font-weight: bold;">server-id<br></span>
+  <dd>optional unique id, if multiple debug
+servers are running on the same remote host.<br>
+<br>
+</blockquote>
+
+<a name="description">
+<h2>DESCRIPTION</h2>
+</a>
+<blockquote>
+<b>jstack</b>
+prints Java stack traces of Java threads for a given Java
+process or core file or a remote debug server.  For each Java frame,
+the full class name, method name, 'bci' (byte code index) and line
+number, if available, are printed. With the -m option, jstack prints
+both Java and native frames of all threads along with the 'pc'
+(program counter).  For each native frame, the closest native symbol
+to 'pc', if available, is printed. C++ mangled names are not
+demangled.  To demangle C++ names, the output of this command may be 
+piped to <span style="font-weight: bold;">c++filt</span>.
+<br>
+<p>
+<b>NOTE - This utility is unsupported and may or may not be available in 
+future versions of the J2SE SDK.
+jstack is not currently available on Windows platforms or on
+the Linux Itanium platform.
+</b>
+</blockquote>
+
+<a name="options">
+<h2>OPTIONS</h2>
+</a><a name="standard"></a>
+<blockquote>
+<dl>
+<dt><b>-m</b></dt>
+<dd>
+prints mixed mode (both Java and native C/C++ frames) stack trace.
+<p> </p>
+</dd>
+<dt><b>-h</b> </dt>
+<dd>prints a help message.<br>
+<br>
+</dd>
+<dt><b>-help</b></dt>
+<dd>prints a help message<br>
+<p> </p>
+</dd>
+</dl>
+</blockquote>
+
+<a name="seealso">
+<h2>SEE ALSO</h2>
+</a>
+<blockquote>
+<ul>
+<li>
+pstack(1)
+</li>
+<li>c++filt(1)
+</li>
+<li>
+<a href="./jps.html">
+jps</a>
+</li>
+<li>
+<a href="./jsadebugd.html">jsadebugd</a>
+</li>
+</ul>
+</blockquote>
+
+<a name="knownbugs">
+<h2><a name="KNOWN_BUGS"></a>KNOWN BUGS</h2>
+</a>
+<blockquote> 
+Mixed mode stack trace, the -m option, does not work with the
+remote debug server.
+</blockquote>
+<hr size="3" noshade="noshade">
+<table border="0" width="100%" summary="layout">
+<tbody>
+<tr valign="top">
+<td>
+<p><font size="-2">
+<a href="../../relnotes/SMICopyright.html">Copyright</a>
+&copy; 2004 <a href="http://www.sun.com/">Sun Microsystems, Inc.</a>
+All Rights Reserved.</font></p>
+</td>
+<td align="right"> <img src="../../images/sunlogo64x30.gif"
+ alt="Sun" border="0" width="64" height="30"> <br>
+<font size="+1"> <i>Java Software</i> </font> </td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

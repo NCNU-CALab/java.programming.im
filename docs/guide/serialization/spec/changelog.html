@@ -1,0 +1,92 @@
+<html>
+<head>
+<title> </title>
+</head>
+<body BGCOLOR=#ffffff text=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+ 
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="serial-title.html">Prev</a> | <a href="serialTOC.html">Next</a> </td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<hr><br>
+ 
+
+<h1 align="left">
+  <a name="4657"> </a>Change History</h1>
+
+
+
+
+<p>
+July 24, 2004	 Updates for Java<font size="-1"><sup>TM</sup></font> 2 SDK, Standard Edition, v1.5 Beta 1</p>
+
+<a name="9363"> </a>
+<li>Added support for serializing enum constants.<a name="9364"> </a>
+<li>Added specification of class modifier flags used in the computation of default <code>serialVersionUID</code> values to <a href="class.html#4100">Section4.6 Stream Unique Identifiers</a>". 
+<p>
+Aug. 16, 2001	 Updates for Java<font size="-1"><sup>TM</sup></font> 2 SDK, Standard Edition, v1.4 Beta 2</p>
+
+<a name="9273"> </a>
+<li>Added support for class-defined <code>readObjectNoData</code> methods, to be used for initializing serializable class fields in cases not covered by class-defined readObject methods.  See <a href="input.html#6053">Section3.5 The readObjectNoData Method</a>", as well as Appendix A, "Security in Object Serialization".<a name="9309"> </a>
+<li>New methods <code>ObjectOutputStream.writeUnshared</code> and <code>ObjectInputStream.readUnshared</code> provide a mechanism for ensuring unique references to deserialized objects.  See <a href="output.html#933">Section2.1 The ObjectOutputStream Class</a>", <a href="input.html#961">Section3.1 The ObjectInputStream Class</a>", as well as Appendix A, "Security in Object Serialization".<a name="9313"> </a>
+<li>Documented new security checks in the one-argument constructors for <code>ObjectOutputStream</code> and <code>ObjectInputStream</code>.  See <a href="output.html#933">Section2.1 The ObjectOutputStream Class</a>" and <a href="input.html#961">Section3.1 The ObjectInputStream Class</a>".<a name="9338"> </a>
+<li>Added caution against using inner classes for serialization in <a href="serial-arch.html#4539">Section1.10 The Serializable Interface</a>". <a name="9331"> </a>
+<li>Clarified requirement that class-defined <code>writeObject</code> methods invoke <code>ObjectOutputStream.defaultWriteObject</code> or <code>writeFields</code> once before writing optional data, and that class-defined <code>readObject</code> methods invoke <code>ObjectInputStream.defaultReadObject </code>or <code>readFields</code> once before reading optional data.  See <a href="output.html#861">Section2.3 The writeObject Method</a>" and <a href="input.html#2971">Section3.4 The readObject Method</a>".<a name="9324"> </a>
+<li>Clarified the behavior of <code>ObjectInputStream</code> when class-defined <code>readObject</code> or <code>readExternal</code> methods attempt read operations which exceed the bounds of available data; see <a href="input.html#2971">Section3.4 The readObject Method</a>" and <a href="input.html#6014">Section3.6 The readExternal Method</a>".<a name="9302"> </a>
+<li>Clarified the description of non-proxy class descriptor field type strings to require that they be written in "field descriptor" format; see <a href="protocol.html#8299">Section6.2 Stream Elements</a>".
+<p>
+July 30, 1999	 Updates for Java<font size="-1"><sup>TM</sup></font> 2 SDK, Standard Edition, v1.3 Beta</p>
+
+<a name="9199"> </a>
+<li>Added the ability to write <code>String</code> objects for which the UTF encoding is longer than 65535 bytes in length.  See <a href="protocol.html#8299">Section6.2 Stream Elements</a>".<a name="9214"> </a>
+<li>New methods <code>ObjectOutputStream.writeClassDescriptor</code> and <code>ObjectInputStream.readClassDescriptor</code> provide a means of customizing the serialized representation of <code>ObjectStreamClass</code> class descriptors.  See <a href="output.html#933">Section2.1 The ObjectOutputStream Class</a>" and <a href="input.html#961">Section3.1 The ObjectInputStream Class</a>".<a name="9221"> </a>
+<li>Expanded Appendix A, "<a href="security.html#2527">Security in Object Serialization</a>".
+<p>
+Sept. 30, 1998	 Updates for JDK<font size="-1"><sup>TM</sup></font> 1.2 Beta4 RC1</p>
+
+<a name="9156"> </a>
+<li>Documentation corrections only.
+<p>
+June 22, 1998	 Updates for JDK<font size="-1"><sup>TM</sup></font> 1.2 Beta4</p>
+
+<a name="9121"> </a>
+<li>Eliminated JDK<font size="-1"><sup>TM</sup></font> 1.2 <code>java.io</code> interfaces, <code>Replaceable</code> and <code>Resolvable</code>.<br>References to either of these classes as an interface should be replaced with <code>java.io.Serializable</code>. Serialization will use reflection to invoke the methods, <code>writeReplace</code> and <code>readResolve</code>, if the Serializable class defines these methods. See <a href="output.html#5324">Section2.5 The writeReplace Method</a>" and <a href="input.html#5903">Section3.7 The readResolve Method</a>."<a name="9107"> </a>
+<li>New javadoc tags <em>@serial</em>, <em>@serialField</em>, and <em>@serialData</em> provide a way to document the Serialized Form of a Serializable class. Javadoc generates a serialization specification based on the contents of these tags. See <a href="serial-arch.html#5251">Section1.6 Documenting Serializable Fields and Data for a Class</a>." <a name="9113"> </a>
+<li>Special Serializable class member, <code>serialPersistentFields</code>, must be declared private. See <a href="serial-arch.html#6250">Section1.5 Defining Serializable Fields for a Class</a>."<a name="9232"> </a>
+<li>Clarified the steps involved in computing the <code>serialVersionUID</code> in <a href="class.html#4100">Section4.6 Stream Unique Identifiers</a>."
+<p>
+Feb. 6, 1998	 Updates for JDK<font size="-1"><sup>TM</sup></font> 1.2 Beta 3</p>
+
+<a name="4599"> </a>
+<li>Introduced the concept of STREAM_PROTOCOL versions. Added the <code>STREAM_PROTOCOL_2</code> version to indicate a new format for <code>Externalizable</code> objects that enable skipping by an <code>Externalizable</code> object within the stream, even when the object's class is not available in the local Virtual Machine. Compatibility issues are discussed in <a href="protocol.html#5849">Section6.3 Stream Protocol Versions</a>."<a name="4603"> </a>
+<li><code>The ObjectInputStream.resolveClass</code> method can return a local class in a different package than the name of the class within the stream. This capability enables renaming of packages between releases. The <code>serialVersionUID </code>and the base class name must be the same in the stream and in the local version of the class. See <a href="input.html#961">Section3.1 The ObjectInputStream Class</a>."<a name="4607"> </a>
+<li>Allow substitution of <code>String</code> or <code>array</code> objects when writing them to or reading them from the stream. See <a href="output.html#933">Section2.1 The ObjectOutputStream Class</a>" and <a href="input.html#961">Section3.1 The ObjectInputStream Class</a>."
+<p>
+Sept. 4, 1997	 Updates for JDK<font size="-1"><sup>TM</sup></font> 1.2 Beta1</p>
+
+<a name="4418"> </a>
+<li>Separated the Replaceable interface into two interfaces: Replaceable and Resolvable. The Replaceable interface allows a class to nominate its own replacement just before serializing the object to the stream. The Resolvable interface allows a class to nominate its own replacement when reading an object from the stream. <a name="4424"> </a>
+<li>Modified serialization to use the JDK<font size="-1"><sup>TM</sup></font> 1.2 security model. There is a check for <code>SerializablePermission "enableSubstitution"</code> within the <code>ObjectInputStream.enableReplace</code> and <code>ObjectOutputStream.enableResolve</code> methods. See <a href="output.html#933">Section2.1 The ObjectOutputStream Class</a>" and <a href="input.html#961">Section3.1 The ObjectInputStream Class</a>."<a name="4446"> </a>
+<li>Updated <code>writeObject</code>'s exception handler to write handled <code>IOException</code>s into the stream. See <a href="output.html#933">Section2.1 The ObjectOutputStream Class</a>."
+<p>
+July 3, 1997	 	 Updates for JDK<font size="-1"><sup>TM</sup></font> 1.2 Alpha</p>
+
+<a name="4618"> </a>
+<li>Documented the requirements for specifying the serialized state of classes. See <a href="serial-arch.html#6250">Section1.5 Defining Serializable Fields for a Class</a>."<a name="4622"> </a>
+<li>Added the Serializable Fields API to allow classes more flexibility in accessing the serialized fields of a class. The stream protocol is unchanged. See <a href="serial-arch.html#5253">Section1.7 Accessing Serializable Fields of a Class</a>," <a href="output.html#5068">Section2.2 The ObjectOutputStream.PutField Class</a>," and <a href="input.html#4936">Section3.2 The ObjectInputStream.GetField Class</a>."<a name="4632"> </a>
+<li>Clarified that field descriptors and data are written to and read from the stream in canonical order. See <a href="class.html#5082">Section4.1 The ObjectStreamClass Class</a>."
+
+<hr>
+<!-- This inserts footnotes--><p>
+<table border="0" width="100%">
+<tr>
+<td><a href="serialTOC.html">Contents</a> | <a href="serial-title.html">Prev</a> | <a href="serialTOC.html">Next</a> </td>
+<td align=right><i>Java Object Serialization Specification<br>version 1.5.0</i>
+</td></tr></table>
+<p>
+<font size="-1"><i>Copyright &#169 2004 Sun Microsystems, Inc.
+All rights reserved</i>
+<br>
+</font>
+</body></html>

@@ -1,0 +1,1468 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0064) -->
+<!--
+
+- JAAS/KeyStoreLoginModule
+- tool enhancements: keytool/jarsigner/policytool 
+--><HTML><HEAD><TITLE>Java PKCS#11 Reference Guide</TITLE>
+<META http-equiv=Content-Type content="text/html;  charset=windows-1252">
+<META content="MSHTML 6.00.2800.1400" name=GENERATOR></HEAD>
+<BODY bgColor=white>
+<HR>
+
+<CENTER>
+<H1>Java<FONT size=-2><SUP>TM</SUP></FONT> PKCS#11 Reference Guide</H1>
+<H3><I>Last Modified: 11 May 2004</I></H3></CENTER>
+<HR>
+
+<P><STRONG>IMPORTANT NOTE:</STRONG>The APIs and features described in this 
+document are SUBJECT TO CHANGE. Please send feedback related to these new APIs 
+and features to <A 
+href="mailto:java-security@sun.com">java-security@sun.com</A>. 
+<P><B><FONT size=+1>1.0 <A 
+href="#Intro">Introduction</A></FONT></B> 
+</P><B><FONT size=+1>2.0 <A 
+href="#P11Provider">Sun 
+PKCS#11 Provider</A></FONT></B> 
+<P></P>
+<DL>
+  <DT>
+  <DD><B>2.1 <A 
+  href="#Requirements">Requirements</A></B> 
+
+  <DT>
+  <DD><B>2.2 <A 
+  href="#Config"><B>Configuration</B></A></B> 
+  </DD></DL><B><FONT size=+1>3.0 <A 
+href="#AppDev">Application 
+Developers</A></FONT></B> 
+<DL>
+  <DT>
+  <DD><B>3.1 <A 
+  href="#Login">Token 
+  Login</A></B> 
+  <DT>
+  <DD><B>3.2 <A 
+  href="#Keys">Token 
+  Keys</A></B> 
+  <DT>
+  <DD><B>3.3 <A 
+  href="#DelayedSelect">Delayed 
+  Provider Selection</A></B> 
+  <DT>
+  <DD><B>3.4 <A 
+  href="#JAAS">JAAS 
+  KeyStoreLoginModule</A></B> 
+  <DT>
+  <DD><B>3.5 <A 
+  href="#JSSE">Tokens 
+  as JSSE Keystores and Trust Stores</A></B></DD></DL><B><FONT size=+1>4.0 <A 
+href="#Tools">Tools</A></FONT></B> 
+
+<DL>
+  <DT>
+  <DD><B>4.1 <A 
+  href="#KeyToolJarSigner">KeyTool 
+  and JarSigner</A></B> 
+  <DT>
+  <DD><B>4.2 <A 
+  href="#PolicyTool">PolicyTool</A></B> 
+  </DD></DL><B><FONT size=+1>5.0 <A 
+href="#ProviderDev">Provider 
+Developers</A></FONT></B> 
+<DL>
+  <DT>
+  <DD><B>5.1 <A 
+  href="#Service">Provider 
+  Services</A></B> 
+  <DL>
+    <DT>
+    <DD><B>5.1.1 <A 
+    href="#NewInstance">Instantiating 
+    Engine Classes</A></B> 
+    <DT>
+    <DD><B>5.1.2 <A 
+    href="#SupportsParam">Parameter 
+    Support</A></B> </DD></DL>
+  <P></P></DD></DL><B><FONT size=+1>Appendix A <A 
+href="#ALG">Sun 
+PKCS#11 Provider's Supported Algorithms</A></FONT></B> 
+<P><B><FONT size=+1>Appendix B <A 
+href="#KeyStoreRestrictions">
+Sun PKCS#11 Provider's KeyStore Restrictions
+</A></FONT></B> 
+<P><B><FONT size=+1>Appendix C <A 
+href="#ExampleProvider">Example 
+Provider</A></FONT></B> 
+<P>
+<HR>
+<A name=Intro></A>
+<H2>1.0 Introduction</H2>
+<P>The Java platform defines a set of programming interfaces for performing 
+cryptographic operations. These interfaces are collectively known as the Java 
+Cryptography Architecture (JCA) and the Java Cryptography Extension (JCE), and 
+are specified at the  <A 
+href="index.html">Security in J2SE 5 home page</A>. 
+</P>
+<P>The cryptographic interfaces are provider-based. Specifically, applications 
+talk to Application Programming Interfaces (APIs), and the actual cryptographic 
+operations are performed in configured providers which adhere to a set of 
+Service Provider Interfaces (SPIs). This architecture supports different 
+provider implementations. Some providers may perform cryptographic operations in 
+software; others may perform the operations on a hardware token (for example, on 
+a smartcard device or on a hardware cryptographic accelerator). </P>
+<P>The Cryptographic Token Interface Standard, PKCS#11, is produced by RSA 
+Security and defines native programming interfaces to cryptographic tokens, such 
+as hardware cryptographic accelerators and Smartcards. To facilitate the 
+integration of native PKCS#11 tokens into the Java platform, a new cryptographic 
+provider, the Sun PKCS#11 provider, has been introduced into the J2SE 5.0
+release. This new provider enables existing applications written to the JCA and 
+JCE APIs to access native PKCS#11 tokens. No modifications to the application 
+are required. The only requirement is the proper configuration of the provider 
+into the Java Runtime. 
+<P><A name=NEWAPIS></A>Although an application can make use of most PKCS#11 
+features using existing APIs, some applications might need more flexibility and 
+capabilities. For example, an application might want to deal with Smartcards 
+being removed and inserted dynamically more easily. Or, a PKCS#11 token might 
+require authentication for some non-key-related operations and therefore, the 
+application must be able to log into the token without using keystore. In J2SE 5.0,
+the JCA was enhanced to allow applications greater flexibility in dealing with 
+different providers. 
+<P>This document describes how native PKCS#11 tokens can be configured into the 
+Java platform for use by Java applications. It also describes the enhancements 
+that were made to the JCA to make it easier for applications to deal with 
+different types of providers, including PKCS#11 providers. </P><A 
+name=P11Provider></A>
+<H3>2.0 Sun PKCS#11 Provider</H3>
+<P>The Sun PKCS#11 provider, in contrast to most other providers, does not 
+implement cryptographic algorithms itself. Instead, it acts as a bridge between 
+the Java JCA and JCE APIs and the native PKCS#11 cryptographic API, translating 
+the calls and conventions between the two. This means that Java applications 
+calling standard JCA and JCE APIs can, without modification, take advantage of 
+algorithms offered by the underlying PKCS#11 implementations, such as, for 
+example, 
+<UL>
+  <LI>Cryptographic Smartcards, 
+  <LI>Hardware cryptographic accelerators, and 
+  <LI>High performance software implementations. </LI></UL>Note that J2SE only 
+facilitates accessing native PKCS#11 implementations, it does not itself include 
+a native PKCS#11 implementation. However, cryptographic devices such as 
+Smartcards and hardware accelerators often come with software that includes a 
+PKCS#11 implementation, which you need to install and configure according to 
+manufacturer's instructions. 
+<BLOCKQUOTE><A name=Requirements></A>
+  <H3>2.1 Requirements</H3>The Sun PKCS#11 provider is supported on Solaris 
+  SPARC platforms (32-bit and 64-bit Java VM) and on x86 compatible platforms 
+  (Solaris, Linux, and Windows operating systems). It is not supported on 64-bit 
+  AMD64 and Itanium platforms. 
+  <P>The Sun PKCS#11 provider requires an implementation of PKCS#11 v2.0 or 
+  later to be installed on the system. This implementation must take the form of 
+  a shared-object library (.so on Solaris and Linux) or dynamic-link library 
+  (.dll on Windows). Please consult your vendor documentation to find out if 
+  your cryptographic device includes such a PKCS#11 implementation, how to 
+  configure it, and what the name of the library file is. 
+  <P>The Sun PKCS#11 provider supports a number of algorithms, provided that the 
+  underlying PKCS#11 implementation offers them. The algorithms and their 
+  corresponding PKCS#11 mechanisms are listed in the table in Appendix A. <A 
+  name=Config></A>
+  <H3>2.2 Configuration</H3>The Sun PKCS#11 provider is implemented by the main 
+  class <CODE>sun.security.pkcs11.SunPKCS11</CODE> and accepts the full pathname 
+  of a configuration file as an argument. To use the provider, you must first 
+  install it by using the <A 
+  href="CryptoSpec.html#ProviderInstalling">Java 
+  Cryptography Architecture</A> (JCA). As with all JCA providers, installation 
+  of the provider can be done either statically or programmatically. To install 
+  the provider statically, add the provider to the Java Security properties file 
+  (<TT>$JAVA_HOME/lib/security/java.security</TT>). For example, here's a 
+  fragment of the <TT>java.security</TT> file that installs the Sun PKCS#11 
+  provider with the configuration file <TT>/opt/bar/cfg/pkcs11.cfg</TT>. 
+  <BLOCKQUOTE><PRE># configuration for security providers 1-6 ommitted
+security.provider.7=sun.security.pkcs11.SunPKCS11 /opt/bar/cfg/pkcs11.cfg
+</PRE></BLOCKQUOTE>To install the provider dynamically, create an instance of 
+  the provider with the appropriate configuration filename and then install it. 
+  Here is an example. 
+  <BLOCKQUOTE><PRE>String configName = "/opt/bar/cfg/pkcs11.cfg";
+Provider p = new sun.security.pkcs11.SunPKCS11(configName);
+Security.addProvider(p);
+</PRE></BLOCKQUOTE>
+  <P>To use more than one slot per PKCS#11 implementation, or to use more than 
+  one PKCS#11 implementation, simply repeat the installation for each with the 
+  appropriate configuration file. This will result in a Sun PKCS#11 provider 
+  instance for each slot of each PKCS#11 implementation. 
+
+<p>
+The configuration file is a text file that contains entries in the following
+format.
+<blockquote>
+<em>attribute</em> = <em>value</em>
+</blockquote>
+The valid values for <em>attribute</em> and <em>value</em>
+are described in the table in this section.
+The two mandatory attributes are
+<tt>name</tt> and <tt>library</tt>.
+Here is a sample configuration file.
+<blockquote>
+<pre>
+name = FooAccelerator
+library = /opt/foo/lib/libpkcs11.so
+</pre>
+</blockquote>
+Comments are denoted by lines starting with the <tt>#</tt> (number) symbol.
+
+<!--<strong>
+<blockquote>
+??? Format questions:
+1. Leading spaces ignored?
+2. Trailing spaces ignored?
+3. Spaces surrounding '=' mandatory or optional?
+</blockquote>
+</strong>
+-->
+
+<p>
+<a name=ATTRS></a>
+<table border>
+<tr><th>Attribute</th><th>Value</th></th><th>Description</th>
+<tr>
+<td>library</td>
+<td>pathname of PKCS#11 implementation</td>
+<td>
+This is the full pathname (including extension) of the PKCS#11 implementation;
+the format of the pathname is platform dependent.
+For example, <code>/opt/foo/lib/libpkcs11.so</code> might be the
+pathname of a PKCS#11 implementation on Solaris and Linux while
+<code>C:\foo\mypkcs11.dll</code> might be one on Windows.
+</td>
+</tr>
+<tr><td>name</td>
+<td>name suffix of this provider instance
+</td>
+<td>
+This string is concatenated with the prefix <tt>SunPKCS11-</tt> to
+produce this provider instance's name (that is, the
+the string returned by its <code>Provider.getName()</code> method).
+For example, if the <tt>name</tt> attribute is <tt>"FooAccelerator"</tt>,
+then the provider instance's name will be <code>"SunPKCS11-FooAccelerator"</code>.
+</td>
+</tr>
+<tr>
+<td>description</td>
+<td>description of this provider instance
+</td>
+<td>
+This string will be returned by the provider instance's
+<code>Provider.getInfo()</code> method. If none is specified,
+a default description will be returned.
+</td>
+</tr>
+<tr>
+<td>slot</td>
+<td>slot id
+</td>
+<td>
+This is the id of the slot that this provider instance is to be associated with.
+For example, you would use <code>1</code> for the slot with
+the id <code>1</code> under PKCS#11.
+At most one of <tt>slot</tt> or <tt>slotListIndex</tt> may be
+specified. If neither is specified, the default is a
+<tt>slotListIndex</tt> of <tt>0</tt>.
+</td>
+</tr>
+
+<tr>
+<td>slotListIndex</td>
+<td>slot index</td>
+<td>
+This is the slot index that this provider instance is to be associated with.
+It is the index into the list of all slots returned by the PKCS#11 function
+<code>C_GetSlotList</code>.
+For example, <code>0</code> indicates the
+first slot in the list.
+At most one of <tt>slot</tt> or <tt>slotListIndex</tt> may be
+specified. If neither is specified, the default is a
+<tt>slotListIndex</tt> of <tt>0</tt>.
+</td>
+</tr>
+<tr>
+<td>enabledMechanisms</td>
+<td>brace enclosed, whitespace-separated list of PKCS#11 mechanisms to enable
+</td>
+<Td>
+This is the list PKCS#11 mechanisms that this provider instance should
+use, provided that they are supported by both the Sun PKCS#11 provider
+and PKCS#11 token. All other mechanisms will be ignored. Each entry in the list
+is the name of a PKCS#11 mechanism. Here is an example that lists
+two PKCS#11 mechanisms.
+<blockquote><pre>
+enabledMechanisms = {
+  CKM_RSA_PKCS
+  CKM_RSA_PKCS_KEY_PAIR_GEN
+}
+</pre></blockquote>
+At most one of <tt>enabledMechanisms</tt> or <tt>disabledMechanisms</tt>
+may be specified.
+If neither is specified, the mechanisms enabled are those that
+are supported by both the <a href=#ALG>Sun PKCS#11 provider</a>
+and the PKCS#11 token.
+</td>
+</tr>
+<tr>
+<td>disabledMechanisms</td>
+<td>brace enclosed, whitespace-separated list of PKCS#11 mechanisms to disable</td>
+<td>
+This is the list of PKCS#11 mechanism that this provider instance
+should ignored. Any mechanism listed will be ignored by the provider,
+even if they are supported by the token and the Sun PKCS#11 provider.
+At most one of <tt>enabledMechanisms</tt> or <tt>disabledMechanisms</tt>
+may be specified.
+If neither is specified, the mechanisms enabled are those that
+are supported by both the <a href=#ALG>Sun PKCS#11 provider</a>
+and the PKCS#11 token.
+</td></tr>
+
+<tr>
+<td>attributes</td>
+<td>see below</td>
+<td>The <tt>attributes</tt> option can be used to specify additional
+PKCS#11 that should be set when creating PKCS#11 key objects. This makes
+it possible to accomodate tokens that require particular attributes.
+For details, see the section below.
+</tr>
+
+</table>
+
+<H4>Attributes Configuration</h4>
+
+The attributes option allows you to specify additional PKCS#11 attributes
+that should be set when creating PKCS#11 key objects. By default, the
+SunPKCS11 provider only specifies mandatory PKCS#11 attributes when creating
+objects. For example, for RSA public keys it specifies the key type and
+algorithm (CKA_CLASS and CKA_KEY_TYPE) and the key values for RSA public
+keys (CKA_MODULUS and CKA_PUBLIC_EXPONENT). The PKCS#11 library you are
+using will assign implementation specific default values to the other
+attributes of an RSA public key, for example that the key can be used
+to encrypt and verify messages (CKA_ENCRYPT and CKA_VERIFY = true).
+
+<p>
+The <tt>attributes</tt> option can be used if you do not like the default values
+your PKCS#11 implementation assigns or if your PKCS#11 implementation
+does not support defaults and requires a value to be specified explicitly.
+Note that specifying attributes that your PKCS#11 implementation does not
+support or that are invalid for the type of key in question may cause
+the operation to fail at runtime.
+
+<p>
+The option can be specified
+zero or more times, the options are processed in the order specified
+in the configuration file as described below.
+
+The <tt>attributes</tt> option has the format:
+
+<blockquote>
+<pre>
+attributes(operation, keytype, keyalgorithm) = {
+  name1 = value1
+  [...]
+}
+</pre>
+</blockquote>
+
+Valid values for <tt>operation</tt> are:
+<ul>
+
+<li><tt>generate</tt>, for keys generated via a KeyPairGenerator
+or KeyGenerator
+
+<p>
+<li><tt>import</tt>, for keys created via a KeyFactory or SecretKeyFactory.
+This also applies to Java software keys automatically converted to PKCS#11 key
+objects when they are passed to the initialization method of a cryptographic
+operation, for example <tt>Signature.initSign()</tt>.
+
+<p>
+<li><tt>*</tt>, for keys created using either a generate or a create operation.
+
+</ul>
+
+Valid values for <tt>keytype</tt> are <tt>CKO_PUBLIC_KEY</tt>, <tt>CKO_PRIVATE_KEY</tt>,
+and <tt>CKO_SECRET_KEY</tt>, for public, private, and secret keys, respectively,
+and <tt>*</tt> to match any type of key.
+
+<p>
+Valid values for <tt>keyalgorithm</tt> are one of the <tt>CKK_xxx</tt> constants
+from the PKCS#11 specification, or <tt>*</tt> to match keys of any algorithm.
+The algorithms currently supported by the SunPKCS11 provider are
+CKK_RSA, CKK_DSA, CKK_DH, CKK_AES, CKK_DES, CKK_DES3, CKK_RC4, CKK_BLOWFISH,
+and CKK_GENERIC.
+
+<p>
+The attribute names and values are specified as a list of one or more name-value
+pairs. <tt>name</tt> must be a <tt>CKA_xxx</tt> constant from the PKCS#11
+specification, for example <tt>CKA_SENSITIVE</tt>. <tt>value</tt> can be one of
+the following:
+
+<ul>
+<li>a boolean value, <tt>true</tt> or <tt>false</tt>
+<li>an integer, in decimal form (default) or in hexadecimal form
+if it begins with <tt>0x</tt>.
+<li><tt>null</tt>, indicating that this attribute should <em>not</em> be
+specified when creating objects.
+
+</ul>
+
+If the <tt>attributes</tt> option is specified multiple times, the entries are
+processed in the order specified with the attributes aggregated and later
+attributes overriding earlier ones. For example, consider the following
+configuration file excerpt:
+
+<blockquote>
+<pre>
+attributes(*,CKO_PRIVATE_KEY,*) = {
+  CKA_SIGN = true
+}
+
+attributes(*,CKO_PRIVATE_KEY,CKK_DH) = {
+  CKA_SIGN = null
+}
+
+attributes(*,CKO_PRIVATE_KEY,CKK_RSA) = {
+  CKA_DECRYPT = true
+}
+</pre>
+</blockquote>
+
+The first entry says to specify <tt>CKA_SIGN = true</tt> for all private keys.
+The second option overrides that with <tt>null</tt> for Diffie-Hellman private keys,
+so the <tt>CKA_SIGN</tt> attribute will not specified for them at all. Finally,
+the third option says to also specify <tt>CKA_DECRYPT = true</tt> for RSA private
+keys. That means RSA private keys will have both <tt>CKA_SIGN = true</tt> and
+<tt>CKA_DECRYPT = true</tt> set.
+
+<p>
+There is also a special form of the <tt>attributes</tt> option. You can write
+<tt>attributes = compatibility</tt> in the configuration file.
+That is a shortcut for a whole set of
+attribute statements. They are designed to provider maximum compatibility with
+existing Java applications, which may expect, for example, all key components to be accessible
+and secret keys to be useable for both encryption and decryption. The <tt>compatibility</tt>
+attributes line can be used together with other <tt>attributes</tt> lines, in which
+case the same aggregation and overriding rules apply as described earlier.
+
+<P>
+
+<!--
+<p> 
+
+This provider
+has the name, "SunPKCS11-<i>TokenName</i>", where <i>TokenName</i>
+is an administrator-specified name that describes the PKCS#11 token.
+<i>TokenName</i> is specified in the
+<a href="#Config">token configuration</a> section.
+
+</p><p> The configuration also specifies the location of an existing
+native PKCS#11 library.  Typically this library is implemented and
+supplied by the token vendor.  The Sun PKCS#11 provider first
+dynamically loads the library.  When the provider is then asked to
+perform a cryptographic operation, it translates the request
+into PKCS#11 request, and forwards it to the native library.
+After the library finishes execution,
+the Sun PKCS#11 provider translates the result appropriately,
+and finally returns it back to the caller.
+
+</p><p> 
+</p><p> Multiple Sun PKCS#11 providers may be configured into the
+runtime if, for example, applications require access to multiple
+PKCS#11 tokens.  A separate Sun PKCS#11 provider must be configured
+for each individual token.
+
+<blockquote>
+<a name="Config"></a>
+</p><h3>2.1 Configuration</h3>
+
+<a name="Requirements"></a>
+<h3>2.2 Requirements</h3>
+</blockquote>
+-->
+</blockquote>
+<A 
+name=AppDev></A>
+<H2>3.0 Application Developers</H2>
+<P>Java applications can use the existing JCA and JCE APIs to access PKCS#11 
+tokens via the Sun PKCS#11 provider. This is sufficient for many applications 
+but it might be difficult for an application to deal with certain PKCS#11 
+features, such as unextractable keys and dynamically changing Smartcards. 
+Consequently, a number of enhancements were made to the APIs to better support 
+applications using certain PKCS#11 features. These enhancments are discussed in 
+this section. </P>
+<BLOCKQUOTE><A name=Login></A>
+  <H3>3.1 Token Login</H3>
+  <P>Certain PKCS#11 operations, such as accessing private keys, require a login 
+  using a Personal Identification Number, or PIN, before the operations can 
+  proceed. The most common type of operations that require login are those that 
+  deal with keys on the token. In a Java application, such operations often 
+  involve first loading the keystore. When accessing the PKCS#11 token as a 
+  keystore via the <TT>java.security.KeyStore</TT> class, you can supply the PIN 
+  in the password input parameter to the <A 
+  href="../../api/java/security/KeyStore.html#load(java.io.InputStream, char[])">load</A> 
+  method, similar to how applications initialize a keystore prior to J2SE 5.0. The
+  PIN will then be used by the Sun PKCS#11 provider for logging into the token. 
+  Here is an example. 
+  <BLOCKQUOTE><PRE>char[] pin = ...; 
+KeyStore ks = KeyStore.getInstance("PKCS11");
+ks.load(null, pin); 
+</PRE></BLOCKQUOTE>
+  <P>This is fine for an application that treats PKCS#11 tokens as static 
+  keystores. For an application that wants to accommodate PKCS#11 tokens more 
+  dynamically, such as Smartcards being inserted and removed, you can use the 
+  new <TT>KeyStore.Builder</TT> class. Here is an example of how to initialize 
+  the builder for a PKCS#11 keystore with a callback handler. 
+  <BLOCKQUOTE><PRE>KeyStore.Builder builder = new KeyStore.Builder("PKCS11");
+builder.setCallbackHandler(new MyGuiCallbackHandler());
+</PRE></BLOCKQUOTE>For the Sun PKCS#11 provider, the callback handler must be 
+  able to satisfy a <TT>PasswordCallback</TT>, which is used to prompt the user 
+  for the PIN. Whenever the application needs access to the keystore, it uses 
+  the builder as follows. 
+  <BLOCKQUOTE><PRE>KeyStore ks = builder.getKeyStore();
+Key key = ks.get(alias, null);
+</PRE></BLOCKQUOTE>The builder will prompt for a password as needed using the 
+  previously configured callback handler. The builder will prompt for a password 
+  only for the initial access. If the user of the application continues using 
+  the same Smartcard, the user will not be prompted again. If the user removes 
+  and inserts a different SmartCard, the builder will prompt for a password for 
+  the new card. <!--To avoid getting the keystore
+each time, the application might call <tt>builder.getKeyStore()</tt>
+only when its attempt to use the existing keystore throws a
+<tt>KeyStoreException</tt>.  To avoid dependencies on the new APIs, an
+application can use a similar strategy of catching
+<tt>KeyStoreException</tt> and then reloading it via
+<tt>KeyStore.load()</tt> instead.
+-->
+  <P>Depending on the PKCS#11 token, there may be non-key-related operations 
+  that also require token login. Applications that use such operations can use 
+  the newly introduced <A 
+  href="../../api/java/security/AuthProvider.html"><TT>java.security.AuthProvider</TT></A> 
+  class. The <TT>AuthProvider</TT> class extends from 
+  <TT>java.security.Provider</TT> and defines methods to perform login and 
+  logout operations on a provider, as well as to set a callback handler for the 
+  provider to use. <!--By using an <tt>AuthProvider</tt>, an
+application can invoke <tt>login</tt> either directly or indirectly.
+For the indirect case, <tt>login</tt> is invoked automatically by the
+provider when it needs to perform an operation that requires
+authentication (and authentication has not occurred earlier).
+-->For 
+  the Sun PKCS#11 provider, the callback handler must be able to satisfy a 
+  <TT>PasswordCallback</TT>, which is used to prompt the user for the PIN. 
+  <P>Here is an example of how an application might use an <TT>AuthProvider</TT> 
+  to log into the token. 
+  <BLOCKQUOTE><PRE>AuthProvider aprov = Security.getProvider("SunPKCS11");
+aprov.login(subject, new MyGuiCallbackHandler());
+</PRE></BLOCKQUOTE><!--When <tt>aprov</tt> is used later for an operation that implicitly
+requires authentication, the provider will use the previously
+installed callback handler. If no callback handler has be set
+explicitly, then the callback handler set by the 
+<tt>auth.login.defaultCallbackHandler</tt> security property is used.
+--><A 
+  name=Keys></A>
+  <P></P>
+  <H3>3.2 Token Keys</H3>
+  <P>Java <CODE>Key</CODE> objects may or may not contain actual key material. 
+  </P>
+  <UL>
+    <LI>A software Key object does contain the actual key material and allows 
+    access to that material. 
+    <P></P>
+    <LI>An unextractable key on a secure token (such as a Smartcard) is 
+    represented by a Java Key object that does not contain the actual key 
+    material. The Key object only contains a reference to the actual key. 
+  </LI></UL>
+  <P>Applications and providers must use the correct interfaces to represent 
+  these different types of Key objects. Software Key objects (or any Key object 
+  that has access to the actual key material) should implement the interfaces in 
+  the <A 
+  href="../../api/java/security/interfaces/package-summary.html">java.security.interfaces</A> 
+  and <A 
+  href="../../api/javax/crypto/interfaces/package-summary.html">javax.crypto.interfaces</A> 
+  packages (such as <TT>DSAPrivateKey</TT>). Key objects representing 
+  unextractable token keys should only implement the relevant generic interfaces 
+  in the <A 
+  href="../../api/java/security/package-summary.html">java.security</A> 
+  and <A 
+  href="../../api/javax/crypto/package-summary.html">javax.crypto</A> 
+  packages (<TT>PrivateKey</TT>, <TT>PublicKey</TT>, or <TT>SecretKey</TT>). 
+  Identification of the algorithm of a key should be performed using the 
+  <TT>Key.getAlgorithm()</TT> method. </P>
+  <P>Applications should note that a Key object for an unextractable token key 
+  can only be used by the provider associated with that token. <A 
+  name=DelayedSelect></A></P>
+  <H3>3.3 Delayed Provider Selection</H3>
+  <P>Prior to J2SE 5.0, the Java cryptography <TT>getInstance()</TT>
+  methods, such as <TT>Cipher.getInstance("DES")</TT>, returned the 
+  implementation from the first provider that implemented the requested 
+  algorithm. This is problematic if an application attempts to use a 
+  <TT>Key</TT> object for an unextractable token key with a provider that only 
+  accepts software key objects. In such a case, the provider would throw an 
+  <TT>InvalidKeyException</TT>. This is an issue for the <TT>Cipher</TT>, 
+  <TT>KeyAgreement</TT>, <TT>Mac</TT>, and <TT>Signature</TT> classes. </P>
+  <P>J2SE 5.0, addresses this issue <A name=Init></A>by delaying the
+  selection of the provider until the relevant initialization method is called. 
+  The initialization method accepts a <TT>Key</TT> object and can determine at 
+  that point which provider can accept the specified <TT>Key</TT> object. This 
+  ensures that the selected provider can use the specified <TT>Key</TT> object. 
+  The following represents the affected initialization methods. <TT></P>
+  <UL>
+    <LI><A 
+    href="../../api/javax/crypto/Cipher.html">Cipher</A>.init(..., 
+    Key key, ...) 
+    <LI><A 
+    href="../../api/javax/crypto/KeyAgreement.html">KeyAgreement</A>.init(Key 
+    key, ...) 
+    <LI><A 
+    href="../../api/javax/crypto/Mac.html">Mac</A>.init(Key 
+    key, ...) 
+    <LI><A 
+    href="../../api/java/security/Signature.html">Signature</A>.initSign(PrivateKey 
+    privateKey) </LI></UL></TT>Furthermore, if an application calls the 
+  initialization method multiple times (each time with a different key, for 
+  example), the proper provider for the given key is selected each time. In 
+  other words, a different provider may be selected for each initialization 
+  call. 
+  <P>Although this delayed provider selection is hidden from the application, it 
+  does affect the behavior of the <CODE>getProvider()</CODE> method for 
+  <TT>Cipher</TT>, <TT>KeyAgreement</TT>, <TT>Mac</TT>, and <TT>Signature</TT>. 
+  If <CODE>getProvider()</CODE> is called <I>before</I> the initialization 
+  operation has occurred (and therefore before provider selection has occurred), 
+  then the first provider that supports the requested algorithm is returned. 
+  This may not be the same provider as the one selected <EM>after</EM> the 
+  initialization method is called. If <CODE>getProvider()</CODE> is called 
+  <I>after</I> the initialization operation has occurred, then the actual 
+  selected provider is returned. It is recommended that applications only call 
+  <CODE>getProvider()</CODE> after they have called the relevant initialization 
+  method. </P>
+  <P>In addition to <CODE>getProvider()</CODE>, the following additional methods 
+  are similarly affected. <TT></P>
+  <UL>
+    <LI>Cipher.getBlockSize 
+    <LI>Cipher.getExcemptionMechanism 
+    <LI>Cipher.getIV 
+    <LI>Cipher.getOutputSize 
+    <LI>Cipher.getParameters 
+    <LI>Mac.getMacLength 
+    <LI>Signature.getParameters 
+    <LI>Signature.setParameter </LI></UL></TT><A name=JAAS></A>
+  <P></P>
+  <H3>3.4 JAAS KeyStoreLoginModule</H3>J2SE comes with a JAAS keystore login 
+  module, <TT><A 
+  href="jaas/spec/com/sun/security/auth/module/KeyStoreLoginModule.html">KeyStoreLoginModule</A></TT> 
+  that allows an application to authenticate using its identity in a specified 
+  keystore. After authentication, the application would have acquire its 
+  principal and credentials information (certificate and private key) from the 
+  keystore. By using this login module and configuring it to use a PKCS#11 token 
+  as a keystore, the application can acquire this information from a PKCS#11 
+  token. 
+  <P>Use the following options to configure the <TT>KeyStoreLoginModule</TT> to 
+  use a PKCS#11 token as the keystore. 
+  <UL>
+    <LI><TT>keyStoreURL="NONE"</TT> 
+    <LI><TT>keyStoreType="PKCS11"</TT> 
+    <LI><TT>keyStorePasswordURL=<EM>some_pin_url</EM></TT> </LI></UL>where 
+  <EM>some_pin_url</EM> is the location of the PIN. If the 
+  <TT>keyStorePasswordURL</TT> option is omitted, then the login module will get 
+  the PIN via the application's callback handler, supplying it with a 
+  <TT>PasswordCallback</TT>. Here is an example of a configuration file that 
+  uses a PKCS#11 token as a keystore. 
+  <BLOCKQUOTE><PRE>other {
+    com.sun.security.auth.module.KeyStoreLoginModule required
+        keyStoreURL="NONE"
+  keyStoreType="PKCS11"
+  keyStorePasswordURL=file:/home/joe/scpin;
+};
+</PRE></BLOCKQUOTE>
+  <P>
+  <P>If more than one Sun PKCS#11 provider has been configured dynamically or in 
+  the <TT>java.security</TT> security properties file, you can use the 
+  <TT>keyStoreProvider</TT> option to target a specific provider instance. The 
+  argument to this option is the name of the provider. For the Sun PKCS#11 
+  provider, the provider name is of the form 
+  <TT>SunPKCS11-<I>TokenName</I></TT>, where <TT><I>TokenName</I></TT> is the 
+  name suffix that the provider instance has been configured with, as detailed 
+  in the <A 
+  href="#ATTRS">configuration 
+  attributes table</A>. For example, the following configuration file names the 
+  PKCS#11 provider instance with name suffix <TT>SmartCard</TT>. 
+  <BLOCKQUOTE><PRE>other {
+    com.sun.security.auth.module.KeyStoreLoginModule required
+        keyStoreURL="NONE"
+  keyStoreType="PKCS11"
+  keyStorePasswordURL=file:/home/joe/scpin
+  keyStoreProvider="SunPKCS11-SmartCard";
+};
+</PRE></BLOCKQUOTE>
+  <P>Some PKCS#11 tokens support login via a <EM>protected authentication 
+  path</EM>. For example, a Smartcard may have a dedicated PIN-pad to enter the 
+  pin. Biometric devices will also have their own means to obtain authentication 
+  information. If the PKCS#11 token has a protected authentication path, then 
+  use the <TT>protected=true</TT> option and omit the 
+  <TT>keyStorePasswordURL</TT> option. Here is an example of a configuration 
+  file for such a token. 
+  <BLOCKQUOTE><PRE>other {
+    com.sun.security.auth.module.KeyStoreLoginModule required
+        keyStoreURL="NONE"
+  keyStoreType="PKCS11"
+  protected=true;
+};
+</PRE></BLOCKQUOTE><A name=JSSE></A>
+  <P></P>
+  <H3>3.5 Tokens as JSSE Keystore and Trust Stores</H3>To use PKCS#11 tokens as 
+  JSSE keystores or trust stores, the JSSE application can use the APIs <A 
+  href="#Login">described 
+  previously</A> to instantiate a <TT>KeyStore</TT> that is backed by a PKCS#11 
+  token and pass it to its key manager and trust manager. The JSSE application 
+  will then have access to the keys on the token. 
+  <P>JSSE also supports configuring the use of keystores and trust stores via 
+  system properties, as described in the <A 
+  href="jsse/JSSERefGuide.html#Customization">JSSE 
+  Reference Guide</A>. To use a PKCS#11 token as a keystore or trust store, set 
+  the <TT>javax.net.ssl.keyStoreType</TT> and 
+  <TT>javax.net.ssl.trustStoreType</TT> system properties, respectively, to 
+  "PKCS11", and set the <TT>javax.net.ssl.keyStore</TT> and 
+  <TT>javax.net.ssl.trustStore</TT> system properties, respectively, to 
+  <TT>NONE</TT>. To specify the use of a specific provider instance, use the 
+  <TT>javax.net.ssl.keyStoreProvider</TT> and 
+  <TT>javax.net.ssl.trustStoreProvider</TT> system properties (e.g., 
+  "SunPKCS11-SmartCard"). </P></BLOCKQUOTE><A name=Tools></A>
+<H2>4.0 Tools</H2>
+<P>In J2SE 5.0, the <A
+href="../../tooldocs/index.html#security">security
+tools</A> were updated to support operations using the new Sun PKCS#11 provider. 
+The changes are discussed below. 
+<BLOCKQUOTE><A name=KeyToolJarSigner></A>
+  <H3>4.1 KeyTool and JarSigner</H3>
+  <P>If the Sun PKCS#11 provider has been configured in the 
+  <TT>java.security</TT> security properties file (located in the 
+  <TT>$JAVA_HOME/lib/security</TT> directory of the Java runtime), then keytool 
+  and jarsigner can be used to operate on the PKCS#11 token by specifying the 
+  following options. 
+  <UL>
+    <LI>-keystore NONE 
+    <LI>-storetype PKCS11 </LI></UL>Here an example of a command to list the 
+  contents of the configured PKCS#11 token. 
+  <BLOCKQUOTE><PRE>keytool -keystore NONE -storetype PKCS11 -list
+</PRE></BLOCKQUOTE>The PIN can be specified using the -storepass option. If 
+  none has been specified, then keytool and jarsigner will prompt for the token 
+  PIN. If the token has a protected authentication path (such as a dedicated 
+  PIN-pad or a biometric reader), then the <TT>-protected</TT> option must be 
+  specified, and no password options can be specified. 
+  <P>If more than one Sun PKCS#11 provider has been configured in the 
+  <TT>java.security</TT> security properties file, you can use the 
+  <TT>-providerName</TT> option to target a specific provider instance. The 
+  argument to this option is the name of the provider. 
+  <UL>
+    <LI>-providerName <I>providerName</I> </LI></UL>For the Sun PKCS#11 provider, 
+  <I>providerName</I> is of the form <TT>SunPKCS11-<I>TokenName</I></TT>, where 
+  <TT><I>TokenName</I></TT> is the name suffix that the provider instance has 
+  been configured with, as detailed in the <A 
+  href="#ATTRS">configuration 
+  attributes table</A>. For example, the following command lists the contents of 
+  the PKCS#11 keystore provider instance with name suffix <TT>SmartCard</TT>. 
+  <BLOCKQUOTE><PRE>keytool -keystore NONE -storetype PKCS11 \
+        -providerName SunPKCS11-SmartCard \
+        -list
+</PRE></BLOCKQUOTE>
+  <P>If the Sun PKCS#11 provider has not been configured in the 
+  <TT>java.security</TT> security properties file, you can use the following 
+  options to instruct keytool and jarsigner to install the provider dynamically. 
+
+  <UL>
+    <LI>-providerClass sun.security.pkcs11.SunPKCS11 
+    <LI>-providerArg <I><A 
+    href="#Config">ConfigFilePath</A></I> 
+    </LI></UL><I>ConfigFilePath</I> is the path to the token configuration file. 
+  Here is an example of a command to list a PKCS#11 keystore when the Sun 
+  PKCS#11 provider has not been configured in the <TT>java.security</TT> file. 
+  <BLOCKQUOTE><PRE>keytool -keystore NONE -storetype PKCS11 \
+        -providerClass sun.security.pkcs11.SunPKCS11 \
+        -providerArg /foo/bar/token.config \
+        -list
+</PRE></BLOCKQUOTE><A name=PolicyTool></A>
+  <H3>4.2 PolicyTool</H3>
+  <P>Prior to J2SE 5.0, the <I>keystore</I> entry in the <A
+  href="PolicyFiles.html">default 
+  policy implementation</A> had the following syntax. 
+  <BLOCKQUOTE><PRE>keystore "<EM>some_keystore_url</EM>", "<EM>keystore_type</EM>";
+</PRE></BLOCKQUOTE>This syntax was inadequate for accessing a PKCS#11 keystore 
+  because such access usually required a PIN, and there might be multiple 
+  PKCS#11 provider instances. To accommodate these requirements, the 
+  <I>keystore</I> entry syntax has been updated in J2SE 5.0, to the
+  following. 
+  <BLOCKQUOTE><PRE>keystore "<EM>some_keystore_url</EM>", "<EM>keystore_type</EM>", "<EM>keystore_provider</EM>";
+keystorePasswordURL "<EM>some_password_url</EM>";
+</PRE></BLOCKQUOTE>Where <I>keystore_provider</I> is the keystore provider 
+  name (for example, <TT>"SunPKCS11-SmartCard"</TT>), and 
+  <I>some_password_url</I> is a URL pointing to the location of the token PIN. 
+  Both <I>keystore_provider</I> and the <I>keystorePasswordURL</I> line are 
+  optional. If <I>keystore_provider</I> has not been specified, then the first 
+  configured provider that supports the specified keystore type is used. If the 
+  <TT>keystorePasswordURL</TT> line has not been specified, then no password is 
+  used. 
+  <P>The following is an example keystore policy entry for a PKCS#11 token. 
+  <BLOCKQUOTE><PRE>keystore "NONE", "PKCS11", "SunPKCS11-SmartCard";
+keystorePasswordURL "file:/foo/bar/passwordFile";
+</PRE></BLOCKQUOTE></BLOCKQUOTE><A name=ProviderDev></A>
+<H2>5.0 Provider Developers</H2>
+<P><A 
+href="HowToImplAProvider.html">How 
+to Implement a Provider for the Java<SUP><FONT size=-2>TM</FONT></SUP> 
+Cryptography Architecture</A>.
+<--
+. and <A 
+</A> provide documentation for implementing cryptographic 
+providers. </P>
+-->
+<P>J2SE 5.0 introduces new facilities in the <A
+href="../../api/java/security/Provider.html">java.security.Provider</A> 
+class for provider implementations to more easily support PKCS#11 tokens and 
+cryptographic services in general. These new facilities are discussed below. 
+<P>See <A 
+href="#ExampleProvider">Appendix 
+C</A> for an example of a simple provider designed to demonstrate the new 
+facilties. 
+<P></P>
+<BLOCKQUOTE><A name=Service></A>
+  <H3>5.1 Provider Services</H3>
+  <P>As described in the above provider documentation, prior to J2SE 5.0, providers were required to create <TT>java.util.Property</TT> entries
+  describing the services they supported. For each service implemented by the 
+  provider, there must be a property whose name is the type of service 
+  (<TT>Cipher</TT>, <TT>Signature</TT>, etc), followed by a period and the name 
+  of the algorithm to which the service applies. The property value must specify 
+  the fully qualified name of the class implementing the service. Here is an 
+  example of a provider setting <TT>KeyAgreement.DiffieHellman</TT> property to 
+  have the value <TT>com.sun.crypto.provider.DHKeyAgreement</TT>. 
+  <BLOCKQUOTE><PRE>put("KeyAgreement.DiffieHellman", 
+      "com.sun.crypto.provider.DHKeyAgreement")
+</PRE></BLOCKQUOTE>
+  <P></P>
+  <P>J2SE 5.0 introduces a new public static nested class, <TT><A
+  href="../../api/java/security/Provider.Service.html">Provider.Service</A></TT>, 
+  to help better encapsulate the properties of a provider service (including its 
+  type, attributes, algorithm name, and algorithm aliases). Providers can 
+  instantiate <TT>Provider.Service</TT> objects and register them by calling the 
+  <TT>Provider.putService()</TT> method. This is equivalent to creating a 
+  <TT>Property</TT> entry and calling the <TT>Provider.put()</TT> method (as was 
+  done prior to J2SE 5.0). Note that legacy <TT>Property</TT> entries
+  registered via <TT>Provider.put</TT> are still supported. 
+  <P>Here is an example of a provider creating a <TT>Service</TT> object with 
+  the <TT>KeyAgreement</TT> type, for the <TT>DiffieHellman</TT> algorithm, 
+  implemented by the class <TT>com.sun.crypto.provider.DHKeyAgreement</TT>. 
+  <BLOCKQUOTE><PRE>Service s = new Service(this, "KeyAgreement", "DiffieHellman",
+    "com.sun.crypto.provider.DHKeyAgreement", null, null);
+putService(s);
+</PRE></BLOCKQUOTE>
+  <P></P>
+  <P>Using <TT>Provider.Servicee</TT> objects instead of legacy 
+  <TT>Property</TT> entries has a couple of major benefits. One benefit is that 
+  it allows the provider to have greater flexibility when <A 
+  href="#NewInstance">instantiating 
+  engine classes</A>. Another benefit is that it allows the provider to test <A 
+  href="#SupportsParam">parameter 
+  validity</A>. These features are discussed in detail next. </P>
+  <BLOCKQUOTE><A name=NewInstance></A>
+    <H3>5.1.1 Instantiating Engine Classes</H3>
+    <P>Prior to J2SE 5.0, the Java Cryptography framework looked up the
+    provider property for a particular service and directly instantiated the 
+    engine class registered for that property. J2SE 5.0, has the same
+    behavior by default, but allows the provider to override this behavior and 
+    instantiate the engine class for the requested service itself. </P>
+    <P>To override the default behavior, the provider overrides the 
+    <TT>Provider.Service.newInstance()</TT> method to add its customer behavior. 
+    For example, the provider might call a custom constructor, or might perform 
+    initialization using information not accessible outside the provider (or 
+    that are only known by the provider). <!--<strong>??? How does PKCS11 provider make use of this flexibility</strong>--><A 
+    name=SupportsParam></A></P>
+    <H3>5.1.2 Parameter Support</H3>
+    <P>The Java Cryptography framework may attempt a fast check to determine 
+    whether a provider's service implementation can use an application-specified 
+    parameter. To perform this fast check, the framework calls 
+    <TT>Provider.Service.supportsParameter()</TT>. </P>
+    <P>In J2SE 5.0, the framework relies on this fast test during <A
+    href="#DelayedSelect">delayed 
+    provider selection</A>. When an application invokes an <A 
+    href="#Init">initialization</A> 
+    method and passes it a <TT>Key</TT> object, the framework asks an underlying 
+    provider whether it supports the object by calling its 
+    <TT>Service.supportsParameter()</TT> method. If 
+    <CODE>supportsParameter()</CODE> returns <CODE>false</CODE>, the framework 
+    can immediately remove that provider from consideration. If 
+    <CODE>supportsParameter()</CODE> returns <CODE>true</CODE>, the framework 
+    passes the <TT>Key</TT> object to that provider's initialization engine 
+    class implementation. A provider that requires software <TT>Key</TT> objects 
+    should override this method to return <CODE>false</CODE> when it is passed 
+    non-software keys. Likewise, a provider for a PKCS#11 token that contains 
+    unextractable keys should only return <CODE>true</CODE> for <TT>Key</TT> 
+    objects that it created, and which therefore correspond to the <TT>Key</TT>s 
+    on its respective token. </P>
+    <P>Note that the default implementation of <CODE>supportsParameter()</CODE> 
+    returns <CODE>true</CODE>. This allows existing providers to work without 
+    modification. However, because of this lenient default implementation, the 
+    framework must be prepared to catch exceptions thrown by providers that 
+    reject the <TT>Key</TT> object inside their initialization engine class 
+    implementations. The framework treats these cases the same as when 
+    <CODE>supportsParameter()</CODE> returns <CODE>false</CODE>. 
+</P></BLOCKQUOTE></BLOCKQUOTE><A name=ALG></A>
+<H2>Appendix A: Sun PKCS#11 Provider's Supported Algorithms</H2>The following 
+table lists the Java algorithms supported by the Sun PKCS#11 provider and 
+corresponding PKCS#11 mechanisms needed to support them. When multiple 
+mechanisms are listed, they are given in the order of preference and any one of 
+them is sufficent. 
+<P>
+<TABLE border=1>
+  <TBODY>
+  <TR>
+    <TH>Java Algorithm</TH>
+    <TH>PKCS#11 Mechanisms</TH>
+  <TR>
+    <TD>Signature.MD2withRSA</TD>
+    <TD>CKM_MD2_RSA_PKCS, CKM_RSA_PKCS, CKM_RSA_X_509</TD>
+  <TR>
+    <TD>Signature.MD5withRSA</TD>
+    <TD>CKM_MD5_RSA_PKCS, CKM_RSA_PKCS, CKM_RSA_X_509</TD>
+  <TR>
+    <TD>Signature.SHA1withRSA</TD>
+    <TD>CKM_SHA1_RSA_PKCS, CKM_RSA_PKCS, CKM_RSA_X_509</TD>
+  <TR>
+    <TD>Signature.SHA256withRSA</TD>
+    <TD>CKM_SHA256_RSA_PKCS, CKM_RSA_PKCS, CKM_RSA_X_509</TD>
+  <TR>
+    <TD>Signature.SHA384withRSA</TD>
+    <TD>CKM_SHA384_RSA_PKCS, CKM_RSA_PKCS, CKM_RSA_X_509</TD>
+  <TR>
+    <TD>Signature.SHA512withRSA</TD>
+    <TD>CKM_SHA512_RSA_PKCS, CKM_RSA_PKCS, CKM_RSA_X_509</TD>
+  <TR>
+    <TD>Signature.SHA1withDSA</TD>
+    <TD>CKM_DSA_SHA1, CKM_DSA</TD>
+  <TR>
+    <TD>Signature.NONEwithDSA</TD>
+    <TD>CKM_DSA</TD>
+  <TR>
+    <TD>Cipher.RSA/ECB/PKCS1Padding</TD>
+    <TD>CKM_RSA_PKCS</TD>
+  <TR>
+    <TD>Cipher.ARCFOUR</TD>
+    <TD>CKM_RC4</TD>
+  <TR>
+    <TD>Cipher.DES/CBC/NoPadding</TD>
+    <TD>CKM_DES_CBC</TD>
+  <TR>
+    <TD>Cipher.DESede/CBC/NoPadding</TD>
+    <TD>CKM_DES3_CBC</TD>
+  <TR>
+    <TD>Cipher.AES/CBC/NoPadding</TD>
+    <TD>CKM_AES_CBC</TD>
+  <TR>
+    <TD>Cipher.Blowfish/CBC/NoPadding</TD>
+    <TD>CKM_BLOWFISH_CBC</TD>
+  <TR>
+    <TD>KeyAgreement.DiffieHellman</TD>
+    <TD>CKM_DH_PKCS_DERIVE</TD>
+  <TR>
+    <TD>KeyPairGenerator.RSA</TD>
+    <TD>CKM_RSA_PKCS_KEY_PAIR_GEN</TD>
+  <TR>
+    <TD>KeyPairGenerator.DSA</TD>
+    <TD>CKM_DSA_KEY_PAIR_GEN</TD>
+  <TR>
+    <TD>KeyPairGenerator.DiffieHellman</TD>
+    <TD>CKM_DH_PKCS_KEY_PAIR_GEN</TD>
+  <TR>
+    <TD>KeyGenerator.ARCFOUR</TD>
+    <TD>CKM_RC4_KEY_GEN</TD>
+  <TR>
+    <TD>KeyGenerator.DES</TD>
+    <TD>CKM_DES_KEY_GEN</TD>
+  <TR>
+    <TD>KeyGenerator.DESede</TD>
+    <TD>CKM_DES3_KEY_GEN</TD>
+  <TR>
+    <TD>KeyGenerator.AES</TD>
+    <TD>CKM_AES_KEY_GEN</TD>
+  <TR>
+    <TD>KeyGenerator.Blowfish</TD>
+    <TD>CKM_BLOWFISH_KEY_GEN</TD>
+  <TR>
+    <TD>Mac.HmacMD5</TD>
+    <TD>CKM_MD5_HMAC</TD>
+  <TR>
+    <TD>Mac.HmacSHA1</TD>
+    <TD>CKM_SHA_1_HMAC</TD>
+  <TR>
+    <TD>Mac.HmacSHA256</TD>
+    <TD>CKM_SHA256_HMAC</TD>
+  <TR>
+    <TD>Mac.HmacSHA384</TD>
+    <TD>CKM_SHA384_HMAC</TD>
+  <TR>
+    <TD>Mac.HmacSHA512</TD>
+    <TD>CKM_SHA512_HMAC</TD>
+  <TR>
+    <TD>MessageDigest.MD2</TD>
+    <TD>CKM_MD2</TD>
+  <TR>
+    <TD>MessageDigest.MD5</TD>
+    <TD>CKM_MD5</TD>
+  <TR>
+    <TD>MessageDigest.SHA1</TD>
+    <TD>CKM_SHA_1</TD>
+  <TR>
+    <TD>MessageDigest.SHA-256</TD>
+    <TD>CKM_SHA256</TD>
+  <TR>
+    <TD>MessageDigest.SHA-384</TD>
+    <TD>CKM_SHA384</TD>
+  <TR>
+    <TD>MessageDigest.SHA-512</TD>
+    <TD>CKM_SHA512</TD>
+  <TR>
+    <TD>KeyFactory.RSA</TD>
+    <TD>Any supported RSA mechanism</TD>
+  <TR>
+    <TD>KeyFactory.DSA</TD>
+    <TD>Any supported DSA mechanism</TD>
+  <TR>
+    <TD>KeyFactory.DiffieHellman</TD>
+    <TD>Any supported Diffie-Hellman mechanism</TD>
+  <TR>
+    <TD>SecretKeyFactory.ARCFOUR</TD>
+    <TD>CKM_RC4</TD>
+  <TR>
+    <TD>SecretKeyFactory.DES</TD>
+    <TD>CKM_DES_CBC</TD>
+  <TR>
+    <TD>SecretKeyFactory.DESede</TD>
+    <TD>CKM_DES3_CBC</TD>
+  <TR>
+    <TD>SecretKeyFactory.AES</TD>
+    <TD>CKM_AES_CBC</TD>
+  <TR>
+    <TD>SecretKeyFactory.Blowfish</TD>
+    <TD>CKM_BLOWFISH_CBC</TD></TR></TBODY></TABLE>
+
+<P><A name=KeyStoreRestrictions></A>
+<H2>Appendix B: Sun PKCS#11 provider's KeyStore Requirements</H2>
+
+<p> The following describes the requirements placed by the
+Sun PKCS#11 Provider's KeyStore implementation on the
+underlying native PKCS#11 library.
+<b>
+Note that changes may be made in future releases to maximize
+interoperability with as many existing PKCS#11 libraries as possible.
+</b>
+
+<blockquote>
+<h3>Read-Only Access</h3>
+
+<p> To map existing objects stored on a PKCS#11 token to KeyStore entries,
+the Sun PKCS#11 Provider's KeyStore implementation performs the
+following operations.
+
+<ol>
+<li> A search for all private key objects on the token
+     is performed by calling C_FindObjects[Init|Final].
+     The search template includes the following attributes:
+
+     <p>
+     <ul>
+     <li> CKA_TOKEN = true
+     <li> CKA_CLASS = CKO_PRIVATE_KEY
+     </ul>
+     <p>
+     
+<li> A search for all certificate objects on the token
+     is performed by calling C_FindObjects[Init|Final].
+     The search template includes the following attributes:
+
+     <p>
+     <ul>
+     <li> CKA_TOKEN = true
+     <li> CKA_CLASS = CKO_CERTIFICATE
+     </ul>
+     <p>
+     
+<li> Each private key object is matched with its corresponding
+     certificate by retrieving their respective CKA_ID attributes.
+     A matching pair must share the same unique CKA_ID.
+
+     <p> For each matching pair, the certificate chain is built
+     by following the issuer->subject path.  From the end entity certificate,
+     a call fo C_FindObjects[Init|Final] is made with a search template
+     that includes the following attributes:
+
+     <p>
+     <ul>
+     <li> CKA_TOKEN = true
+     <li> CKA_CLASS = CKO_CERTIFICATE
+     <li> CKA_SUBJECT = [DN of certificate issuer]
+     </ul>
+     <p>
+
+     <p> This search is continued until either no certificate for the
+     issuer is found, or until a self-signed certificate is found.
+     If more than one certificate is found the first one is used.
+
+     <p> Once a private key and certificate have been matched
+     (and its certificate chain built), the information is stored
+     in a private key entry with the CKA_LABEL value from
+     end entity certificate as the KeyStore alias.
+
+     <p> If the end entity certificate has no CKA_LABEL,
+     then the alias is derived from the CKA_ID.  
+     If the CKA_ID can be determined to consist exclusively of
+     printable characters, then a String alias is created by decoding the
+     CKA_ID bytes using the UTF-8 charset.  Otherwise, a hex String alias is
+     created from the CKA_ID bytes ("0xFFFF...", for example).
+
+     <p> If multiple certificates share the same CKA_LABEL,
+     then the alias is derived from the CKA_LABEL plus the
+     end entity certificate issuer and serial number
+     ("MyCert/CN=foobar/1234", for example).
+
+<li> Each certificate not part of a private key entry
+     (as the end entity certificate) is checked whether it is trusted.
+     If the CKA_TRUSTED attribute is true, then a KeyStore
+     trusted certificate entry is created with the CKA_LABEL
+     value as the KeyStore alias.  If the certificate has no CKA_LABEL,
+     or if multiple certificates share the same CKA_LABEL,
+     then the alias is derived as described above.
+
+     <p> If the CKA_TRUSTED attribute is not supported
+     then no trusted certificate entries are created.
+
+<li> Any private key or certificate object not part of a private key entry
+     or trusted certificate entry is ignored.
+     <p>
+     
+<li> A search for all secret key objects on the token
+     is performed by calling C_FindObjects[Init|Final].
+     The search template includes the following attributes:
+
+     <p>
+     <ul>
+     <li> CKA_TOKEN = true
+     <li> CKA_CLASS = CKO_SECRET_KEY
+     </ul>
+     <p>
+
+     <p> A KeyStore secret key entry is created for each
+     secret key object, with the CKA_LABEL value as the KeyStore alias.
+     Each secret key object must have a unique CKA_LABEL.
+</ol>
+
+<h3>Write Access</h3>
+
+<p> To create new KeyStore entries on a PKCS#11 token to KeyStore entries,
+the Sun PKCS#11 Provider's KeyStore implementation performs the
+following operations.
+
+<ol>
+<li> When creating a KeyStore entry (during KeyStore.setEntry, for example),
+     C_CreateObject is called with CKA_TOKEN=true to create token objects
+     for the respective entry contents.
+
+     <p> Private key objects are stored with CKA_PRIVATE=true.
+     The KeyStore alias (UTF8-encoded) is set as the CKA_ID for
+     both the private key and the corresponding end entity certificate.
+     The KeyStore alias is also set as the CKA_LABEL for the
+     end entity certificate object.
+
+     <p> Each certificate in a private key entry's chain is also stored.
+     The CKA_LABEL is not set for CA certificates.
+     If a CA certificate is already in the token,
+     a duplicate is not stored.
+
+     <p> Secret key objects are stored with CKA_PRIVATE=true.
+     The KeyStore alias is set as the CKA_LABEL.
+
+<li> If an attempt is made to convert a session object to a token object
+     (for example, if KeyStore.setEntry is called and the private key object
+     in the specified entry is a session ojbect), then C_CopyObject
+     is called with CKA_TOKEN=true.
+     <p>
+
+<li> If multiple certificates in the token are found to share the same
+     CKA_LABEL, then the write capabilities to the token are disabled.
+     <p>
+
+<li> Since the PKCS#11 specification does not allow regular applications
+     to set CKA_TRUSTED=true (only token initialization applications may do so),
+     trusted certificate entries can not be created.
+</ol>
+
+<h3>Miscellaneous</h3>
+
+<p> In addition to the searches listed above, the following searches
+may be used by the Sun PKCS#11 provider's KeyStore implementation to perform
+internal functions.  Specifically, C_FindObjects[Init|Final] may be called with
+any of the following attribute templates:
+
+<ul>
+<li><pre>
+    CKA_TOKEN    true
+    CKA_CLASS    CKO_CERTIFICATE
+    CKA_SUBJECT  [subject DN]
+    </pre>
+<li><pre>
+    CKA_TOKEN    true
+    CKA_CLASS    CKO_SECRET_KEY
+    CKA_LABEL    [label]
+    </pre>
+<li><pre>
+    CKA_TOKEN    true
+    CKA_CLASS    CKO_CERTIFICATE or CKO_PRIVATE_KEY
+    CKA_ID       [cka_id] 
+    </pre>
+</ul>
+</blockquote>
+
+<P><A name=ExampleProvider></A>
+<H2>Appendix C: Example Provider</H2><PRE>package com.foo;
+
+import java.io.*;
+import java.lang.reflect.*;
+import java.security.*;
+import javax.crypto.*;
+
+/**
+ * Example provider that demonstrates some of the new API features.
+ *
+ *  . implement multiple different algorithms in a single class.
+ *    Previously each algorithm needed to be implemented in a separate class
+ *    (e.g. one for MD5, one for SHA-1, etc.)
+ *
+ *  . multiple concurrent instances of the provider frontend class each
+ *    associated with a different backend.
+ *
+ *  . it uses "unextractable" keys and lets the framework know which key
+ *    objects it can and cannot support
+ *
+ * Note that this is only a simple example provider designed to demonstrate
+ * several of the new features.  It is not explicitly designed for efficiency.
+ */
+public final class ExampleProvider extends Provider {
+
+    // reference to the crypto backend that implements all the algorithms
+    final CryptoBackend cryptoBackend;
+
+    public ExampleProvider(String name, CryptoBackend cryptoBackend) {
+        super(name, 1.0, "JCA/JCE provider for " + name);
+        this.cryptoBackend = cryptoBackend;
+        // register the algorithms we support (MD5, SHA1, DES, and AES)
+        putServiceDescription(new MyServiceDescription
+            (this, "MessageDigest", "MD5", "com.foo.ExampleProvider$MyMessageDigest"));
+        putServiceDescription(new MyServiceDescription
+            (this, "MessageDigest", "SHA1", "com.foo.ExampleProvider$MyMessageDigest"));
+        putServiceDescription(new MyCipherServiceDescription
+            (this, "Cipher", "DES", "com.foo.ExampleProvider$MyCipher"));
+        putServiceDescription(new MyCipherServiceDescription
+            (this, "Cipher", "AES", "com.foo.ExampleProvider$MyCipher"));
+    }
+
+    // the API of our fictitious crypto backend
+    static abstract class CryptoBackend {
+        abstract byte[] digest(String algorithm, byte[] data);
+        abstract byte[] encrypt(String algorithm, KeyHandle key, byte[] data);
+        abstract byte[] decrypt(String algorithm, KeyHandle key, byte[] data);
+        abstract KeyHandle createKey(String algorithm, byte[] keyData);
+    }
+
+    // the shell of the representation the crypto backend uses for keys
+    private static final class KeyHandle {
+        // fill in code
+    }
+
+    // we have our own ServiceDescription implementation that overrides newInstance()
+    // that calls the (Provider, String) constructor instead of the no-args constructor
+    private static class MyServiceDescription extends ServiceDescription {
+
+        private static final Class[] paramTypes = {Provider.class, String.class};
+
+        MyServiceDescription(Provider provider, String type, String algorithm,
+                String className) {
+            super(provider, type, algorithm, className, null, null);
+        }
+
+        public Object newInstance(Object param) throws Exception {
+            // get the Class object for the implementation class
+            Class clazz;
+            Provider provider = getProvider();
+            ClassLoader loader = provider.getClass().getClassLoader();
+            if (loader == null) {
+                clazz = Class.forName(getClassName());
+            } else {
+                clazz = loader.loadClass(getClassName());
+            }
+            // fetch the (Provider, String) constructor
+            Constructor cons = clazz.getConstructor(paramTypes);
+            // invoke constructor and return the SPI object
+            Object obj = cons.newInstance(new Object[] {provider, getAlgorithm()});
+            return obj;
+        }
+    }
+
+    // custom ServiceDescription class for Cipher objects. See supportsParameter() below
+    private static class MyCipherServiceDescription extends MyServiceDescription {
+        MyCipherServiceDescription(Provider provider, String type, String algorithm,
+                String className) {
+            super(provider, type, algorithm, className);
+        }
+        // we override supportsParameter() to let the framework know which
+        // keys we can support. We support instances of MySecretKey, if they
+        // are stored in our provider backend, plus SecretKeys with a RAW encoding.
+        public boolean supportsParameter(Object obj) {
+            if (obj instanceof SecretKey == false) {
+                return false;
+            }
+            SecretKey key = (SecretKey)obj;
+            if (key.getAlgorithm().equals(getAlgorithm()) == false) {
+                return false;
+            }
+            if (key instanceof MySecretKey) {
+                MySecretKey myKey = (MySecretKey)key;
+                return myKey.provider == getProvider();
+            } else {
+                return "RAW".equals(key.getFormat());
+            }
+        }
+    }
+
+    // our generic MessageDigest implementation. It implements all digest
+    // algorithms in a single class. We only implement the bare minimum
+    // of MessageDigestSpi methods
+    private static final class MyMessageDigest extends MessageDigestSpi {
+        private final ExampleProvider provider;
+        private final String algorithm;
+        private ByteArrayOutputStream buffer;
+        MyMessageDigest(Provider provider, String algorithm) {
+            super();
+            this.provider = (ExampleProvider)provider;
+            this.algorithm = algorithm;
+            engineReset();
+        }
+        protected void engineReset() {
+            buffer = new ByteArrayOutputStream();
+        }
+        protected void engineUpdate(byte b) {
+            buffer.write(b);
+        }
+        protected void engineUpdate(byte[] b, int ofs, int len) {
+            buffer.write(b, ofs, len);
+        }
+        protected byte[] engineDigest() {
+            byte[] data = buffer.toByteArray();
+            byte[] digest = provider.cryptoBackend.digest(algorithm, data);
+            engineReset();
+            return digest;
+        }
+    }
+
+    // our generic Cipher implementation, only partially complete. It implements
+    // all cipher algorithms in a single class. We implement only as many of the
+    // CipherSpi methods as required to show how it could work
+    private static abstract class MyCipher extends CipherSpi {
+        private final ExampleProvider provider;
+        private final String algorithm;
+        private int opmode;
+        private MySecretKey myKey;
+        private ByteArrayOutputStream buffer;
+        MyCipher(Provider provider, String algorithm) {
+            super();
+            this.provider = (ExampleProvider)provider;
+            this.algorithm = algorithm;
+        }
+        protected void engineInit(int opmode, Key key, SecureRandom random)
+                throws InvalidKeyException {
+            this.opmode = opmode;
+            myKey = MySecretKey.getKey(provider, algorithm, key);
+            if (myKey == null) {
+                throw new InvalidKeyException();
+            }
+            buffer = new ByteArrayOutputStream();
+        }
+        protected byte[] engineUpdate(byte[] b, int ofs, int len) {
+            buffer.write(b, ofs, len);
+            return new byte[0];
+        }
+        protected int engineUpdate(byte[] b, int ofs, int len, byte[] out, int outOfs) {
+            buffer.write(b, ofs, len);
+            return 0;
+        }
+        protected byte[] engineDoFinal(byte[] b, int ofs, int len) {
+            buffer.write(b, ofs, len);
+            byte[] in = buffer.toByteArray();
+            byte[] out;
+            if (opmode == Cipher.ENCRYPT_MODE) {
+                out = provider.cryptoBackend.encrypt(algorithm, myKey.handle, in);
+            } else {
+                out = provider.cryptoBackend.decrypt(algorithm, myKey.handle, in);
+            }
+            buffer = new ByteArrayOutputStream();
+            return out;
+        }
+        // code for remaining CipherSpi methods goes here
+    }
+
+    // our SecretKey implementation. All our keys are stored in our crypto
+    // backend, we only have an opaque handle available. There is no
+    // encoded form of these keys.
+    private static final class MySecretKey implements SecretKey {
+
+        final String algorithm;
+        final Provider provider;
+        final KeyHandle handle;
+
+        MySecretKey(Provider provider, String algorithm, KeyHandle handle) {
+            super();
+            this.provider = provider;
+            this.algorithm = algorithm;
+            this.handle = handle;
+        }
+        public String getAlgorithm() {
+            return algorithm;
+        }
+        public String getFormat() {
+            return null; // this key has no encoded form
+        }
+        public byte[] getEncoded() {
+            return null; // this key has no encoded form
+        }
+        // Convert the given key to a key of the specified provider, if possible
+        static MySecretKey getKey(ExampleProvider provider, String algorithm, Key key) {
+            if (key instanceof SecretKey == false) {
+                return null;
+            }
+            // algorithm name must match
+            if (!key.getAlgorithm().equals(algorithm)) {
+                return null;
+            }
+            // if key is already an instance of MySecretKey and is stored
+            // on this provider, return it right away
+            if (key instanceof MySecretKey) {
+                MySecretKey myKey = (MySecretKey)key;
+                if (myKey.provider == provider) {
+                    return myKey;
+                }
+            }
+            // otherwise, if the input key has a RAW encoding, convert it
+            if (!"RAW".equals(key.getFormat())) {
+                return null;
+            }
+            byte[] encoded = key.getEncoded();
+            KeyHandle handle = provider.cryptoBackend.createKey(algorithm, encoded);
+            return new MySecretKey(provider, algorithm, handle);
+        }
+    }
+}
+
+</PRE>
+<P>
+<HR>
+
+<P></P></BODY></HTML>

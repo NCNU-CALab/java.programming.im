@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>unpack200 - JAR Unpacking tool</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+
+<h1>unpack200 - JAR Unpacking tool</h1>
+
+<ul>
+  <li><a href="#synopsis">Synopsis</a>
+  <li><a href="#description">Description</a>
+  <li><a href="#options">Options</a>
+  <li><a href="#exitstatus">Exit Status</a>
+  <li><a href="#seealso">See Also</a>
+  <li><a href="#notes">Notes</a>
+</ul>
+
+<!-- ---------------------------------------------- -->
+
+<a name="synopsis"></a>
+<h2>SYNOPSIS</h2>
+
+<blockquote>
+  <p><code><strong>unpack200</strong> [ <em>options</em> ] <em>input-file</em> <em>JAR-file</em></code></p>
+
+  <p>Options may be in any order. The last option on the command line 
+     supersedes all previously specified options.</p>
+
+  <blockquote>
+    <dl>
+    <dt><code><em>input-file</em></code></dt>
+      <dd>Name of the input file, which can be a pack200 gzip file or a pack200 file. 
+      The input could also be JAR file produced by pack200(1) with an effort of 0. 
+      In this case the contents of the input file will be copied to the output 
+      JAR file with the Pack200 marker.</dd>
+
+    <dt><code><em>JAR-file</em></code></dt>
+      <dd>Name of the output JAR file.</dd>
+    </dl>
+  </blockquote>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="description"></a>
+<h2>DESCRIPTION</h2>
+
+<blockquote> 
+  <p><code>unpack200</code> is a native implementation that transforms a packed 
+    file produced by <code>pack200</code>(1) into a JAR file. Typical usage:</p>
+  <blockquote>
+    <p><code>% unpack200 myarchive.pack.gz myarchive.jar</code></p>
+  </blockquote>
+  <p>In this example, the <code>myarchive.jar</code> is produced from <code>myarchive.pack.gz</code> 
+    using the default <code>unpack200</code> settings.</p>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="options"></a>
+<h2>OPTIONS</h2>
+
+<h3>Standard Options</h3>
+<blockquote> 
+  <p><code><strong>-Hvalue --deflate-hint=</strong><em>value</em></code></p>
+  <blockquote>
+    <p> Sets the deflation to be <code>true</code>, <code>false</code>, or <code>keep</code> on all entries within a JAR file. The default mode is <code>keep</code>. If <code>true</code> or <code>false</code>, overrides the default behavior and sets the deflation mode on all entries within the output JAR file. </p>
+  </blockquote>
+</blockquote>
+<h3>Non-Standard Options </h3>
+<blockquote> 
+  <p><strong><code>-r --remove-pack-file</code></strong></p>
+  <blockquote> 
+    <p>Removes the input packed file.</p>
+  </blockquote>
+  <p><strong><code>-v --verbose</code></strong></p>
+  <blockquote> 
+    <p>Outputs minimal messages. Multiple specification of this option will output 
+      more verbose messages.</p>
+  </blockquote>
+  <p><strong> <code>-q --quiet</code></strong></p>
+  <blockquote> 
+    <p>Specifies quiet operation with no messages.</p>
+  </blockquote>
+  <p><code><strong>-lfilename --log-file=</strong><em>filename</em></code></p>
+  <blockquote>
+    <p>Specifies a log file to output messages.</p>
+  </blockquote>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="exitstatus"></a>
+<h2>EXIT STATUS</h2>
+
+<blockquote> 
+  <p>The following exit values are returned:</p>
+  <blockquote> 
+    <p><code>&nbsp;0</code> if successful completion;</p>
+    <p><code>&gt;0</code> if an error occurred.</p>
+  </blockquote>
+</blockquote>
+
+<!-- ---------------------------------------------- -->
+
+<a name="seealso"></a>
+<h2>SEE ALSO</h2>
+
+<ul>
+  <li> <a href="pack200.html">pack200 - JAR Packing Tool</a></li>
+  <li> <code>pack200(1)</code>, <code>jar(1)</code>, <code>jarsigner(1)</code>, 
+       <code>attributes(5)</code> man pages</li>
+  <li> <a href="../../index.html">J2SE Documentation</a></li>
+  <li> <a href="../../guide/deployment/deployment-guide/pack200.html">Java 
+       Deployment Guide - Pack200</a></li>
+  <li> <a href="../index.html#basic"><code>jar</code> - Java Archive Tool</a></li>
+  <li> <a href="../solaris/jarsigner.html"><code>jarsigner</code> - JAR Signer tool</a></li>
+</ul>
+
+<!-- ---------------------------------------------- -->
+
+<a name="notes"></a>
+<h2>NOTES</h2>
+
+<blockquote>
+  <p>This command should not be confused with <code>unpack(1)</code>. They are 
+     distinctly separate products.</p>
+  <p>The J2SE API Specification provided with the SDK is the superseding 
+    authority, in case of discrepancies.</p>
+</blockquote>
+<p><br>
+</p>
+</body>
+</html>

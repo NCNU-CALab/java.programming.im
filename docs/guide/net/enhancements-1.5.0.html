@@ -1,0 +1,35 @@
+ <hr> 
+<h1>Networking Enhancments for J2SE 5.0</h1>
+<hr>
+<ul>
+  <li>Complete support for IPv6 on Windows XP (SP1) and 2003 server has been provided 
+    in this release. (4608529)</li>
+  <li> The networking API now provides a way of setting timeouts on connect and 
+    read operations for protocol handlers. This will benefit any HTTP client application 
+    that must behave robustly in the event of server failure. (4700777)</li>
+  <li>A new API provides a mean for Java applications, which includes RMI applications, 
+    to be launched via <code>inetd</code>. (4295885, 4673940)</li>
+  <li>The <code>InetAddress</code> class now provides an API to allow testing 
+    for the reachability of a host. This features provides a ping-like capability 
+    in Java. (4639861)</li>
+  <li>Cookie support has been improved. Applications and web containers can provide 
+    Cookie management by implementing the new <code>CookieHandler</code> API. 
+    (4696506)</li>
+  <li>Proxy server configuration has been improved. It can now be dynamic and 
+    controlable by web containers and applications through the <code>ProxySelector</code> 
+    API, which can also handle failures to connect to the proxy. (4696512)</li>
+  <li>A new framework provides a way for protocol handlers to access a file caching 
+    mechanism implemented by the platform or by a third party. (4837267)</li>
+  <li>The specification of the URL class now mandates a minimum set of URL protocol 
+    handlers that are guaranteed to be present in J2SE. They are http, https, 
+    file, jar and ftp. (4180636)</li>
+  <li> There have been a number of enhancements for JSSE (SSL/TLS). For more information, 
+    please see: <a href="http://rhea.sfbay:91/j2se/1.5.0/docs/guide/security/enhancements15.html">Security 
+    Enhancements</a> </li>
+</ul>
+
+
+
+
+
+

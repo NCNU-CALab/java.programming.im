@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<HTML>
+
+<HEAD>
+
+     <TITLE>JavaBeans API Enhancements in J2SE 5.0</TITLE>
+
+</HEAD>
+
+
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR>
+
+<TD WIDTH="60">
+
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+
+</TD>
+
+
+
+<TD>
+
+<center>
+     <h1>API Enhancements to the JavaBeans<sup><font size=-2>TM</font></SUP> Component API in J2SE 5.0</h1>
+</center>
+
+</TD>
+
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+
+
+   <font size="-1"><a href="index.html">JavaBeans<sup><font size=-2>TM</font></sup> Component API</a></font>
+
+
+
+</TD>
+
+</TR>
+
+</TABLE>
+
+<!-- Body text begins here -->
+
+
+<blockquote>
+This document describes changes to the <tt>java.beans</tt> package
+that were introduced in 
+version 5.0 of the Java<sup><font size=-2>TM</font></sup> 2 Platform Standard Edition:
+
+<ul>
+<li> <a href="#4353056">Support for IndexedPropertyChangeEvent</a>
+<li> <a href="#4274639">New Method for Creating a PropertyEditor</a>
+<li> <a href="#4305280">Public Constructors for PropertyEditorSupport</a>
+</ul>
+
+<h4>
+<a name="4353056">Support for IndexedPropertyChangeEvent</a>
+</h4>
+The bugtraq report that corresponds to this change is:
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4353056.html">4353056</a>
+
+<p>
+A new subclass of <code>PropertyChangeEvent</code> named 
+<code>
+<a href="../../api/java/beans/IndexedPropertyChangeEvent.html">IndexedPropertyChangeEvent</a>
+</code>
+has been added
+to support bound properties 
+that use an index to identify the part of the bean that changed.
+Also, three methods &#0151; all named 
+<code>
+<a href="../../api/java/beans/PropertyChangeSupport.html#fireIndexedPropertyChange(java.lang.String, int, java.lang.Object, java.lang.Object)">
+fireIndexedPropertyChange</a></code> &#0151;
+have been added to the 
+<code>PropertyChangeSupport</code> utility class
+to support firing indexed property change events.
+You can find an example of using indexed property change events in
+<code><a href="examples/IndexedTest.java">IndexedTest.java</a></code>.
+</p>
+
+<br>
+<h4>
+<a name="4274639">New Method for Creating a PropertyEditor</a>
+</h4>
+The bugtraq report that corresponds to this change is:
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4274639.html">4274639</a>
+
+<p>
+A new method called 
+<code>
+<a href="../../api/java/beans/PropertyDescriptor.html#createPropertyEditor(java.lang.Object)">createPropertyEditor</a>
+</code>
+has been added to the <code>PropertyDescriptor</code> class.
+</p>
+
+<br>
+<h4>
+<a name="4305280">Public Constructors for PropertyEditorSupport</a>
+</h4>
+The bugtraq report that corresponds to this change is:
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4305280.html">4305280</a>
+
+<p>
+The two 
+<a href="../../api/java/beans/PropertyEditorSupport.html#constructor_summary">
+<code>PropertyEditorSupport</code> constructors
+</a>
+are now public instead of protected, 
+so that <code>PropertyEditorSupport</code> objects
+can be more easily created and used as delegates.
+Also, the source object is now exposed by means of new
+<a href="../../api/java/beans/PropertyEditorSupport.html#setSource(java.lang.Object)">
+<code>setSource</code></a> and 
+<a href="../../api/java/beans/PropertyEditorSupport.html#getSource()">
+<code>getSource</code></a> methods.
+</blockquote>
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+<P><FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright</A> &#169; 2004
+
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+
+    All Rights Reserved.</FONT></P>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+
+   <BR>
+
+   <FONT SIZE="+1">
+
+   <i>Java Software</i>
+
+   </FONT>
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+
+</BODY>
+
+</HTML>

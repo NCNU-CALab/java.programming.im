@@ -1,0 +1,487 @@
+<HTML>
+<HEAD>
+   <TITLE>Font Configuration Files</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" VLINK="#000077">
+
+<P><TABLE BORDER=0 WIDTH="100%" summary="layout">
+   <TR>
+      <TD WIDTH=60>
+         <P><IMG SRC="../../images/javalogo52x88.gif" ALT="Java"
+         WIDTH=52 HEIGHT=88 BORDER=0 ALIGN=bottom>
+      </TD><TD>
+         <H1><CENTER>Font Configuration Files</CENTER></H1>
+      </TD><TD WIDTH=60>
+         <P>
+      </TD></TR>
+</TABLE><!-- Body text begins here --></P>
+
+<P>The Java 2 platform defines five logical font names that every
+implementation must support: Serif, SansSerif, Monospaced, Dialog,
+and DialogInput. These logical font names are mapped to physical
+fonts in implementation dependent ways.</P>
+
+<P>Sun's J2SE Runtime Environments use <I>font configuration</I>
+files to map logical font names to physical fonts. There are several
+files to support different mappings depending on the host operating
+system version. The files are located in the lib directory within the
+JRE installation. Users can edit or create their own font
+configuration files to adjust the mappings to their particular system
+setup. Note however that this is a modification of the JRE, and Sun
+does not support modified JREs.</P>
+
+<P>Font configuration files come in two formats: A properties format
+and a binary format. The properties format is described in detail in
+this document and can be used for user-defined configurations. The
+binary format is undocumented and used only for the JRE's predefined
+configurations; the corresponding files in properties format are
+available for reference as files with the ".properties.src"
+extension.</P>
+
+<P>Note that font configuration files are implementation dependent.
+Not all implementations of the Java 2 platform use them, and the
+format and content vary between different runtime environments as
+well as between releases. This document describes the format used by
+version 5.0 of Sun's J2SE Runtime Environments.</P>
+
+<OL>
+   <LI><A HREF="#loading">Loading Font Configuration Files</A>
+   
+   <LI><A HREF="#names">Names Used in Font Configuration Files</A>
+   
+   <LI><A HREF="#all">Properties for All Platforms</A>
+   
+   <LI><A HREF="#windows">Properties for Windows</A>
+   
+   <LI><A HREF="#unix">Properties for Solaris and Linux</A>
+</OL>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="loading"></A>Loading Font Configuration Files</H2>
+
+<P>To find the appropriate font configuration file for a host
+operating system, the following information is used:</P>
+
+<UL>
+   <LI><I>JavaHome</I> - the JRE's directory, as given by the
+   "java.home" system property.
+   
+   <LI><I>OS</I> - a string identifying an operating system variant:
+   
+   <UL>
+      <LI>For Windows, <CODE>"98"</CODE>, <CODE>"2000"</CODE>,
+      <CODE>"Me"</CODE>, <CODE>"XP"</CODE>, <CODE>"2003"</CODE>.
+      
+      <LI>For Solaris, empty.
+      
+      <LI>For Linux, <CODE>"Sun"</CODE>, <CODE>"RedHat"</CODE>,
+      <CODE>"Turbo"</CODE>, <CODE>"SuSE"</CODE>.
+   </UL>
+   
+   <LI><I>Version</I> - a string identifying the operating system
+   version.
+</UL>
+
+<P>The runtime uses the first of the following files it finds:</P>
+
+<PRE><I>	JavaHome</I><CODE>/lib/fontconfig.</CODE><I>OS.Version</I><CODE>.properties</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.</CODE><I>OS.Version</I><CODE>.bfc</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.</CODE><I>OS</I><CODE>.properties</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.</CODE><I>OS</I><CODE>.bfc</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.</CODE><I>Version</I><CODE>.properties</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.</CODE><I>Version</I><CODE>.bfc</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.properties</CODE><I>
+	JavaHome</I><CODE>/lib/fontconfig.bfc</CODE></PRE>
+
+<P>Files with a ".properties" suffix are assumed to be properties
+files as specified by the
+<CODE><A HREF="../../api/java/util/Properties.html#load(java.io.InputStream)">Properties</A></CODE>
+class and are loaded through that class. Files without this suffix
+are assumed to be in binary format.</P>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="names"></A>Names Used in Font Configuration Files</H2>
+
+<P>Throughout the font configuration files, a number of different
+names are used:</P>
+
+<UL>
+   <LI><I>LogicalFontName</I> - one of the five logical font names:
+   <CODE>serif</CODE>, <CODE>sansserif</CODE>,
+   <CODE>monospaced</CODE>, <CODE>dialog</CODE>, and
+   <CODE>dialoginput</CODE>. In font configuration files, these names
+   are always in lowercase.
+   
+   <LI><I>StyleName</I> - one of the four standard font styles:
+   <CODE>plain</CODE>, <CODE>bold</CODE>, <CODE>italic</CODE>, and
+   <CODE>bolditalic</CODE>. Again, these names are always in
+   lowercase.
+   
+   <LI><A NAME="PlatformFontName"></A><I>PlatformFontName</I> - the
+   name of a physical font, in a format typically used on the
+   platform:
+   
+   <UL>
+      <LI>On Windows, a font face name, such as <CODE>"Courier
+      New"</CODE> or <CODE>"\uad74\ub9bc"</CODE>.
+      
+      <LI>On Solaris and Linux, an xlfd name, such as
+      <CODE>"-monotype-times new
+      roman-regular-r---*-%d-*-*-p-*-iso8859-1"</CODE>. Note that
+      <CODE>"%d"</CODE> is used for the font size - the actual font
+      size is filled in at runtime.
+   </UL>
+   
+   <LI><I>CharacterSubsetName</I> - a name for a subset of the
+   Unicode character set which certain component fonts can render.
+   For Windows, the following names are predefined: alphabetic,
+   arabic, chinese-ms936, chinese-gb18030, chinese-ms950,
+   chinese-hkscs, cyrillic-iso8859-5, cyrillic-cp1251,
+   cyrillic-koi8-r, devanagari, dingbats, greek, hebrew, japanese,
+   korean, latin, symbol, thai. For Solaris and Linux, the following
+   names are predefined: arabic, chinese-gb2312, chinese-gbk,
+   chinese-gb18030-0, chinese-gb18030-1, chinese-cns11643-1,
+   chinese-cns11643-2, chinese-cns11643-3, chinese-big5,
+   chinese-hkscs, cyrillic, devanagari, dingbats, greek, hebrew,
+   japanese-x0201, japanese-x0208, japanese-x0212, korean,
+   korean-johab, latin-1, latin-2, latin-4, latin-5, latin-7,
+   latin-9, symbol,thai. A font configuration file may define
+   additional names to identify additional character subsets.
+   
+   <LI><I>Encoding</I> - the canonical name of the default encoding,
+   as provided by
+   <CODE>java.nio.charset.Charset.defaultCharset().name()</CODE>.
+   
+   <LI><I>Language</I> - the language of the initial default locale.
+   
+   <LI><I>Country</I> - the country of the initial default locale.
+</UL>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="all"></A>Properties for All Platforms</H2>
+
+<H4>Version Property</H4>
+
+<P>The version property identifies the font configuration format
+version. This document specifies version 1.</P>
+
+<P>The complete property has the form:</P>
+
+<BLOCKQUOTE><PRE>version=1</PRE></BLOCKQUOTE>
+
+<H4>Component Font Mappings</H4>
+
+<P>Component font mapping properties describe which physical font to
+use to render characters from a given character subset with a given
+logical font in a given style.</P>
+
+<P>The keys have the forms:</P>
+
+<PRE><I>	</I>allfonts<CODE>.</CODE><I>CharacterSubsetName
+	LogicalFontName</I><CODE>.</CODE><I>StyleName</I><CODE>.</CODE><I>CharacterSubsetName</I></PRE>
+
+<P>The first form is used if the same font is used for a character
+subset independent of logical font and style (in this case, the font
+rendering engines apply algorithmic styles to the font). The second
+form is used if different physical fonts are used for a character
+subset for different logical fonts and styles. In this case,
+properties must be specified for each combination of logical font and
+style, so 20 properties for one character subset. If a property of
+the first form is present for a character subset, then properties of
+the second form for the same character subset are ignored.</P>
+
+<P>The values are platform font names, as described
+<A HREF="#PlatformFontName">above</A>.</P>
+
+<P>Since the character subsets supported by given fonts often
+overlap, separate search sequence properties are used to define in
+which order to try the fonts when rendering a character.</P>
+
+<H4>Search Sequences</H4>
+
+<P><A NAME="lookup"></A>The Java runtime uses sequence properties to
+determine search sequences for the five logical fonts. However, a
+font configuration file may specify properties that are specific to a
+combination of encoding, language, and country, and the runtime will
+then use a lookup to determine the search sequence property for each
+logical font.</P>
+
+<P>The keys have the form:</P>
+
+<PRE><CODE>	sequence.allfonts</CODE><I>.Encoding.Language.Country</I><CODE>
+	sequence.</CODE><I>LogicalFontName.Encoding.Language.Country</I><CODE>
+	sequence.allfonts</CODE><I>.Encoding.Language</I><CODE>
+	sequence.</CODE><I>LogicalFontName.Encoding.Language</I><CODE>
+	sequence.allfonts</CODE><I>.Encoding</I><CODE>
+	sequence.</CODE><I>LogicalFontName.Encoding</I><CODE>
+	sequence.allfonts
+	sequence.</CODE><I>LogicalFontName</I></PRE>
+
+<P>The <CODE>allfonts</CODE> forms are used if the sequence is used
+for all five logical fonts. The forms specifying logical font names
+are used if different sequences are used for different logical fonts.
+</P>
+
+<P>For each logical font, the Java runtime uses the property value
+with the first of the above keys. This property determines the
+primary search sequence for the logical font.</P>
+
+<P>The file may also define a single fallback search sequence. The
+key for the fallback search sequence property is:</P>
+
+<PRE><CODE>	sequence</CODE>.fallback</PRE>
+
+<P>The values of all search sequence properties have the form:</P>
+
+<PRE><I>SearchSequenceValue:</I>
+	<I>CharacterSubsetName</I>
+	<I>CharacterSubsetName</I> , <I>SearchSequenceValue</I></PRE>
+
+<P>The primary search sequence properties specify character subset
+names for required fonts, which are used for both AWT and 2D font
+rendering. The fallback search sequence property gives character
+subset names for optional fonts, which are used as fallbacks for all
+logical fonts, but only for 2D font rendering. The runtime
+automatically adds the Lucida Sans Regular font as a fallback font
+for 2D rendering if it's not already specified. If the runtime
+environment has a directory lib/fonts/fallback and this directory
+contains valid TrueType or Type 1 fonts, the runtime automatically
+adds these fonts as fallback fonts for 2D rendering. On Windows, if
+there is a system EUDC (End User Defined Characters) font registered
+with Windows, the runtime automatically adds this font as well as a
+fallback font for 2D rendering.</P>
+
+<P>The sequence properties determine in which sequence component
+fonts are tried to render a given character. For example, given the
+following properties:</P>
+
+<BLOCKQUOTE><PRE>sequence.monospaced=japanese,alphabetic
+sequence.fallback=korean
+monospaced.plain.alphabetic=Arial
+monospaced.plain.japanese=MSGothic
+monospaced.plain.korean=Gulim</PRE></BLOCKQUOTE>
+
+<P>the runtime will first attempt to render a character with the
+MSGothic font. If that font doesn't provide a glyph for the
+character, it will attempt the Arial font. For 2D rendering, it will
+also try the Gulim and the Lucida Sans Regular font as well as any
+TrueType or Type 1 fonts in the runtime's lib/fonts/fallback
+directory. For 2D rendering on Windows, if there is a system EUDC
+font registered with Windows, the runtime will finally try this EUDC
+font.</P>
+
+<P>When calculating font metrics for a logical font without reference
+to a string, only the required fonts are taken into consideration.
+For the example above, the
+<A HREF="../../api/java/awt/FontMetrics.html#getMaxDescent()">FontMetrics.getMaxDescent</A>
+method would return results based on the MSGothic and Arial fonts,
+but not the Gulim and Lucida Sans fonts. In this way, simple user
+interface elements such as buttons, which sometimes calculate their
+size based on font metrics, are not affected by an extended list of
+component fonts which their labels usually don't use. On the other
+hand, text components typically calculate metrics based on the text
+they contain and thus will obtain correct results.</P>
+
+<P>The sequence properties that the runtime obtains for the five
+logical fonts should list the same character subsets, but may list
+them in different order.</P>
+
+<H4>Exclusion Ranges</H4>
+
+<P>The exclusion range properties specify Unicode character ranges
+which should be excluded from being rendered with the fonts
+corresponding to a given character subset. This is used if a font
+with a large character repertoire needs to be placed early in the
+search sequence (for example, for performance reasons), but some
+characters that it supports should be drawn with a different font
+instead. These properties are optional, so there's at most one per
+character subset.</P>
+
+<P>The keys have the form:</P>
+
+<PRE><CODE>	exclusion.</CODE><I>CharacterSubsetName</I></PRE>
+
+<P>The values have the form:</P>
+
+<PRE><I>ExclusionRangeValue:
+	Range
+	Range</I> <CODE>,</CODE> <I>ExclusionRangeValue
+&nbsp;
+Range:
+	Char</I> <CODE>-</CODE> <I>Char
+&nbsp;
+Char:
+	HexDigit</I> <I>HexDigit</I> <I>HexDigit</I> <I>HexDigit
+	HexDigit</I> <I>HexDigit</I> <I>HexDigit</I> <I>HexDigit HexDigit</I> <I>HexDigit</I></PRE>
+
+<P>A Char is a Unicode character represented as a hexadecimal value.
+</P>
+
+<H4>Proportional Fonts</H4>
+
+<P>The proportional font properties describe the relationship between
+proportional and non-proportional variants of otherwise equivalent
+fonts. These properties are used to implement preferences specified
+by the
+<A HREF="../../api/java/awt/GraphicsEnvironment.html#preferProportionalFonts()">GraphicsEnvironment.preferProportionalFonts</A>
+method.</P>
+
+<P>The keys have the form:</P>
+
+<PRE><CODE>	proportional.</CODE><I>PlatformFontName</I></PRE>
+
+<P>Space characters in the platform font name must be replaced with
+underscore characters ("_").</P>
+
+<P>The values have the form:</P>
+
+<PRE><CODE>	</CODE><I>PlatformFontName</I></PRE>
+
+<P>In values, space characters are left unmodified.</P>
+
+<P>Each property indicates that the font named in the value is the
+proportional equivalent of the font named in the key, and also that
+the font named in the key is the non-proportional equivalent of the
+font named in the value.</P>
+
+<H4>Font File Names</H4>
+
+<P>Font file name properties provide the names of the files
+containing the physical fonts used in the font configuration file.
+File names are required for all physical fonts on Windows and
+recommended for all physical fonts on Solaris and Linux.</P>
+
+<P>The keys have the form:</P>
+
+<PRE><CODE>	filename.</CODE><I>PlatformFontName</I></PRE>
+
+<P>Space characters in the platform font name must be replaced with
+underscore characters ("_").</P>
+
+<P>The values are the file names of the files containing the fonts.
+On Windows, simple file names are used; and the runtime environment
+looks for each file first in its own <CODE>lib/fonts</CODE>
+directory, then in the Windows fonts directory. On Solaris and Linux,
+absolute path names, path names starting with
+<CODE>"$JRE_LIB_FONTS"</CODE> for the runtime environment's own
+<CODE>lib/fonts</CODE> directory, or xlfd names are used.</P>
+
+<H4>Appended Font Path</H4>
+
+<P>The Java runtime can automatically determine a number of
+directories that contain font files, such as its own
+<CODE>lib/fonts</CODE> directory or the Windows fonts folder.
+Additional directories can be specified to be appended to the font
+path.</P>
+
+<P>The key has the form:</P>
+
+<PRE><CODE>	</CODE>appendedfontpath</PRE>
+
+<P>The value has the form:</P>
+
+<PRE><I>AppendedFontPathValue:
+	Directory
+	Directory PathSeparator</I> <I>AppendedFontPathValue</I></PRE>
+
+<P>The path separator is the platform dependent value of
+<A HREF="../../api/java/io/File.html#pathSeparator">java.io.File.pathSeparator</A>.
+</P>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="windows"></A>Properties for Windows</H2>
+
+<P>There are no platform-specific properties for Windows. However,
+there is a special form of the character subset name used in search
+sequences. The name "alphabetic" can take a suffix indicating the
+character encoding associated with the subset:</P>
+
+<PRE><CODE>	</CODE>alphabetic<CODE>
+	</CODE>alphabetic/default<CODE>
+	</CODE>alphabetic/1252</PRE>
+
+<P>This information is only used for AWT, not for 2D. The "/default"
+suffix restricts use of the component fonts for this character subset
+to the character set of the default encoding; the "/1252" suffix to
+the Windows-1252 character set. For accessing component font mappings
+and exclusion ranges, the character encoding suffix is omitted. For
+all other character subsets, the AWT character encoding is determined
+internally by the Java runtime.</P>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="unix"></A>Properties for Solaris and Linux</H2>
+
+<H4>Motif Component Font Mappings</H4>
+
+<P>The AWT text components, which rely on Motif-based peers for text
+rendering, cannot always use the same platform fonts as other AWT
+components and 2D. When looking up component fonts for these
+components, additional keys are recognized. The complete set of keys
+looked up in this case is:</P>
+
+<PRE><CODE>	allfonts.</CODE><I>CharacterSubsetName</I><CODE>.motif
+	</CODE><I>LogicalFontName</I><CODE>.</CODE><I>StyleName</I><CODE>.</CODE><I>CharacterSubsetName</I><CODE>.motif
+	allfonts.</CODE><I>CharacterSubsetName</I><CODE>
+	</CODE><I>LogicalFontName</I><CODE>.</CODE><I>StyleName</I><CODE>.</CODE><I>CharacterSubsetName</I></PRE>
+
+<H4>AWT X11 Font Path</H4>
+
+<P>The AWT font path properties specify platform directories which
+should be added to the X11 server font path. The keys have the form:
+</P>
+
+<PRE>	awtfontpath.<I>CharacterSubsetName</I></PRE>
+
+<P>The values have the form:</P>
+
+<PRE><I>AWTFontPathValue:</I>
+	<I>Directory</I>
+	<I>Directory</I> <CODE>:</CODE> <I>AWTFontPathValue</I></PRE>
+
+<P>The directories must be valid X11 font directories. The Java
+runtime ensures that the directories for all character subsets of a
+primary search sequence found by the <A HREF="#lookup">search
+sequence lookup</A> are part of the X11 font path. The implementation
+assumes that all logical fonts use the same set of character subsets
+for a given environment of encoding, language, and country.</P>
+
+<P><!-- Body text ends here --><!-- ============================================================== -->
+<HR SIZE="3" NOSHADE>
+<TABLE BORDER=0 WIDTH="100%" summary="layout">
+   <TR>
+      <TD VALIGN=top>
+         <P><FONT
+         SIZE="-2"><A HREF="../../relnotes/SMICopyright.html">Copyright
+         &copy;</A></FONT><FONT SIZE="-2"> 2004 </FONT><FONT
+         SIZE="-2"><A HREF="http://www.sun.com/">Sun Microsystems,
+         Inc.</A></FONT><FONT SIZE="-2"> All Rights Reserved.</FONT>
+         </P>
+         
+         <P><FONT
+         SIZE="-1"><A HREF="http://developers.sun.com/contact/feedback.jsp?referer=http://java.sun.com/j2se/1.5.0/docs/guide/intl/fontconfig.html&category=api&mailsubject=Internationalization">Contact
+         us</A></FONT>
+      </TD><TD VALIGN=top align=RIGHT>
+         <P ALIGN=RIGHT><IMG SRC="../../images/sunlogo64x30.gif"
+         ALT="Sun" WIDTH=64 HEIGHT=30 BORDER=0 ALIGN=bottom><BR>
+         
+         <I><FONT SIZE="+1">Java Software</FONT></I><FONT SIZE="+1">
+         </FONT>
+      </TD></TR>
+</TABLE></P>
+</BODY>
+</HTML>

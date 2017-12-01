@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head>
+  <meta name="generator" content="HTML Tidy for Windows (vers 1st March 2004), see www.w3.org">
+
+  <meta http-equiv="content-type" content="text/html; charset=us-ascii"><title>Using JConsole</title>
+  <link rel="stylesheet" href="doc.css" type="text/css"></head><body>
+<h1>Using jconsole</h1>
+
+<p>Jconsole is a JMX-compliant monitoring tool.&nbsp; It uses the
+extensive JMX instrumentation of the Java virtual machine to
+provide information on performance and resource consumption of
+applications running on the Java platform.</p>
+
+<ul>
+<li><a href="#starting">Starting jconsole</a></li>
+<li><a href="#interface">The jconsole interface</a></li>
+<li><a href="#summary">Viewing summary information</a></li>
+<li><a href="#memory">Monitoring Memory Consumption</a></li>
+<li><a href="#thread">Monitoring Thread Use</a></li>
+<li><a href="#class_loading">Monitoring Class Loading</a></li>
+<li><a href="#MBeans">Monitoring and Managing MBeans</a></li>
+<li><a href="#VM">Viewing VM Information</a>
+</li>
+</ul>
+
+<h2><a name="starting" id="starting"></a>Starting jconsole</h2>
+
+<p>The <code>jconsole</code> executable is in
+<code><i>JDK_HOME</i>/bin</code>, where
+<i><code>JDK_HOME</code></i> is the directory where the JDK is
+installed.&nbsp; If this directory is on your system path, you can
+start the tool by simply typing <code>jconsole</code> in a command
+(shell) prompt. Otherwise, you have to type the full path to the
+executable file.</p>
+
+<h3>Command Syntax</h3>
+
+<p>You can use jconsole to monitor both local applications (those
+running on the same system as <code>jconsole</code>) and remote applications (those
+running on other systems).&nbsp;
+</p>
+<p><b>Note</b>: Using <code>jconsole</code> to monitor a local application is useful for development
+and prototyping, but is not recommended for production environments,
+because <code>jconsole</code> itself consumes significant system
+resources.  Remote monitoring is recommended to isolate the
+<code>jconsole</code> application from the platform being
+monitored.</p>
+<p>For a complete reference on <code>jconsole</code> command syntax, see <a href="../../tooldocs/share/jconsole.html">jconsole - Java Monitoring and
+Management Console</a>.</p>
+
+<h4>Local Monitoring</h4>
+<p>To monitor a local application, it must be running with the same user ID as <code>jconsole</code>.&nbsp; The command syntax to start <code>jconsole</code> for local monitoring is:</p>
+
+<pre>jconsole [<i>processID</i>]</pre>
+
+<p>where <i>processID</i> is the application's process ID (PID). To determine an application's PID:</p>
+
+<ul>
+<li>On Unix or Linux systems, use the <code>ps</code> command to
+find the PID of <b>java</b>.</li><li>On Windows systems, use Task Manager to find the PID of
+<b>java</b> or <b>javaw</b>.</li>
+</ul>
+
+<p>You can also use the <a href="../../tooldocs/share/jps.html">jps</a> command-line utility to determine PIDs.
+</p>
+<p>For example, if you determined that the process ID of the
+<i>Notepad</i> application is 2956, then you would start jconsole as follows:</p>
+
+
+<pre>jconsole 2956</pre>
+
+<p>Both <code>jconsole</code> and the application must by executed
+by the same user name. The management and monitoring system uses
+the operating system's file permissions.</p>
+<p>If&nbsp; you don't specify a process ID, jconsole will automatically detect
+all local Java applications, and display a dialog box that lets you select the one you want to
+monitor (see the next section).
+</p>
+<p>For more information, see <a href="agent.html#local">Local JMX Monitoring and Management</a>.</p>
+
+<h4>Remote Monitoring</h4>
+<p>To start <code>jconsole</code> for remote monitoring, use this command syntax:</p>
+
+<pre>jconsole [<i>hostName</i>:<i>portNum</i>]</pre>
+
+<p>where <i>hostName</i> is the name of the system running the
+application and <i>portNum</i> is the port number you specified
+when you enabled the JMX agent when you started the JVM.  For more information,
+see <a href="agent.html#remote">Remote JMX Monitoring and Management</a>.</p>
+
+<p>If you do not specify a host name/port number
+combination, then jconsole will display a connection dialog box
+(see the next section) enabling you to enter a host name and port number.</p>
+
+<h3>Connecting to a JMX Agent</h3>
+
+<p>If you start <code>jconsole</code> with arguments specifying a JMX agent to which to connect, it
+will automatically start monitoring the specified JVM.  You can connect to a different host at any time by choosing
+<b>Connection | New Connection</b>. and entering the necessary
+information.</p>
+<p>Otherwise,
+if you do not provide any arguments when you start <code>jconsole</code>, the first thing you see is the
+connection dialog box.&nbsp; This dialog box has three tabs:</p>
+<p>
+</p>
+
+<ul>
+  <li>Local</li>
+  <li>Remote</li>
+  <li>Advanced</li>
+</ul>
+
+<h4>Local Tab</h4>
+
+<p><img src="images/connect.jpg" title="" alt="Connection dialog" width="234" height="217">
+</p>
+
+<p>The local tab lists any JVMs running on the local system started with the same user ID as jconsole, along with
+their process ID and class/argument information.&nbsp; Select the
+application you want to monitor, then click Connect.
+</p>
+
+<h4>Remote Tab</h4>
+
+<p><img src="images/connectrem.jpg" title="" alt="Connection dialog remote tab" width="234" height="217">
+</p>
+
+<p>To monitor a remote JVM, enter:</p>
+
+<ul>
+<li>Host name: name of the machine on which the JVM is
+running.</li>
+<li>Port number: the JMX agent port number you specified when you
+started the JVM.</li>
+
+<li>User name and password: the user name and password to use (required
+only if monitoring a&nbsp; JVM through a JMX agent that requires
+password authentication).
+</li>
+</ul>
+
+<p>For information on setting the port number of the JMX agent, see
+<a href="agent.html#jmxagent">Enabling the JMX Management
+Agent</a>.  For information on user names and passwords, see
+<a href="agent.html#PasswordAccessFiles">Using Password and Access
+Files</a>.
+</p>
+<p>To monitor the JVM running jconsole, simply
+click Connect, using host localhost and the port zero (0).</p>
+<h4>Advanced Tab</h4>
+
+<p><img src="images/connectadv.jpg" title="" alt="Connection dialog advanced tab" width="234" height="217">
+</p>
+
+<p>The advanced tab enables you to connect to other JMX agents (MBean
+servers) by specifying their JMX URL, and the user name and
+password.&nbsp; The syntax of a JMX URL is described in the API
+documentation for <a href="../../api/javax/management/remote/JMXServiceURL.html">javax.management.remote.JMXServiceURL</a>.
+</p>
+
+<h2><a name="interface" id="interface"></a>The jconsole
+interface</h2>
+
+<p>The jconsole interface is composed of six tabs:</p>
+
+<ul>
+<li>Summary tab: displays summary information on the JVM and
+monitored values.</li>
+<li>Memory tab: displays information on memory use.</li>
+<li>Threads tab: displays information on thread use.</li>
+<li>Classes tab: displays information on class loading</li>
+<li>MBeans tab: displays information on MBeans</li>
+<li>VM tab: displays information on the JVM</li>
+</ul>
+
+<p>The following sections provide information on each tab.</p>
+
+<h2><a name="summary" id="summary"></a>Viewing Summary Information</h2>
+
+<p>
+The Summary tab displays some key monitoring information on thread
+usage, memory consumption, and class loading, plus information on
+the JVM and operating system.
+</p>
+
+<p><img src="images/summarytab.jpg" title="" alt="Summary tab" width="646" height="512"></p>
+
+<h3>Summary</h3>
+
+<ul>
+<li><b>Uptime</b>: how long the JVM has been running</li>
+<li><b>Total compile time</b>: the amount of time spent in
+just-in-time (JIT) compilation.</li>
+<li><b>Process CPU time</b>: the total amount of CPU time consumed
+by the JVM</li>
+</ul>
+
+<h3>Threads</h3>
+
+<ul>
+<li><b>Live threads</b>: Current number of live daemon threads plus
+non-daemon threads</li>
+<li><b>Peak</b>: Highest number of live threads since JVM
+started.</li>
+<li><b>Daemon threads</b>: Current number of live daemon
+threads</li>
+<li><b>Total started</b>: Total number of threads started since JVM
+started (including daemon, non-daemon, and terminated).</li>
+</ul>
+
+<h3>Memory</h3>
+
+<ul>
+<li><b>Current heap size</b>: Number of Kbytes currently occupied
+by the heap.</li>
+<li><b>Committed memory</b>: Total amount of memory allocated for
+use by the heap.</li>
+<li><b>Maximum heap size</b>: Maximum number of Kbytes occupied by
+the heap.</li>
+<li><b>Objects pending for finalization</b>: <font color="#000000">Number of objects pending for finalization.</font>
+</li>
+<li><b>Garbage collector information</b>: Information on GC, including the garbage collector names, number of collections performed,
+and total time spent performing GC.</li>
+</ul>
+
+<h3>Classes</h3>
+
+<ul>
+<li><b>Current classes loaded</b>: Number of classes currently
+loaded into memory.</li>
+<li><b>Total classes loaded</b>: Total number of classes loaded
+into memory since the JVM started, included those subsequently unloaded.</li>
+<li><b>Total classes unloaded</b>: Number of classes unloaded from
+memory since the JVM started.</li>
+</ul>
+
+<h3>Operating System</h3>
+
+<ul>
+<li><b>Total physical memory</b>: Amount of random-access memory
+(RAM) that the OS has.</li>
+<li><b>Free physical memory</b>: Amount of free RAM the OS
+has.</li>
+<li><b>Committed virtual memory</b>: <font color="#000000">Amount of </font>virtual memory guaranteed to
+ be available to the running process.
+</li>
+</ul>
+
+<h2><a name="memory" id="memory"></a>Monitoring Memory
+Consumption</h2>
+
+<p>The Memory tab provides information on memory consumption and
+memory pools.</p>
+
+<p><img src="images/memtab.jpg" title="" alt="jconsole memory tab" width="646" height="512"></p>
+
+<p>The chart shows the JVM's memory use versus time, for heap and
+non-heap memory, and for specific memory pools.  The memory pools
+available depend on the JVM being used.  For
+the HotSpot JVM, the pools are:</p>
+
+<ul>
+<li>Eden Space (heap): pool from which memory is initially
+allocated for most objects.</li>
+<li>Survivor Space (heap): pool containing objects that have
+survived GC of eden space.</li>
+<li>Tenured Generation (heap): pool containing objects that have
+existed for some time in the survivor space.</li>
+<li>Permanent Generation (non-heap): holds all the reflective data
+of the virtual machine itself, such as class and method objects. With JVMs that use <a href="../vm/class-data-sharing.html">class data sharing</a>, this generation is divided into
+read-only and read-write areas.</li>
+<li>Code Cache (non-heap): HotSpot JVM also includes a "code cache"
+containing memory used for compilation and storage of native
+code.</li>
+</ul>
+
+<p>For more information on these memory pools,  see <a href="#gc">Garbage Collection.</a></p>
+
+<p>The <b>Details</b> area shows several current memory
+metrics:</p>
+
+<ul>
+
+<li><b>Used</b>: the amount of memory currently used.  Memory
+used includes the memory occupied by all objects including both
+reachable and unreachable objects.</li>
+<li><b>Committed</b>: the amount of memory guaranteed to be
+available for use by the JVM. The amount of committed memory may
+change over time. The Java virtual machine may release memory to
+the system and committed could be less than the amount of memory initially allocated at startup. Committed will
+always be greater than or equal to used.</li>
+<li><b>Max</b>: the maximum amount of memory that can be used for
+memory management. Its value may change or be undefined.  A memory
+allocation may fail if the JVM attempts to increase the used memory
+to be greater than committed memory, even if the amount used is
+less than or equal to max (for example, when the system is low on
+virtual memory).</li>
+</ul>
+
+<p>The bar chart at the lower right shows memory consumed by the
+memory pools in heap and non-heap memory.&nbsp; The bar will turn red
+when the memory used exceeds the memory usage threshold.&nbsp; You can
+set the memory usage threshold through an attribute of the MemoryMXBean.
+</p>
+
+<h3>Heap and Non-heap Memory</h3>
+
+<p>The JVM manages two kinds of memory:  heap and non-heap memory,
+both created when it starts.</p>
+
+<p><i>Heap memory</i> is the runtime data area from which the JVM
+allocates memory for all class instances and arrays.  The heap may
+be of a fixed or variable size.  The <i>garbage collector</i> is an
+automatic memory management system that reclaims heap memory for
+objects.</p>
+
+<p><i>Non-heap memory</i> includes a method area shared among all
+threads and memory required for the internal processing or
+optimization for the JVM. It stores per-class structures such as a
+runtime constant pool, field and method data, and the code for
+methods and constructors.  The method area is logically part of the
+heap but, depending on implementation, a JVM may not garbage
+collect or compact it. Like the heap, the method area may be of
+fixed or variable size. The memory for the method area does not
+need to be contiguous.</p>
+
+<p>In addition to the method area, a JVM implementation may require
+memory for internal processing or optimization which also belongs
+to non-heap memory. For example, the JIT compiler requires memory
+for storing the native machine code translated from the JVM code
+for high performance.</p>
+
+<h3>Memory Pools and Memory Managers</h3>
+
+<p>Memory pools and memory managers are key aspects of the JVM
+memory system.</p>
+
+<p>A <i>memory pool</i> represents a memory area that the JVM
+manages. The JVM has at least one memory pool and it may create or
+remove memory pools during execution. A memory pool can belong to
+either heap or non-heap memory.</p>
+
+<p>A <i>memory manager</i> manages one or more memory pools. The
+garbage collector is a type of memory manager responsible for
+reclaiming memory used by unreachable objects. A JVM may have one
+or more memory managers. It may add or remove memory managers
+during execution. A memory pool can be managed by more than one
+memory manager.</p>
+
+<h3><a name="gc" id="gc"></a>Garbage Collection</h3>
+
+<p>Garbage collection (GC) is how the JVM frees memory occupied by
+objects that are no longer referenced.  It is common to think of
+objects that have active references as being "alive" and
+un-referenced (or unreachable) objects as "dead."  Garbage
+collection is the process of releasing memory used by the dead
+objects.  The algorithms and parameters used by GC can have
+dramatic effects on performance.</p>
+
+<p>The HotSpot VM garbage collector uses <i>generational garbage
+collection</i>. Generational GC takes advantage of the observation
+that, in practice, most programs create:</p>
+
+<ul>
+
+<li>many objects that have short lives (for example, iterators and
+local variables).</li>
+<li>some objects that have very long lifetimes (for example, high
+level persistent objects)</li>
+</ul>
+
+<p>So, generational GC divides memory into several
+<i>generations</i>, and assigns each a memory pool. When a
+generation uses up its allotted memory, the VM performs a partial
+garbage collection (also called a <i>minor collection</i>) on that
+memory pool to reclaim memory used by dead objects. This partial GC
+is usually much faster than a full GC.</p>
+
+<p>The HotSpot VM defines two generations: the <b>young
+generation</b> (sometimes called the "nursery") and the <b>old
+generation</b>. The young generation consists of an "eden space"
+and two "survivor spaces."  The VM initially assigns all objects to
+the eden space, and most objects die there.  When it performs a
+minor GC, the VM moves any remaining objects from the eden space to
+one of the survivor spaces.  The VM moves objects that live long
+enough in the survivor spaces to the "tenured" space in the old
+generation.  When the tenured generation fills up, there is a full
+GC that is often much slower because it involves all live objects. 
+The permanent generation  holds all the reflective data of the
+virtual machine itself, such as class and method objects.</p>
+
+<p>The default arrangement of generations looks something like
+this:
+</p>
+
+<p>
+<img src="images/generations.gif" name="Graphic4" alt="space usage by generations" border="0" title="" width="400" height="222" id="Graphic4">
+</p>
+
+<p>As explained in the following documents, if the garbage
+collector has become a bottleneck, you can improve performance by
+customizing the generation sizes. Using jconsole, explore the
+sensitivity of your performance metric to the garbage collector
+parameters.  For more information, see:</p>
+
+<ul>
+<li><a href="http://java.sun.com/docs/hotspot/gc/index.html">Tuning
+Garbage collection with the 5.0 HotSpot VM</a></li>
+<!-- <li><a href="http://java.sun.com/docs/hotspot/gc/faq.html">FAQ
+for Garbage Collection in the 5.0 Hotspot JVM</a></li> -->
+</ul>
+
+<h2><a name="thread" id="thread"></a>Monitoring Thread Use</h2>
+
+<p>The Threads tab provides information on thread use.</p>
+
+<p><img src="images/threadtab.jpg" title="" alt="jconsole thread tab" width="646" height="512"></p>
+
+<p>The Threads list in the lower left lists all the active threads.
+ If you enter a string in the Filter field, the Threads list will
+show only those threads whose name contains the string you enter. 
+Click on the name of a thread in the Threads list to display
+information about that thread to the right, including the thread
+name, state, and stack trace.</p>
+
+<p>The chart shows the number of live threads versus time.  Three
+lines are shown:</p>
+
+<ul>
+<li>Magenta: total number of threads</li>
+<li>Red: peak number of threads</li>
+<li>Blue: number of live threads.</li>
+</ul>
+
+<p>See <a href="../../api/index.html">java.lang.Thread</a> for more
+information about threads and daemon threads.</p>
+
+<h2><a name="class_loading" id="class_loading"></a>Monitoring Class
+Loading</h2>
+
+<p>The Classes tab displays information on class loading. </p>
+
+<p><img src="images/classtab.jpg" title="" alt="jconsole class tab" width="646" height="512"></p>
+
+<p>The graph plots the number of classes loaded versus
+time:</p>
+
+<ul>
+
+<li>Red line is the total number of classes loaded (including those
+subsequently unloaded).</li>
+<li>Blue line is the current number of classes loaded. </li>
+</ul>
+
+<p>The Details section at the bottom of the tab displays the total
+number of classes loaded since the JVM started, the number
+currently loaded and the number unloaded.</p>
+
+<h2><a name="MBeans" id="MBeans"></a>Monitoring and Managing
+MBeans</h2>
+
+<p>The MBean tab displays information on all the MBeans registered
+with the platform MBean server.</p>
+
+<p><img src="images/mbeantab.jpg" title="" alt="jconsole mbean tab" width="646" height="512"></p>
+
+<p>The tree on the left shows all the MBeans, organized
+according to their objectNames.  When you select an MBean in the
+tree, its attributes, operations, notifications and other
+information is displayed on the right.
+</p>
+<p>You can set the value of attributes, if they are writeable (the
+value will be displayed in blue).&nbsp; You can also invoke operations
+displayed in the Operations tab.
+</p>
+<h3>Displaying a Chart</h3>
+<p>You can display a chart of an attribute's value versus time by
+double-clicking on the attribute value.&nbsp; For example, if you click
+on the value of the CollectionTime property of
+java.lang.GarbageCollector.Copy MBean, you will see a chart that looks
+something like this:</p>
+<p><img src="images/chart.jpg" title="" alt="chart vs. time" width="357" height="250">
+</p>
+
+<h2><a name="VM" id="VM"></a>Viewing VM Information</h2>
+
+<p>The VM tab provides information on the JVM.</p>
+
+<p><img src="images/vmtab.jpg" title="" alt="VM tab" width="640" height="504"></p>
+
+<p>The information includes:</p>
+
+<ul>
+
+<li><b>Uptime</b>: Total amount of time since the JVM was
+started.</li>
+<li><b>Process CPU Time</b>: Total amount of CPU time that the JVM
+has consumed since it was started.</li>
+<li><b>Total Compile Time</b>: Total accumulated time spent in
+just-in-time (JIT) compilation. The JVM implementation determines
+when JIT compilation occurs.  The Hotspot VM uses <i>adaptive
+compilation</i>, in which the VM launches an application using a
+standard interpreter, but then analyzes the code as it runs to
+detect performance bottlenecks, or "hot spots".
+</li>
+</ul>
+</body></html>

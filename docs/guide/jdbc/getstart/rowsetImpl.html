@@ -1,0 +1,1447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>RowSet</title>
+</head>
+<body bgcolor=#ffffff>
+<a href="GettingStartedTOC.fm.html">[Top]</a> <a href="mapping.html">[Prev]</a> <a href="appendixB.html">[Next]</a>
+<hr><br>
+
+<h1>RowSet</h1>
+
+<a name="997347"></a>
+<h2>10.1	 &nbsp;&nbsp; RowSet Overview</h2>
+<a name="998158"></a>
+A </a><code>RowSet</code> object is a container for tabular data, encapsulating a set of zero or more 
+rows that have been retrieved from a data source. In a basic implementation of the 
+<code>RowSet</code> interface, the rows are retrieved from a JDBC data source, but a rowset may 
+be customized so that its data can also be from a spreadsheet, a flat file, or any other 
+data source with a tabular format. A <code>RowSet</code> object extends the <code>ResultSet</code> interface, 
+which means that it can be scrollable, can be updatable, and can do anything a 
+<code>ResultSet</code> object can do. The features of a <code>RowSet</code> object, which are summarized in 
+this introductory section, will be explained in more detail in later sections.
+<p><a name="1003756"></a>
+A <code>RowSet</code> </a>object differs from a <code>ResultSet</code> object in that it is a </a>JavaBeans<font size="-2"><sup>TM</sup></font> 
+component. Thus, it has a set of JavaBeans properties and follows the JavaBeans 
+event model. A <code>RowSet</code> object's properties allow it to establish its own database 
+connection and to execute its own query in order to fill itself with data. A rowset 
+may be <em>disconnected</em>, that is, function without maintaining an open connection to 
+a data source the whole time it is in use. In addition, a rowset can be serialized, 
+which means that it can be sent to a remote object over a network.
+<p>
+<a name="1005012"></a>
+In general, the JDBC API can be divided into two categories, the <code>RowSet</code> portion
+and the driver portion. <code>RowSet</code> and its supporting interfaces are intended to be 
+implemented using the rest of the JDBC API. In other words, a class that implements
+the <code>RowSet</code> interface is a layer of software that is said to execute "on top" of 
+a JDBC driver. Unlike other JDBC objects, a <code>RowSet</code> object contains within itself 
+the means to operate without a driver and without being connected to a data 
+source.
+<p>
+<a name="1009982"></a>
+The release of J2SE 5.0 introduced a third category. In addition to the 
+<code>RowSet</code> API and the driver, there are five standard implementations of the <code>RowSet</code> 
+interface. These implementations provide a set of interfaces that extend the basic 
+<code>RowSet</code> interface plus reference implementations for each of them. There is no 
+requirement to use these implementations, but by using them, developers can be 
+sure that their implementations follow the JDBC API in event handling, cursor 
+manipulation, and other operations. The standard implementations are discussed 
+more fully in <a href="rowsetImpl.html#1010137">"Standard Implementations," on page&nbsp;808</a>.
+<p>
+<a name="998227"></a>
+The <code>RowSet</code> interface provides a basic set of methods common to all rowsets, 
+which this section describes. All <code>RowSet</code> objects are JavaBeans components; therefore,
+the <code>RowSet</code> interface has methods for adding and removing an event listener, 
+and it has getter amd setter methods for all of its properties. Many of these </a>properties
+support setting up a connection or executing a command. A rowset uses a connection
+with a data source in order to execute a query and produce a result set 
+from which it will get its data. It may also use a connection to write modified data 
+back to the data source. In addition, the <code>RowSet</code> interface has methods (one for 
+each data type) for setting the values of input parameters, if any, in a <code>RowSet</code> 
+object's command string. In the JDBC <code>RowSet</code> Implementations specification, 
+these basic methods, defined in the <code>RowSet</code> interface, are provided in the <code>BaseRowSet
+</code> abstract class, which is discussed later.
+<p>
+<a name="1001958"></a>
+Five other interfaces and one class work together with the <code>RowSet</code> interface 
+behind the scenes. The class <code>RowSetEvent</code> and the interface <code>RowSetListener</code> support
+the JavaBeans event model. When a <code>RowSet</code> object's cursor moves or its data 
+is modified, it will invoke the <code>RowSetListener</code> method corresponding to the event, 
+providing it with a <code>RowSetEvent</code> object that identifies itself as the source of the 
+event. Implementations are free to write extensions that add other <code>RowSet</code> events if 
+they are needed.
+<p>
+<a name="1002261"></a>
+A component that wants to be notified of the events that occur in a <code>RowSet</code> 
+object will implement the <code>RowSetListener</code> interface and be registered with the 
+<code>RowSet</code> object. Such a component, called a </a><em>listener</em>, </a>is typically a GUI (graphical 
+user interface) component, such as a table or bar chart, that is displaying the 
+<code>RowSet</code> object's data. Because a listener is notified every time an event occurs in 
+the rowset, it can keep its cursor position and data consistent with that of the 
+rowset.
+<p>
+<a name="1012912"></a>
+The interfaces <code>RowSetInternal</code>, <code>RowSetReader</code>, and <code>RowSetWriter</code> support the 
+rowset<code> </code>reader/writer facility. A </a><em>reader</em>, an instance of a class that implements the 
+<code>RowSetReader</code> interface, reads data and inserts it into a rowset. A </a><em>writer</em>, an 
+instance of a class that implements the <code>RowSetWriter</code> interface, writes modified 
+data back to the data source from which a rowset's data was retrieved. 
+<p>
+<a name="1001981"></a>
+The <code>RowSetInternal</code> interface provides additional methods for a reader or 
+writer to use to manipulate the rowset's internal state. For example, a rowset can 
+keep track of its original values, and <code>RowSetInternal</code> methods allow the writer to 
+see if the corresponding data in the data source has been changed by someone 
+else. In addition, <code>RowSetInternal</code> methods make it possible to retrieve the input 
+parameters that were set for a rowset's command string and to retrieve the connection
+that was passed to it, if there is one. Finally, <code>RowSetInternal</code> methods allow a 
+reader to set a new <code>RowSetMetaData</code> object, which describes to the rowset the rows 
+that the reader will insert into it. The name of the interface is <code>RowSetInternal</code> for 
+good reason. Its methods are used internally; an application does not call these 
+methods directly.
+<p>
+<a name="1002505"></a>
+Rowsets may be either </a><em>connected</em> or </a><em>disconnected</em>. A connected <code>RowSet</code> object 
+maintains a connection to its data source the entire time it is in use, whereas a disconnected
+rowset is connected to its data source only while it is reading data from 
+the data source or writing data to it. While the rowset is disconnected, it does not 
+need a JDBC driver or the full implementation of the JDBC API. This makes it 
+very lean and therefore an ideal container for sending a set of data to a thin client. 
+The client can, if it chooses, make updates to the data and send the rowset back to 
+the application server. On the server, the disconnected <code>RowSet</code> object uses its 
+reader to make a connection to the data source and write data back to it. Exactly 
+how this is done depends on how the reader is implemented. Typically, the reader 
+delegates making a connection and reading data to the JDBC driver.
+<p>
+
+<a name="1002925"></a>
+<h3>10.1.1	 &nbsp; &nbsp; The Event Model for Rowsets</h3>
+<a name="1012693"></a>
+The <code>RowSet</code> event model makes it possible for a Java object, or component, to be 
+notified about events generated by a <code>RowSet</code> object. Setting up the notification mechanism
+involves both the component to be notified and the <code>RowSet</code> object itself. First, 
+each component that wants to be notified of </a>events must implement the <code>RowSetListener
+</code> interface. Then the <code>RowSet</code> object must register each component by adding it 
+to its list of components that are to be notified of events. At this point, such a component
+is a </a>listener, an instance of a class that implements the <code>RowSetListener</code> 
+methods and is registered with a <code>RowSet</code> object. 
+<p><a name="1006533"></a>
+Three kinds of </a>events can occur in a <code>RowSet</code> object: its cursor can move, one 
+of its rows can change (be inserted, deleted, or updated), or its entire contents can 
+be changed. The <code>RowSetListener</code> methods <code>cursorMoved</code>, <code>rowChanged</code>, and 
+<code>rowSetChanged </code>correspond to these events. When an event occurs, the rowset will 
+create a <code>RowSetEvent</code> object that identifies itself as the source of the event. The 
+appropriate <code>RowSetListener</code> method will be invoked on each listener, with the 
+<code>RowSetEvent</code> object being passed to the method. This will inform all of the 
+rowset's listeners about the event.
+<p>
+<a name="1003212"></a>
+For example, if a pie chart component, <code>pieChart</code>, wants to display the data in 
+the <code>RowSet</code> object <code>rset</code>, <code>pieChart</code> must implement the <code>RowSetListener</code> methods 
+<code>cursorMoved</code>, <code>rowChanged</code>, and <code>rowSetChanged</code>. The implementations of these 
+methods specify what <code>pieChart</code> will do in response to an event on <code>rset</code>. After 
+implementing these methods, <code>pieChart</code> can be registered with <code>rset</code>. When <code>pieChart
+</code> is added as a listener to <code>rset</code>, it will be notified when an event occurs on 
+<code>rset</code> by having the appropriate method invoked with a <code>RowSetEvent</code> object as its 
+parameter. The listener <code>pieChart</code> can then update itself to reflect the current data 
+and cursor position of <code>rset</code>. If <code>pieChart</code> does not need to reflect one of the events 
+on <code>rset</code>, it can implement the <code>RowSetListener</code> method for that event so that it 
+does nothing. For instance, if <code>pieChart</code> does not need to show the current cursor 
+position in <code>rset</code>, it can have the method <code>cursorMoved</code> do nothing.
+<p>
+<a name="1003477"></a>
+Any number of components may be </a>listeners</a> for a given <code>RowSet</code> object. If, for 
+example, the bar graph component <code>barGraph</code> is also displaying the data in <code>rset</code>, it 
+can become a listener by implementing the <code>RowSetListener</code> methods and then 
+being registered with <code>rset</code>. The following lines of code register the two components
+<code>pieChart</code> and <code>barGraph</code> as listeners with <code>rset</code>.
+<p>
+<pre><a name="1003199"></a>    rset.addRowSetListener(pieChart);
+<a name="1003200"></a>    rset.addRowSetListener(barGraph);
+</pre><a name="1003229"></a>
+Removing a listener is done in a similar fashion with the method 
+<code>RowSet.removeListener</code>.
+<p>
+<pre><a name="1003202"></a>    rset.removeRowSetListener(pieChart);
+<a name="1003203"></a>    rset.removeRowSetListener(barGraph);
+</pre><a name="1003235"></a>
+The code for setting up the listeners for a rowset is often generated by a tool, 
+which means that an applications programmer only needs to specify a rowset and 
+the components that are to be notified when an event occurs on that rowset. After 
+the listeners are set up, the processing of an event is done largely behind the 
+scenes. For example, if an application updates a row in <code>rset</code>, <code>rset</code> will internally 
+create a <code>RowSetEvent</code> object and pass it to the <code>rowChanged</code> methods implemented 
+by <code>pieChart</code> and <code>barGraph</code>. The listeners will know where the event occurred 
+because the <code>RowSetEvent</code> object passed to <code>rowChanged</code> is initialized with <code>rset</code>, the 
+<code>RowSet</code> object that is the source of the event. The components <code>pieChart</code> and <code>barGraph
+</code> will update their displays of the row according to their own implementations
+of the <code>RowSetListener.rowChanged</code> method.
+<p>
+<a name="1005705"></a>
+In the following code fragment, <code>pieChart</code> and <code>barGraph</code> are registered as listeners
+with the <code>RowSet</code> object <code>rset</code>. After <code>rset</code> fills itself with new data by calling 
+the method <code>execute</code>, event notification takes place behind the scenes. (The 
+method <code>execute</code> will be explained in detail in the section <a href="rowsetImpl.html#1003388">"Executing a Command
+," on page&nbsp;805</a>.) As the first step in the </a>event notification process, the 
+<code>RowSetEvent</code> object <code>rsetEvent</code> is created and initialized with <code>rset</code>. Next the <code>pieChart
+</code> and <code>barGraph</code> versions of the method <code>rowSetChanged</code> are called with 
+<code>rsetEvent</code> as their arguments. This tells <code>pieChart</code> and <code>barGraph</code> that all the data in 
+<code>rset</code> has changed, and each listener will carry out its own implementation of the 
+method <code>rowSetChanged</code>.
+<p>
+<pre>
+rset.addRowSetListener(pieChart);
+rset.addRowSetListener(barGraph);
+. . .
+rset.execute();
+  
+// The following methods will be invoked behind the scenes:
+RowSetEvent rsetEvent = new RowSetEvent(this);
+pieChart.rowSetChanged(rsetEvent);
+barGraph.rowSetChanged(rsetEvent);
+</pre>
+<a name="1003261"></a>
+<h3>10.1.2	 &nbsp; &nbsp; Properties for a Rowset</h3>
+<a name="1003264"></a>
+The <code>RowSet</code> interface provides a set of JavaBeans </a></a>properties</a> so that a <code>RowSet</code> 
+instance can be configured to connect to a data source and retrieve a set of rows. 
+Some properties may not be required, depending on particular implementations. For 
+example, either a URL or a data source name is required for establishing a connection,
+so if one property is set, the other one is optional. If both are set, the one set 
+more recently is used. If data for a rowset is being retrieved from a non-SQL data 
+source that does not support commands, such as a spreadsheet, the command property
+does not need to be set. Setting some properties is optional if the default is 
+already the desired property. For example, escape processing is on by default, so an 
+application does not need to set escape processing unless it wants to disable it. 
+(Escape processing is explained in <a href="statement.html#17215">"SQL Escape Syntax in Statements," on 
+page&nbsp;958</a>.)
+<p><a name="1003267"></a>
+The following list gives the getter and setter methods defined on the <code>RowSet</code> 
+interface for retrieving and setting a <code>RowSet</code> object's properties. The two exceptions
+are the methods <code>getConcurrency</code> and <code>getType</code>, which are inherited from the 
+<code>ResultSet</code> interface rather than being defined in the <code>RowSet</code> interface.
+<p>
+<a name="1013315"></a>
+
+<p>
+<table cellpadding=10>
+<tr><th><code>getCommand</code></th>
+<th><code>setCommand</code></th></tr>
+
+<tr><td><code>ResultSet.getConcurrency</code></td><td><code>setConcurrency</code></td></tr>
+<tr><td><code>getDataSourceName</code></td><td><code>setDataSourceName</code></td></tr>
+<tr><td><code>getEscapeProcessing</code></td><td><code>setEscapeProcessing</code></td></tr>
+<tr><td><code>getMaxFieldSize</code></td><td><code>setMaxFieldSize</code></td></tr>
+<tr><td><code>getMaxRows</code></td><td><code>setMaxRows</code></td></tr>
+<tr><td><code>getPassword</code></td><td><code>setPassword</code></td></tr>
+<tr><td><code>getQueryTimeout</code></td><td><code>setQueryTimeout</code></td></tr>
+<tr><td><code>getTransactionIsolation</code></td><td><code>setTransactionIsolation</code></td></tr>
+<tr><td><code>ResultSet.getType</code></td><td><code>setType</code></td></tr>
+<tr><td><code>getTypeMap</code></td><td><code>setTypeMap</code></td></tr>
+<tr><td><code>getUrl</code></td><td><code>setUrl</code></td></tr>
+<tr><td><code>getUsername</code></td><td><code>setUsername</code></td></tr>
+</table>
+<p>
+
+In addition, the standard JDBC <code>RowSet</code> implementations may have various properties
+that are specific to them.
+<p>
+<a name="1010064"></a>
+The following code fragment, in which <code>rset</code> is a <code>RowSet</code> object, </a>sets properties 
+that are typically required for establishing a connection with a data source using a 
+<code>DataSource</code> object.
+<p>
+<pre><a name="1002928"></a>    rset.setDataSourceName("jdbc/logicalDataSourceName");
+<a name="1002929"></a>    rset.setUsername("cervantes");
+<a name="1002930"></a>    rset.setPassword("secret");
+</pre><a name="1002931"></a>
+Note that <code>jdbc/logicalDataSourceName</code> is the name that has been registered with 
+a JNDI (Java Naming and Directory Interface) naming service. When an application
+gives the naming service the logical name, it will return the <code>DataSource</code> object 
+that has been bound to the logical name. <a href="datasource.html#27896">"Using JNDI," on page&nbsp;568</a>, explains using
+<code>DataSource</code> objects and the JNDI API. Using a <code>DataSource</code> object instead of 
+hardcoding connection information makes code more portable and makes maintaining
+it much easier. If the host machine or port number of a data source changes, 
+for example, only the properties of the <code>DataSource</code> object entered in the JNDI naming
+service need to be updated, not every application that gets a connection to that 
+data source.
+<p>
+<a name="1005795"></a>
+A <code>RowSet</code> object also has methods for setting properties that affect command 
+execution. For example, as a sampling of these methods, the following code fragment
+sets twenty seconds as the longest a driver will wait for a statement to execute,
+sets 1024 as the largest number of rows <code>rset</code> may contain, and specifies that 
+<code>rset</code> will be allowed to read only data from committed transactions.
+<p>
+<pre><a name="1002948"></a>    rset.setQueryTimeout(20);
+<a name="1002949"></a>    rset.setMaxRows(1024);
+<a name="1002950"></a>    rset.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+</pre><a name="1002962"></a>
+The type and </a>concurrency may also be </a>set for a <code>RowSet</code> object, as shown in the 
+following lines of code.
+<p>
+<pre><a name="1002981"></a>    rset.setType(ResultSet.TYPE_SCROLL_INSENSITIVE);
+<a name="1002982"></a>    rset.setConcurrency(ResultSet.CONCUR_UPDATABLE);
+</pre><a name="1002983"></a>
+The first line sets <code>rset</code> to be scrollable but not sensitive to the updates made while 
+it is open. A <code>RowSet</code> object that maintains a continuously open connection with a 
+data source may be </a><code>TYPE_SCROLL_SENSITIVE</code>, but one that does not is incapable of 
+being sensitive to changes made by other objects or transactions. The second line 
+of code sets <code>rset</code> to be updatable, meaning that it can modify its data.
+<p>
+<a name="1003281"></a>
+Note that a <code>RowSet</code> object may be scrollable even if it uses a driver that does 
+not support scrollable result sets. In fact, a rowset may often be used in place of a 
+regular result set as a way of getting a scrollable result set. This is discussed in 
+more detail in the section "Traversing a <code>RowSet</code> Object," on <a href="rowsetImpl.html#1003347">page 804</a>.
+<p>
+<a name="1003192"></a>
+An application fills a <code>RowSet</code> instance with data by executing the <code>RowSet</code> 
+object's </a>command string. This string must be a query that, when executed, will 
+produce a result set from which the <code>RowSet</code> object will get its data. The method 
+<code>setCommand</code> sets the <code>String</code> object supplied to it as the command that will be executed
+when the method <code>execute</code> is invoked. For example, the following line of 
+code sets the command string to a query that selects the name and salary from 
+every row in the table <code>EMPLOYEES</code>.
+<p>
+<pre><a name="1003193"></a>    <code>rset.setCommand("SELECT NAME, SALARY FROM EMPLOYEES");
+</code></pre><a name="1003080"></a>
+With the preceding command string set, after <code>rset</code> invokes its <code>execute</code> method, it 
+will contain exactly the same data as the result set that the query produces (one row 
+for each row in the table <code>EMPLOYEES</code>, with each row containing a name and a salary).
+<p>
+
+<a name="1003300"></a>
+<h3>10.1.3	 &nbsp; &nbsp; Setting Parameters for the Command String</h3>
+<a name="1003301"></a>
+The example in the previous section uses a command that has no placeholders for 
+</a>parameters, but the command property may also be set with a query that takes input 
+parameters. To make this possible, the internal representation of the command string 
+is a <code>PreparedSatement</code> object. Note that the parameters must be input parameters 
+and not output parameters. 
+<p><a name="1015655"></a>
+A newly created <code>RowSet</code> object exists but has no data until it is populated with 
+a call to the method <code>execute</code> or <code>populate</code>. In order to use the method <code>execute</code>, the 
+necessary properties must be set, and values for any placeholder parameters must 
+be set. Parameter values can be set at run time, which, for example, allows an 
+application to be interactive and accept user input.
+<p>
+<a name="1003348"></a>
+The <code>RowSet</code> interface, like the <code>PreparedStatement</code> interface, has setter methods
+for setting the value of input parameters. There is a setter method for each 
+data type, including the SQL99 data types. The following code fragment sets the 
+command string and then sets its two input parameters with values. Assuming that 
+the column <code>DEPT</code> stores values of type <code>VARCHAR</code>, the method <code>setString</code> is used to 
+set both parameters because that is the appropriate method for setting <code>VARCHAR</code> values.
+
+<p>
+<pre><a name="1003317"></a>    rset.setCommand(
+<a name="1003322"></a>    <code>  "SELECT NAME, SALARY FROM EMPLOYEES WHERE DEPT = ? OR DEPT = ?");
+</code><a name="1003329"></a>    rset.setString(1, "SALES");
+<a name="1003323"></a>    rset.setString(2, "MARKETING");
+</pre><a name="1003535"></a>
+After this command is executed, <code>rset</code> will contain the names and salaries of the 
+employees in the sales and marketing departments.
+<p>
+<a name="1012733"></a>
+Any parameters in a <code>RowSet</code> object's command string must be set with values 
+before the command is executed. When a rowset is disconnected, the parameters 
+that have been set are used by the reader's <code>readData</code> method, which is invoked 
+internally by the method <code>execute</code>. A rowset stores these parameter values in an 
+internal hashtable, and the <code>readData</code> method retrieves them with a call to the 
+rowset's <code>RowSetInternal.getParams</code> method. 
+<p>
+
+<a name="1003347"></a>
+<h3>10.1.4	 &nbsp; &nbsp; Traversing a RowSet Object</h3>
+<a name="1003366"></a>
+The <code>javax.sql.RowSet</code> interface extends the <code>java.sql.ResultSet</code> interface, so 
+</a>moving</a> the cursor in a scrollable <code>RowSet</code> object is exactly the same as moving a cursor
+in a scrollable <code>ResultSet</code> object. A <code>RowSet</code> object inherits all of the <code>ResultSet</code> 
+methods, so it is really a result set with added features that allow it to function as a 
+JavaBeans component. Most components that use instances of <code>RowSet</code> are likely to 
+treat them as <code>ResultSet</code> objects.
+<p><a name="1004961"></a>
+Even though the methods for moving a <code>RowSet</code> object's cursor are identical to 
+those of a <code>ResultSet</code> object from the user's point of view, a <code>RowSet</code> object's implementation
+of these methods is different. A <code>RowSet</code> object needs to let the listeners 
+registered with it know about each movement of its cursor. Consequently, the cursor
+movement </a>methods for a <code>RowSet</code> object are implemented to </a>trigger the internal 
+</a>event notification process. For example, when the method <code>next</code> is called, its 
+implementation <code></a></code>will create a <code>RowSetEvent</code> object and call each listener's <code>cursorMoved
+</code> method, supplying the <code>RowSetEvent</code> object as the parameter. The listener 
+uses the <code>RowSetEvent</code> object to find out in which <code>RowSet</code> object the cursor has 
+moved and then invokes its implementation of the method <code>cursorMoved</code>. The 
+implementation could do nothing, or it could, for example, call the method 
+<code>ResultSet.getRow</code> to get the cursor's current position and update the listener's 
+display of that row's data.
+<p>
+<a name="1003371"></a>
+To demonstrate that cursor movements are the same in <code>RowSet</code> and <code>ResultSet</code>, 
+the following code fragment iterates forward through the <code>RowSet</code> object <code>rset</code> and 
+prints out the two values retrieved from each row.
+<p>
+<pre><a name="1003374"></a>    rset.beforeFirst();
+<a name="1003375"></a>    while (rset.next()) {
+<a name="1003381"></a>      System.out.println(rset.getString(1) + " " + rset.getFloat(2));
+<a name="1003376"></a>    }
+</pre><a name="1003382"></a>
+Other cursor movements are also identical to those in the <code>ResultSet</code> interface. .
+<p>
+<a name="1003388"></a>
+<h3>10.1.5	 &nbsp; &nbsp; Executing a Command</h3>
+<a name="1010071"></a>
+The </a><code>RowSet</code> interface provides the method </a><code>execute</code>, which is invoked to fill a <code>RowSet</code> 
+object with data. There can be many variations in the implementation of this 
+method, and subtypes may define additional methods for populating themselves 
+with data. The <code>execute</code> method makes use of rowset properties and will throw an 
+<code>SQLException</code> if the necessary properties have not been set. Standard properties 
+have been defined; however, additional properties depend on each particular <code>RowSet</code> 
+implementation, so application writers should check the documentation for the 
+implementation they are using.
+<p><a name="1006691"></a>
+A disconnected rowset needs a reader (an object that implements the <code>RowSetReader</code> interface) and a writer (an object that implements the <code>RowSetWriter</code> interface)
+. In the JDBC <code>RowSet</code> Implementations, a reader and writer are encapsulated 
+in the the <code>SyncProvider</code> class, which is part of the <code>javax.sql.rowset.spi</code> package.
+This package, known as the SPI (Service Provider Interface), is explained 
+later. The SPI makes it much easier to implement and deploy a reader and writer. 
+The two reference implementations, <code>RIOptimisticProvider</code> and <code>RIXmlProvider</code>, 
+provide immediate implementations.
+<p>
+<a name="1015711"></a>
+A disconnected rowset must also implement the <code>RowSetInternal</code> interface to 
+make additional access to its internal state available to the reader and writer. With 
+its reader/writer framework in place, a rowset's <code>execute</code> method is able to delegate
+tasks to its reader and writer components. 
+<p>
+<a name="1010074"></a>
+With the addition of the standard <code>RowSet</code> implementations, developers will 
+find it much easier to implement the reader/writer facilities. They can leverage the 
+reader/writer facilities that are already included in these standard implementations 
+by simply incorporating them into their own implementations.
+<p>
+<a name="1003559"></a>
+In a typical implementation, a disconnected rowset's <code>execute</code> method will 
+invoke the reader's </a><code>readData</code> method to accomplish the job of reading new data 
+into the rowset. Generally, after clearing the rowset of its current contents, the 
+<code>readData</code> method will get the properties it needs and establish a connection with 
+the data source. If there are any parameters to be set, <code>readData</code> retrieves them 
+from the rowset and sets them appropriately in the rowset's command string. Then 
+the <code>readData</code> method executes the command string to produce a result set. Finally, 
+<code>readData</code> populates the rowset with the data from the result set and sets that data 
+as the original values.
+<p>
+<a name="1006913"></a>
+The reader's <code>readData</code> method may also be implemented to set the rowset's 
+metadata. One of the many possible implementations is to have the <code>readData</code> 
+method create a </a><code>RowSetMetaData</code> object and set it with information about the columns
+in the data source that is about to be read. The <code>readData</code> method next sets 
+the new <code>RowSetMetaData</code> object to be the one associated with the rowset. The 
+rowset can then use the <code>RowSetMetaData</code> object to see the format for the data that 
+will be read into it.
+<p>
+<a name="1003581"></a>
+When the rowset's command string is executed, all of a rowset's listeners need 
+to be notified so that they can take the appropriate action. The <code>execute</code> method 
+will invoke the <code>rowSetChanged</code> method on each listener, supplying <code>rowSetChanged 
+</code>with a newly created <code>RowSetEvent</code> object that identifies the <code>RowSet</code> object in which 
+the event occurred. As is true of most of what the method <code>execute</code> does, the notification
+of listeners is invisible to the application programmer using a rowset.
+<p>
+<a name="1003926"></a>
+One more task for the <code>execute</code> method is that of setting the </a>"original" values 
+maintained by the rowset. These are the values, returned by the method <code>RowSetInternal.getOriginal</code>, that existed immediately before the most recent update. A 
+<code>RowSet</code> object's original values may be the values it got from the data source, but 
+this is not necessarily true. The first time a <code>RowSet</code> object's data is synchronized 
+with its data source, its original values will be the same as the values it originally 
+got from the data source. However, if some of a <code>RowSet</code> object's values are modified
+a second time, the original values will be the values that existed after the first 
+modifications, not those from the data source. The point of keeping track of a 
+<code>RowSet</code> object's original values is to be able to check whether the corresponding 
+values in the data source have been changed. 
+<p>
+<a name="1014141"></a>
+If a <code>SyncProvider</code> object is implemented to check for conflicts, it compares 
+the original values with the ones in the data source. If the rowset's original values 
+(pre-modification values) and the underlying data source's values are not the 
+same, there will be a conflict if the <code>RowSet</code> object's modified values are written to 
+the data source. If the values are the same, however, there is no conflict. Depending
+on the synchronization model being used, a <code>SyncProvider</code> object may or may 
+not write the new rowset values to the data source when there is a conflict.
+<p>
+<a name="1008796"></a>
+If the <code>SyncProvider</code> implementation does not write new values to the underlying
+data source, the <code>execute</code> method will reset the original values back to the values
+currently in the rowset. Then the next time <code>execute</code> is called, which changes 
+all of the values in the rowset, the <code>SyncProvider</code> object can retrieve these values to 
+compare with those in the underlying data source to see if there is a conflict.
+<p>
+<a name="1003594"></a>
+In summary, when an application invokes the <code>execute</code> method, many operations
+take place behind the scenes. When the rowset is disconnected, the following 
+take place: the contents of the rowset are replaced with new data, any listeners 
+using the rowset's data are notified, the rowset's metadata is updated, and the 
+rowset's original values are set to the current data values. For a connected rowset, 
+the <code>execute</code> method generally just populates the rowset with new data and notifies 
+the listeners of the event. There is no possibility of a conflict because changes 
+made to a connected <code>RowSet</code> object are also made to the data source.</a>
+<p>
+
+<a name="1003633"></a>
+<h3>10.1.6	 &nbsp; &nbsp; Using a RowSet Object's Metadata</h3>
+<a name="1003634"></a>
+A <code>RowSet</code> object maintains a set of </a>metadata</a> about the columns it contains. Being 
+derived from <code>ResultSet</code>, a <code>RowSet</code> object's metadata can be retrieved with <code>ResultSetMetaData
+</code> methods in the same way that a <code>ResultSet</code> object's metadata can. For 
+instance, the following code fragment creates a <code>RowSetMetaData</code> object for the 
+<code>RowSet</code> object <code>rset</code> and finds out how many columns <code>rset</code> contains. Note that the 
+method <code>getMetaData</code> is a <code>ResultSet</code> method that returns a <code>ResultSetMetaData</code> 
+object, so it must be cast to a <code>RowSetMetaData</code> object before it can be assigned to 
+<code>rsetmd</code>.
+<p><pre><a name="1003643"></a>    RowSetMetaData rsetmd = (RowSetMetaData)rset.getMetaData();
+<a name="1003646"></a>    int columnCount = rsetmd.getColumnCount();
+</pre><a name="1003673"></a>
+The variable <code>rsetmd</code> contains information about the columns in the <code>RowSet</code> 
+<code>rset</code>. Any of the <code>RowSetMetaData</code> methods can be invoked on <code>rsetmd</code> to retrieve 
+the information that <code>rsetmd</code> contains.
+<p>
+<a name="1003664"></a>
+The interface <code>RowSetMetaData</code> defines </a>setter<code> </code></a>methods corresponding to each 
+of the getter methods defined in <code>ResultSetMetaData</code> (except that there are no 
+methods for setting the class name for a column or for setting whether the column 
+is read-only, possibly writable, or definitely writable). The <code>RowSetMetaData</code> setter 
+methods are called by a reader after it has read new data into a rowset and created 
+a new <code>RowSetMetaData</code> object for describing the <code>RowSet</code> object's columns. The following
+code shows what a reader might do behind the scenes. It creates the new 
+<code>RowSetMetaData</code> object <code>rowsetmd</code> for the <code>RowSet</code> object <code>rowset</code>, sets the information
+for the columns, and finally calls the <code>RowSetInternal</code> method <code>setMetaData</code> to 
+set <code>rowsetmd</code> as the metadata for <code>rowset</code>.
+<p>
+<pre><a name="1006993"></a>    rowset.execute();
+<a name="1007322"></a>    // ... as part of its implementation, execute calls readData
+<a name="1007323"></a>    reader.readData((RowSetInternal)this);
+<a name="1007000"></a>    
+<a name="1006994"></a>    // ... as part of the implementation of readData, the reader for
+<a name="1006995"></a>    // the rowset would do something like the following to update the
+<a name="1006996"></a>    // metadata for the rowset
+<a name="1006981"></a>    RowSetMetaData rowsetmd = new ...; // create an instance of a class
+<a name="1008908"></a>    // that implements RowSetMetaData
+<a name="1006982"></a>    rowsetmd.setColumnCount(3);
+<a name="1006984"></a>    rowsetmd.setColumnType(1, Types.INTEGER);
+<a name="1006985"></a>    rowsetmd.setColumnType(2, Types.VARCHAR);
+<a name="1006986"></a>    rowsetmd.setColumnType(3, Types.BLOB);
+<a name="1006987"></a>    // ... set other column information
+<a name="1006983"></a>    rowset.setMetaData(rowsetmd);
+</pre>
+<a name="1010137"></a>
+<h2>10.2	 &nbsp;&nbsp; Standard Implementations</h2>
+<a name="1010138"></a>
+The Java platform includes five standard implementations of the <code>RowSet</code> interface 
+with the release of J2SE 5.0. These implementations are being provided as 
+an aid for those who want to write their own implementations. The <code>RowSet</code> interface 
+may be implemented in any number of ways to serve any number of different purposes,
+and anyone may implement it. The expectation is, however, that <code>RowSet</code> 
+implementations will be written mostly by driver vendors, who may include their 
+implementations as part of their JDBC products. Implementors are free to use the 
+reference implementations just as they are, to build on them, or to write their implementations
+completely on their own.
+<p><a name="1010319"></a>
+The standard implementations consist of two parts, the interfaces and the reference
+implementations. The interfaces are in the <code>javax.sql.rowset</code> package; the 
+implementations are in the <code>com.sun.rowset</code> package. They were developed with 
+input from experts in the database field through the Java Community Process as 
+JSR 114. The goal was to standardize key rowset functionality so that developers 
+can leverage it in their own implementations. The standard <code>RowSet</code> implementations
+are:
+<p>
+
+<ul><a name="1010311"></a>
+<li><code>JdbcRowSet
+</code><br><br>
+<a name="1010327"></a>
+<li><code>CachedRowSet
+</code><br><br>
+<a name="1010331"></a>
+<li><code>WebRowSet
+</code><br><br>
+<a name="1010329"></a>
+<li><code>FilteredRowSet
+</code><br><br>
+<a name="1010333"></a>
+<li><code>JoinRowSet
+</code><br><br>
+</ul>
+<a name="1010312"></a>
+<h3>10.2.1	 &nbsp; &nbsp; Implementation Basics</h3>
+<a name="1013759"></a>
+All of the standard <code>RowSet</code> implementations extend the abstract class <code>BaseRowSet</code> 
+and implement the appropriate interface (<code>JdbcRowSet</code>, <code>CachedRowSet</code>, <code>WebRowSet</code>, 
+<code>FilteredRowSet</code>, or <code>JoinRowSet</code>). Note that the <code>BaseRowSet</code> class provides a base 
+implementation of the common functionality for all <code>RowSet</code> objects, which developers
+may choose to use or not. The <code>BaseRowSet</code> class includes the following:
+<p>
+<ul><a name="1013791"></a>
+<li>Properties--fields for storing property values and methods for getting and 
+setting property values
+<br><br>
+<a name="1013795"></a>
+<li>Event notification mechanism--methods for adding and deleting listeners 
+and for notifying listeners of changes
+<br><br>
+<a name="1013801"></a>
+<li>Setter methods--a complete set of methods for setting the placeholder parameters
+in a <code>RowSet</code> object's command property
+<br><br>
+<a name="1013815"></a>
+<li>Default values--all <code>RowSet</code> implementations have the following default 
+values:
+<br><br>
+<a name="1013808"></a>
+<ul>
+<li>Is scrollable and does not show changes made by others
+<br><br>
+<a name="1013831"></a>
+<li>Is updatable
+<br><br>
+<a name="1013832"></a>
+<li>Does not show rows that have been deleted
+<br><br>
+<a name="1013833"></a>
+<li>Has no time limit for how long a driver may take to execute the <code>RowSet</code> object's
+command
+<br><br>
+<a name="1013837"></a>
+<li>Has no limit for the number of bytes that columns of type <code>BINARY</code>, <code>VARBINARY</code>, 
+<code>LONGVARBINARY</code>, <code>CHAR</code>, <code>VARCHAR</code>, or<code> LONGVARCHAR</code> may contain
+<br><br>
+<a name="1013856"></a>
+<li>Does not see uncommitted data (make "dirty" reads)
+<br><br>
+<a name="1013860"></a>
+<li>Has escape processing is turned on
+<br><br>
+<a name="1013861"></a>
+<li>Has its connection's type map is set to <code>null
+</code><br><br>
+<a name="1013865"></a>
+<li>Has an empty <code>Hashtable</code> object for storing the values set for the placeholder 
+parameters in the <code>RowSet</code> object's command
+<br><br>
+</ul>
+</ul><a name="1013874"></a>
+
+<p>
+<a name="1013878"></a>
+As stated previously, <code>RowSet</code> objects may be connected or disconnected. The 
+<code>RowSet</code> implementations fall into the following categories:
+<p>
+
+<ul><a name="1013886"></a>
+<li>Connected (maintains a connection to the data source using a JDBC driver)
+<br><br>
+<a name="1013894"></a>
+<ul>
+<li><code>JdbcRowSet
+</code><br><br>
+</ul>
+<a name="1013901"></a>
+<li>Disconnected (not connected to the data source except when reading data 
+from it or writing data to it)
+<br><br>
+<ul>
+<a name="1013905"></a>
+<li><code>CachedRowSet
+</code><br><br>
+<a name="1013909"></a>
+<li><code>JoinRowSet
+</code><br><br>
+<a name="1013910"></a>
+<li><code>FilteredRowSet
+</code><br><br>
+<a name="1013918"></a>
+<li><code>WebRowSet
+</code><br><br>
+</ul>
+</ul><a name="1013931"></a>
+
+<p>
+<a name="1013935"></a>
+The <code>CachedRowSet</code> interface provides the methods that a disconnected <code>RowSet</code> 
+object needs. In the standard implementations, a disconnected <code>RowSet</code> extends the 
+<code>BaseRowSet</code> class and implements the <code>CachedRowSet</code> interface. In addition, the 
+<code>JoinRowSet</code> implementation implements the <code>JoinRowSet</code> interface, the <code>FilteredRowSet
+</code> implementation implements the <code>FilteredRowSet</code> interface, and the 
+<code>WebRowSet</code> implementation implements the <code>WebRowSet</code> interface.
+<p>
+
+<a name="1013758"></a>
+<h3>10.2.2	 &nbsp; &nbsp; Overview of the JdbcRowSet Implementation</h3>
+<a name="1014003"></a>
+A <code>JdbcRowSet</code> object (an instance of the standard implementation of the <code>JdbcRowSet</code> 
+interface) is, like all rowsets, a container for a set of rows. The source of these rows 
+is always a <code>ResultSet</code> object because a <code>JdbcRowSet</code> object is a connected <code>RowSet</code> 
+object. In other words, it always maintains a connection with a DBMS via a JDBC 
+driver. Note that other implementations may use any tabular data, such as a flat file 
+or a spreadsheet, as their source of data if their reader and writer facilities are appropriately
+implemented.
+<p><a name="1010486"></a>
+A <code>JdbcRowSet</code> object has many uses. Probably the most common use is to 
+make a <code>ResultSet</code> object scrollable and thereby make better use of legacy drivers 
+that do not support scrolling. A <code>JdbcRowSet</code> object's rows of data (and those in any 
+<code>RowSet</code> object) are identical to those in the <code>ResultSet</code> object that is the result of 
+executing the rowset's command. Therefore, if the rowset is scrollable, it is the 
+equivalent of having a scrollable <code>ResultSet</code> object even if the <code>ResultSet</code> object 
+itself is not scrollable.
+<p>
+<a name="1010514"></a>
+Another common use is to make the driver or a <code>ResultSet</code> object a JavaBeans 
+component. Like all <code>RowSet</code> objects, a <code>JdbcRowSet</code> object is a JavaBeans component.
+By being continuously connected to a driver, it serves as a wrapper for the 
+driver, which effectively makes the driver a JavaBeans component. This means 
+that a driver presented as a <code>JdbcRowSet</code> object can be one of the Beans that a tool 
+makes available for composing an application. Being continuously connected also 
+means that a <code>JdbcRowSet</code> object is able to serve as a wrapper for its <code>ResultSet</code> 
+object. It can take calls invoked on it and, in turn, call them on its <code>ResultSet</code> 
+object. As a consequence, the <code>ResultSet</code> object can be, for example, a component 
+in a GUI application that uses <code>Swing </code>technology.
+<p>
+<a name="1010531"></a>
+The following code fragment illustrates creating a <code>JdbcRowSet</code> object, setting 
+its properties, and executing the command string in its <code>command</code> property. The <code>JdbcRowSet
+</code> implementation provides a default constructor, but being a JavaBeans 
+component, a <code>JdbcRowSet </code>implementation will probably most often be created by 
+a visual JavaBeans development tool.
+<p>
+<pre><a name="1010552"></a>    JdbcRowSet jrs = new JdbcRowSetImpl();
+<a name="1010553"></a>    jrs.setCommand("SELECT * FROM TITLES);
+<a name="1010554"></a>    jrs.setURL("jdbc:myDriver:myAttribute");
+<a name="1010557"></a>    jrs.setUsername("cervantes");
+<a name="1010558"></a>    jrs.setPassword("sancho");
+<a name="1010560"></a>    jrs.execute();
+</pre><a name="1010577"></a>
+At this point, <code>jrs</code> contains all of the data in the table <code>TITLES </code>because the <code>ResultSet</code> 
+object generated by <code>jrs</code>'s command contains all of the data in the table <code>TITLES</code>.
+<p>
+<a name="1010687"></a>
+From this point on, the code can simply use <code>ResultSet</code> methods because it is 
+effectively operating on a <code>ResultSet</code> object. It can navigate the rows in <code>jrs</code>, 
+retrieve column values, update column values, insert new rows, and so on. For 
+example, the next two lines of code go to the second row and retrieve the value in 
+the first column using <code>ResultSet</code> methods.
+<p>
+<pre><a name="1010724"></a>    jrs.absolute(2);
+<a name="1010727"></a>    String title = jrs.getString(1);
+</pre>
+<a name="1010401"></a>
+<h3>10.2.3	 &nbsp; &nbsp; Overview of the CachedRowSet Implementation</h3>
+<a name="1010397"></a>
+The standard implementation of the <code>CachedRowSet</code> interface (<code>CachedRowSetImpl</code> in 
+the package <code>com.sun.rowset</code>) provides a container for a set of rows that is being 
+cached in memory outside of a data source. It is disconnected, serializable, updatable,
+and scrollable. Because a <code>CachedRowSet</code> object caches its own data, it does not 
+need to maintain an open connection with a data source and is disconnected from its 
+data source except when it is reading or writing data. But because it stores its rows 
+in memory, a <code>CachedRowSet</code> object is not appropriate for storing extremely large 
+data sets. However, to accommodate larger amounts of data, a <code>CachedRowSet</code> object 
+may page in data, reading only a specified number of rows at a time.
+<p><a name="1014051"></a>
+A <code>CachedRowSet</code> object can populate itself with data from a tabular data 
+source, and because it is updatable, it can also modify its data. As with all <code>RowSet</code> 
+objects, in addition to getting data in, it can get data out, propagating its modifications
+back to the underlying data source. 
+<p>
+
+<a name="1010144"></a>
+<h3>10.2.4	 &nbsp; &nbsp; Uses for a CachedRowSet Object</h3>
+<a name="1010145"></a>
+Being disconnected and serializable, a <code>CachedRowSet</code> object is especially well suited 
+for </a>use with a thin client. Not being continually connected to its data source, it does 
+not require the presence of a JDBC driver and can therefore be much more lightweight
+than a <code>ResultSet</code> object or a connected <code>RowSet</code> object.
+<p><a name="1010147"></a>
+One of the major uses for a <code>CachedRowSet</code> instance is to pass tabular data 
+between different components of a distributed application, such as EnterpriseJavaBeans
+<font size="-2"><sup>TM</sup></font> (EJB<font size="-2"><sup>TM</sup></font>) components running in an application server. The server can use 
+the JDBC API to retrieve a set of rows from a database and then use a <code>CachedRowSet
+</code> object to send the data over the network to, for example, a thin client running
+in a web browser.
+<p>
+<a name="1010148"></a>
+Another use for a <code>CachedRowSet</code> object is to provide scrolling and updating 
+capabilities to a <code>ResultSet</code> object that does not itself have this functionality. For 
+example, as with a <code>JdbcRowSet</code> object, an application can create a <code>CachedRowSet</code> 
+object initialized with the data from a <code>ResultSet</code> object and then operate on the 
+rowset instead of the result set. With the rowset set to be scrollable and updatable, 
+the application can move the cursor, make updates, and then propagate the updates 
+back to the data source.
+<p>
+<a name="1012820"></a>
+The following code fragment populates the <code>CachedRowSet</code> object <code>crset</code> with 
+the data from the <code>ResultSet</code> object <code>rs</code>. 
+<p>
+<pre><a name="1010150"></a>    ResultSet rs = stmt.executeQuery("SELECT * FROM AUTHORS");
+<a name="1010151"></a>    CachedRowSet crset = new CachedRowSetImpl();
+<a name="1010152"></a>    crset.populate(rs);
+</pre><a name="1010733"></a>
+Once the rowset is populated, an application can pass it across the network to be 
+manipulated by distributed components, or it can operate on <code>crset</code> instead of <code>rs</code> to 
+gain scrollability or updatability.
+<p>
+<a name="1012836"></a>
+The <code>CachedRowSet</code> implementation uses the base API from the <code>BaseRowSet</code> 
+abstract class and the <code>CachedRowSet</code> interface, which adds methods for the additional
+functionality it needs. For example, it needs a way to connect to a data 
+source and read data from it. If a <code>CachedRowSet</code> object's data is modified while it is 
+disconnected, it also needs a way to connect to the data source and write the new 
+data back to it. The reader and writer facilities, based on the <code>RowSetReader</code> and 
+<code>RowSetWriter</code> interfaces and encapsulated in a <code>SyncProvider</code> implementation, 
+provide these capabilities.
+<p>
+<a name="1010831"></a>
+A writer implementation supplies a mechanism for updating the data source 
+with any changes it has made while it was disconnected, thus making the modified 
+data persistent. This can get complicated if there is a <em></a>conflict</em>, that is, if another 
+user has already modified the same data in the data source. The <code>SyncProvider</code> 
+class includes mechanisms that afford varying degrees of control over how accessible
+data in the database is to others, and consequently, it has some control over 
+the number of conflicts that <em>may</em> occur. Even more important, a <code>SyncProvider</code> 
+implementation determines the level of care to be taken in synchronization.
+<p>
+<a name="1010801"></a>
+The JDBC <code>RowSet</code> Implementations specification includes two different reference
+implementations for synchronization using two different levels of concurrency.
+The <code>RIXmlProvider</code> does not check for conflicts and simply writes its 
+modified data to the data source. The writer defined in the <code>RIOptimisticProvider</code> 
+implementation checks for conflicts, and if a conflict exists, allows an application 
+to use a <code>SyncResolver</code> object to decide whether or not to write modified data on a 
+case by case basis. Third parties can write <code>SyncProvider</code> implementations offering 
+different degrees of synchronization, and a disconnected rowset may use the one 
+that best fits its needs. The <code>SyncProvider</code> class and the <code>SyncResolver</code> interface are 
+covered in the section "Using the <code>javax.sql.rowset.spi </code>Package".
+<p>
+<a name="1010891"></a>
+The implementation of the <code>CachedRowSet</code> interface can be used as a basis for 
+implementing other disconnected rowsets. For example, the implementations of 
+the <code>WebRowSet</code>, <code>FilteredRowSet</code>, and <code>JoinRowSet</code> interfaces are all based on the 
+implementation of the <code>CachedRowSet</code> interface. Therefore, the following discussion
+of the <code>CachedRowSet</code> interface goes into some detail about the methods it 
+defines and what they do. The sections on the other disconnected rowset implementations
+discuss the capabilities they have beyond those of the <code>CachedRowSet</code> 
+implementation.
+<p>
+
+<a name="1010183"></a>
+<a name="1919183"></a>
+<h3>10.2.5	 &nbsp; &nbsp; </a></a>Creating a CachedRowSet Object</h3>
+<a name="1010185"></a>
+Any <code>RowSet</code> object is a JavaBeans component, so developers will often </a>create them 
+using a visual JavaBeans development tool while they are assembling an application.
+It is also possible for an application to create an instance at run time, using a 
+public constructor provided by a class that implements the <code>RowSet</code> interface. For 
+example, the standard implementation of the <code>CachedRowSet</code> interface defines a public
+default constructor, so an instance of <code>CachedRowSet</code> can be created with the following
+line of code.
+<p><pre><a name="1010186"></a>    CachedRowSet crset = new CachedRowSetImpl();
+</pre><a name="1014326"></a>
+The newly created <code>crset</code> is a container for a set of data, and it will have the 
+default properties of a <code>BaseRowSet</code> object. Because its implementation uses the 
+<code>BaseRowSet</code> class, <code>crset</code> can use <code>BaseRowSet</code> methods to set new values for any of 
+these properties or to set values for other properties as appropriate. For example, 
+in the following code fragment, the first line sets the command string that <code>crset</code> 
+will use to get its data, and the second line turns escape processing off.
+<p>
+<pre><a name="1014318"></a>    crset.setCommand("SELECT * FROM EMPLOYEES");
+<a name="1014346"></a>    crset.setEscapeProcessing(false);
+</pre>
+<a name="1014301"></a>
+<h3>10.2.6	 &nbsp; &nbsp; Setting a SyncProvider Object</h3>
+<a name="1014409"></a>
+Every <code>CachedRowSet</code> object must obtain a <code>SyncProvider</code> object, which implements 
+a reader and a writer, in order to get data from a data source and to write its modifications
+of data back to the data source. The <code>SyncFactory</code> creates an instance of a 
+<code>SyncProvider</code> object that is registered with it when a <code>RowSet</code> object requests it. 
+Because the constructor that created <code>crset</code> was not given any parameters, the <code>SyncFactory
+</code> provided an instance of the default, which is <code>RIOptimisticProvider</code> (one 
+of the two implementations of the <code>SyncProvider</code> class provided with the standard 
+<code>RowSet</code> implementations).
+<p><a name="1015907"></a>
+If the fully qualified class name of a <code>SyncProvider</code> implementation is supplied 
+to the constructor, the <code>SyncFactory</code> will initialize the <code>RowSet</code> object with an 
+instance of that <code>SyncProvider</code> implementation if it has been registered with the 
+<code>SyncFactory</code>. The following line of code creates a <code>CachedRowSet</code> object whose 
+synchronization provider is an instance of the given <code>SyncProvider</code> implementation.
+
+<p>
+<pre><a name="1014428"></a>    CachedRowSet crset = new CachedRowSetImpl("com.supersoftware.providers.HighAvailabilityProvider");
+</pre><a name="1015904"></a>
+After its creation, a <code>RowSet</code> object can be set with another registered <code>SyncProvider
+</code> implementation, including third-party implementations or the other standard
+provider implementation, <code>RIXmlProvider, </code>which reads and writes a<code> RowSet 
+</code>object in XML. The way to set a <code>SyncProvider</code> object is to use the <code>CachedRowSet</code> 
+method <code>setSyncProvider</code>, which resets the current <code>SyncProvider</code> object to the one 
+specified. For example, if the current provider for <code>crset</code> is an <code>RIOptimisticProvider
+</code> object, the following line of code changes the provider to a <code>com.supersoftware.providers.HighAvailabilityProvider
+</code> object.
+<p>
+<pre><a name="1014451"></a>    crset.setSyncProvider("com.supersoftware.providers.HighAvailabilityProvider");
+
+</pre>
+<a name="1010196"></a>
+<h3>10.2.7	 &nbsp; &nbsp; Populating a CachedRowSet Object</h3>
+<a name="1010198"></a>
+</a>Although a <code>CachedRowSet</code> object can contain data that was retrieved from a data 
+source such as a file or spreadsheet, it will probably get its data primarily from a 
+<code>ResultSet</code> object via a JDBC driver. The <code>RowSet</code> interface provides the method <code>execute</code>, which takes no parameters, and the <code>CachedRowSet</code> interface adds a second version
+of the method <code>execute</code> that takes a <code>Connection</code> object as a parameter. Both 
+methods populate a <code>CachedRowSet</code> object with data from the <code>ResultSet</code> object that 
+is created when the <code>CachedRowSet</code> object's command is executed. The <code>CachedRowSet
+</code> interface also adds the method <code>populate</code>, which takes a <code>ResultSet</code> object as 
+a parameter. 
+<p><a name="1010199"></a>
+The version of<code> execute</code> inherited from the <code>RowSet</code> interface has to establish a 
+connection behind the scenes before it can execute the rowset's command string. 
+The version of <code>execute</code> defined in the <code>CachedRowSet</code> interface is passed a <code>Connection
+</code> object, so it does not need to establish its own connection. The method <code>populate
+</code> does not need to establish its own connection or execute a query because it is 
+passed the <code>ResultSet</code> object from which it will get its data. Thus, the method <code>populate
+</code> does not require that the properties affecting a connection be set before it is 
+called, nor does it require that the command string be set. The following code 
+fragment shows how the method <code>populate</code> might be used.
+<p>
+<pre><a name="1010200"></a>    ResultSet rs = stmt.executeQuery("SELECT NAME, SALARY FROM EMPLOYEES");
+
+<a name="1014982"></a>    // The code that generates rs
+<a name="1014983"></a>    . . .
+<a name="1010202"></a>    CachedRowSet crset = new CachedRowSetImpl();
+<a name="1010203"></a>    crset.populate(rs);
+</pre><a name="1010204"></a>
+The new <code>CachedRowSet</code> object <code>crset</code> contains the same data that the <code>ResultSet</code> object
+<code>rs</code> contains.
+<p>
+<a name="1010205"></a>
+The implementation details of the method <code>populate</code> may vary, of course, but 
+because it is passed a <code>ResultSet</code> object, <code>populate</code> is in some ways quite different 
+from the method <code>execute</code>. As stated previously, the <code>populate</code> method does not 
+need to establish a connection. Nor does it use a reader because it can get its data 
+directly from the given result set. By using <code>ResultSetMetaData</code> methods, it can 
+get information about the format of the result set so that it is able to use the appropriate
+getter methods in the <code>ResultSet</code> interface to retrieve the <code>ResultSet</code> object's 
+data.
+<p>
+<a name="1010206"></a>
+The methods <code>execute</code> and <code>populate</code> do have some similarities. The main similarity
+is that both methods change the contents of the entire rowset. As a consequence,
+they both cause the following: notification of listeners, setting the original 
+values equal to the current rowset values, and updating the rowset's metadata 
+information.
+<p>
+<a name="1010207"></a>
+The following code fragments give examples of using the two versions of the 
+method <code>execute</code>. Both versions execute a query, so both require that a command 
+string be set. When no connection has been passed to the method <code>execute</code>, the 
+appropriate connection properties must be set before the command can be called. 
+The <code>execute</code> method will call the rowset's reader, which will use the necessary 
+properties to establish a connection with the data source. Once the connection is 
+established, the reader can call the method <code>executeQuery</code> to execute the rowset's 
+command string and get a result set from which to retrieve data.
+<p>
+<pre><a name="1010208"></a>    CachedRowSet crset1 = new CachedRowSetImpl();
+<a name="1010209"></a>    crset1.setCommand("SELECT NAME, SALARY FROM EMPLOYEES");
+<a name="1010210"></a>    crset1.setDataSourceName("jdbc/myDataSource");
+<a name="1010211"></a>    crset1.setUsername("paz");
+<a name="1010212"></a>    crset1.setPassword("p38c3");
+<a name="1010213"></a>    crset1.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+<a name="1010215"></a>    crset1.execute();
+</pre><a name="1010216"></a>
+In the next example, the <code>Connection</code> object <code>con</code> is passed to the method <code>execute</code>. The <code>CachedRowSet</code> object <code>crset2</code> will use <code>con</code> for executing the command 
+string instead of having to establish a new connection behind the scenes.
+<p>
+<pre><a name="1010217"></a>    CachedRowSet crset2 = new CachedRowSetImpl();
+<a name="1010218"></a>    crset2.setCommand("SELECT NAME, SALARY FROM EMPLOYEES");
+<a name="1010219"></a>    crset2.execute(con);
+</pre><a name="1010220"></a>
+Both <code>crset1</code> and <code>crset2</code> were connected to the data source while the command 
+string was executed and while the resulting data was read and inserted into it. After 
+the method <code>execute</code> returns, both will close their connections to their data sources.</a>
+<p>
+
+<a name="1010222"></a>
+<h3>10.2.8	 &nbsp; &nbsp; Accessing Data</h3>
+<a name="1010223"></a>
+A <code>CachedRowSet</code> object, like all rowsets, uses the getter methods inherited from the 
+<code>ResultSet</code> interface to access its data. Because a <code>CachedRowSet</code> object is implemented
+so that it is scrollable by default, it can also use the <code>ResultSet</code> methods for 
+moving the cursor. For example, the following code fragment moves the cursor to 
+the last row of the <code>CachedRowSet</code> object <code>crset</code> and then retrieves the <code>String</code> value in 
+the first column of that row.
+<p><pre><a name="1010224"></a>    crset.last();
+<a name="1010225"></a>    String note = crset.getString(1);
+</pre><a name="1010227"></a>
+A <code>CachedRowSet</code> object is implemented such that it always has </a>type <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, so in addition to being scrollable, a <code>CachedRowSet</code> 
+object is always insensitive to changes made by others. This makes sense because a 
+<code>CachedRowSet</code> object is mostly disconnected, and while it is disconnected, it has no 
+way of seeing the changes that others might make to the underlying data source 
+from which it got its data.
+<p>
+
+<a name="1010228"></a>
+<h3>10.2.9	 &nbsp; &nbsp; Modifying Data</h3>
+<a name="1010229"></a>
+As shown in the previous section, a <code>CachedRowSet</code> object can have its entire contents 
+changed with its <code>execute</code> and <code>populate</code> methods. It can have one row at a time </a></a>modified
+with the <code>ResultSet</code> updater methods and the methods <code>insertRow</code> and <code>deleteRow
+</code>. Note that the JDBC <code>RowSet</code> Implementations specification does not say 
+where an inserted row should go. In the reference implementations, inserted rows 
+are put immediately after the current row, but there is great flexibility for deciding 
+where rows are inserted.
+<p><a name="1010232"></a>
+An updater method modifies the value in the specified column in the current 
+row, assigning it the value passed to it (usually as the second parameter). An 
+updater method changes only the value in the rowset, which is cached in memory; 
+it does not affect the value in the underlying data source. Also, it does not affect 
+the value that the rowset keeps track of as the original value.
+<p>
+<a name="1010233"></a>
+When an application has made all its updates to a row, it calls the method 
+<code>updateRow</code>. In a <code>CachedRowSet</code> implementation, this method signals that the 
+updates for the current row are complete, but, like the updater methods, it does not 
+affect the values in the underlying data source. The <code>updateRow</code> method likewise 
+does not affect the values stored as original values. After calling the <code>updateRow</code> 
+method on all the rows being updated, an application needs to call the <code>CachedRowSet
+</code> method <code>acceptChanges</code>. This method invokes a writer component internally
+to propagate changes to the data source backing the rowset, and for each 
+column value that was changed, it sets the original value to the current value. 
+<p>
+<a name="1010234"></a>
+Once it has called <code>updateRow</code>, an application may no longer call the method 
+<code>cancelRowUpdates</code> to undo updates to the current row. If it has not yet invoked the 
+method <code>acceptChanges</code>, however, it can call the method <code>restoreOriginal</code>, which 
+undoes the updates to all rows by replacing the updated values in the rowset with 
+the original values. The <code>restoreOriginal</code> method does not need to interact with 
+the underlying data source.
+<p>
+<a name="1010235"></a>
+The following code fragment updates the first two rows in the <code>CachedRowSet 
+</code>object <code>crset</code>.
+<p>
+<pre><a name="1010236"></a>    crset.execute();
+<a name="1010237"></a>    // crset is initialized with its original and current values
+<a name="1010238"></a>    
+<a name="1010239"></a>    crset.first();
+<a name="1010240"></a>    crset.updateString(1, "Jane_Austen");
+<a name="1010241"></a>    crset.updateFloat(2, 150000f);
+<a name="1010242"></a>    crset.updateRow();
+<a name="1010243"></a>    // the current value of the first row has been updated
+<a name="1010244"></a>    
+<a name="1010245"></a>    crset.relative(1);
+<a name="1010246"></a>    crset.updateString(1, "Toni_Morrison");
+<a name="1010247"></a>    crset.updateFloat(2, 120000f);
+<a name="1010248"></a>    crset.updateRow();
+<a name="1010249"></a>    // the current value of the second row has been updated
+<a name="1010250"></a>    
+<a name="1010251"></a>    crset.acceptChanges();
+<a name="1010252"></a>    // the original value has been set to the current value and the 
+<a name="1010253"></a>    // database has been updated
+</pre>
+<a name="1010254"></a>
+<h3>10.2.10	 &nbsp; &nbsp; Customizing Readers and Writers</h3>
+<a name="1010255"></a>
+Disconnected <code>RowSet</code> implementations can take advantage of the ability to </a>customize
+the retrieval and updating of data that the rowset framework provides. This 
+applies to rowsets that are disconnected, such as <code>CachedRowSet</code> objects, because 
+they require the services of a reader and a writer, which are encapsulated by a <code>SyncProvider
+</code> object.
+<p><a name="1010257"></a>
+The <code>CachedRowSet</code> interface defines the method <code>setSyncProvider</code>, which provides
+a <code>CachedRowSet</code> object with its implementation of a reader and writer. It also 
+defines a <code>getSyncProvider</code> method for retrieving a rowset's <code>SyncProvider</code> object. 
+A rowset's reader and writer operate completely behind the scenes, performing any 
+number of tasks that can be customized to provide additional functionality.
+<p>
+<a name="1010258"></a>
+The <code>RowSetReader</code> interface has one public method, <code>readData</code>, which can be 
+customized in various ways. For example, a reader can be implemented so that it 
+reads data straight from a file or from some other non-SQL data source rather than 
+from a database using a JDBC driver. Such a reader might use the method 
+<code>RowSet.insertRow</code> to insert new rows into the rowset. When invoked by a reader, 
+this method could also be implemented so that it updates the original values stored 
+by the rowset. 
+<p>
+<a name="1010260"></a>
+The <code>RowSetWriter</code> interface has one public method, </a><code>writeData</code>, which writes 
+data that has been modified back to the underlying data source. This method can 
+likewise be customized in a variety of ways. The writer establishes a connection 
+with the data source, just as the reader does, and depending on how it is implemented,
+may or may not check for conflicts. The <code>RowSetInternal</code> methods <code>getOriginal
+</code> and <code>getOriginalRow</code> supply the values that existed before the current 
+modifications, so the writer can compare them with the values read from the data 
+source to see if the data source has been modified. How the writer decides whether 
+or not to write data when there is a conflict again depends on how it is implemented.
+
+<p>
+<a name="1010261"></a>
+A <code>CachedRowSet</code> object that has been configured with a custom reader and/or 
+writer can be made available as a normal JavaBeans component. This means that 
+developers writing applications do not have to worry about customizing readers 
+and writers and can concentrate on the more important aspects of using rowsets 
+effectively.
+<p>
+
+<a name="1015563"></a>
+<h3>10.2.11	 &nbsp; &nbsp; Other Methods</h3>
+<a name="1015564"></a>
+The <code>CachedRowSet</code> interface defines a number of other methods. For example, it 
+defines two versions of the method <code>toCollection</code>. Sometimes it is more convenient 
+to work with a rowset's data as elements in a collection, which these methods make 
+possible by converting a rowset's data into a Java collection. Other <code>CachedRowSet</code> 
+methods create a copy of the rowset. <code>CachedRowSet.clone</code> and <code>CachedRowSet.createCopy
+</code> create an exact copy of the rowset that is independent from the original. By 
+contrast, the <code>CachedRowSet.createShared</code> method creates a rowset that shares its 
+state with the original rowset. In other words, both the new and the original rowset 
+share the same physical, in-memory copy of their original and current values. If an 
+updater method is called on one shared rowset, the update affects the other rowset as 
+well. In effect, the <code>createShared</code> method creates multiple cursors over a single set 
+of rows.
+<p>
+<a name="1010262"></a>
+<h3>10.2.12	 &nbsp; &nbsp; Using the javax.sql.rowset.spi Package</h3>
+<a name="1015031"></a>
+The package <code>javax.sql.rowset.spi</code> provides the API that a developer needs to use 
+to implement a synchronization provider. It includes the following classes and interfaces:
+
+<p>
+<ul><a name="1015054"></a>
+<li><code>SyncFactory
+</code><br><br>
+<a name="1015082"></a>
+<li><code>SyncFactoryException
+</code><br><br>
+<a name="1015063"></a>
+<li><code>SyncProvider
+</code><br><br>
+<a name="1015058"></a>
+<li><code>SyncProviderException
+</code><br><br>
+<a name="1015062"></a>
+<li><code>SyncResolver
+</code><br><br>
+<a name="1015083"></a>
+<li><code>XmlReader
+</code><br><br>
+<a name="1015084"></a>
+<li><code>XmlWriter
+</code><br><br>
+<a name="1015085"></a>
+<li><code>TransactionalWriter
+</code><br><br>
+</ul><a name="1015386"></a>
+The following two interfaces are inherited from the package <code>javax.sql</code>:
+<p>
+<ul><a name="1015390"></a>
+<li><code>RowSetReader
+</code><br><br>
+<a name="1015394"></a>
+<li><code>RowSetWriter
+</code><br><br>
+</ul><a name="1015053"></a>
+A <code>CachedRowSet</code> object or other disconnected <code>RowSet</code> object gets its <code>SyncProvider
+</code> object from a <code>SyncFactory</code> object. Being a static class, there is only one 
+instance of <code>SyncFactory</code>, which means that there is only one source from which a 
+disconnected <code>RowSet</code> object can obtain its <code>SyncProvider</code> object. A vendor can register
+its implementation of the <code>SyncProvider</code> abstract class with the <code>SyncFactory</code>, 
+which then makes it available for a <code>RowSet</code> object to plug in. The following line of 
+code shows one way to register a <code>SyncProvider</code> implementation with the <code>SyncFactory</code>.
+<p>
+<pre><a name="1015168"></a>    SyncFactory.registerProvider("com.supersoftware.providers.HAProvider");
+
+</pre><a name="1015239"></a>
+Note that the argument supplied to <code>registerProvider</code> is the fully qualified class 
+name of the <code>SyncProvider</code> implementation.
+<p><a name="1015235"></a>
+A <code>SyncProvider</code> implementation may also be registered by adding it to the 
+system properties. This can be done at the command line at execution time as follows:
+
+<p>
+<pre><a name="1015254"></a>    -Drowset.provider.classname=com.supersoftware.providers.HAProvider
+</pre><a name="1015267"></a>
+Another way to register a <code>SyncProvider</code> implementation is to add the fully 
+qualified class name, the vendor, and the version number to the standard properties
+file. The reference implementation comes with a properties file that already 
+has entries for the two reference implementation synchronization providers, <code>RIOptimisticProvider
+</code> and <code>RIXmlProvider</code>. The fourth way to register a <code>SyncProvider</code> 
+implementation is to register it on a JNDI context and then register the JNDI context
+with the <code>SyncFactory</code> by supplying the fully qualified provider name to the 
+method <code>SyncFactory.registerJNDIContext</code>.
+<p>
+<a name="1015157"></a>
+When a <code>RowSet</code> object requests a particular <code>SyncProvider</code> implementation, the 
+<code>SyncFactory</code> will search for it and create an instance of it and return it to the 
+<code>RowSet</code> object. For example, in the following line of code, the <code>CachedRowSet</code> 
+object <code>crset</code> requests the <code>com.supersoftware.providers.HAProvide</code>r.
+<p>
+<pre><a name="1015334"></a>    crset.setSyncProvider("com.supersoftware.providers.HAProvider");
+</pre><a name="1015335"></a>
+If the requested provider has not been registered in any of the possible ways, 
+the <code>SyncFactory</code> throws a <code>SyncFactoryException</code> object. 
+<p>
+<a name="1015372"></a>
+A <code>CachedRowSet</code> object or any of its subclasses can discover which <code>SyncProvider
+</code> implementations have been registered with the <code>SyncFactory</code> and are thus 
+available for its use by calling the following line of code. 
+<p>
+<pre><a name="1015189"></a>    java.util.Enumeration providers = SyncFactory.getRegisteredProviders();
+</pre><a name="1015200"></a>
+The core components of a <code>SyncProvider</code> object are the reader and writer that 
+it implements. The implementation of the reader determines from what kind of 
+data source (relational database, flat file, spreadsheet, and so on) it can read data 
+and also how it reads that data. The implementation of the writer determines what 
+level of concurrency it uses, whether it checks for conflicts, and how it handles 
+any conflicts it encounters. The reader in the <code>RIOptimisticProvider,</code> an implementation
+of the <code>RowSetReader</code> interface, reads data from a relational database. 
+The writer, an implementation of the RowSetWriter interface, checks for conflicts 
+and does not write data to the data source if there is a conflict. The reader and 
+writer implemented in the <code>RIXmlProvider</code> read and write a rowset as an XML document.
+For this reason, it is primarily used by a <code>WebRowSet</code> object. The writer does 
+not check for conflicts and simply writes all of a <code>RowSet</code> object's modifications to 
+the data source.
+<p>
+<a name="1015489"></a>
+The <code>TransactionalWriter</code> interface allows a <code>CachedRowSet</code> object that is participating
+in a global or local transaction to get fine-grained control of the transactional
+boundaries. To get this functionality, a <code>CachedRowSet</code> object needs to use a 
+<code>SyncProvider</code> object that implements the <code>TransactionalWriter</code> interface. 
+<p>
+<a name="1015201"></a>
+The reference implementation provides a means by which an application can 
+choose to resolve conflicts on a case by case basis. After the writer finds all the 
+conflicts, it throws a <code>SyncProviderException</code> object. An application can catch that 
+exception and use it to create a <code>SyncResolver</code> object, a specialized kind of <code>RowSet</code> 
+object. A <code>SyncResolver</code> object mirrors the <code>RowSet</code> object experiencing the conflicts,
+having the same number of rows and columns; however, it contains only the 
+data that is in conflict. 
+<p>
+<a name="1015517"></a>
+The <code>SyncResolver</code> object retrieves each conflict value in a row, comparing the 
+value in the data source with the value in the <code>RowSet </code>object. After a decision is 
+made as to which value should persist for each conflict in the row, the <code>SyncResolver
+</code> object sets those values with the method <code>setResolvedValue</code>. The <code>SyncResolver
+</code> object then goes to the next conflict and repeats the process until there are 
+no more conflicts.
+<p>
+
+<a name="1015557"></a>
+<h3>10.2.13	 &nbsp; &nbsp; CachedRowSet Summary</h3>
+<a name="1015586"></a>
+In summary, an implementation of the <code>CachedRowSet</code> interface, being disconnected 
+and able to operate without a driver, is designed to work especially well with a thin 
+client for passing data in a distributed application or for making a result set scrollable
+and updatable. Many other <code>RowSet</code> implementations can be designed for other 
+purposes.
+<p>
+<a name="1010267"></a>
+<h3>10.2.14	 &nbsp; &nbsp; WebRowSet Implementation</h3>
+<a name="1010269"></a>
+The <code>WebRowSet</code> interface extends the <code>CachedRowSet</code> interface and therefore has all of 
+the same capabilities. What it adds is the ability to read and write a rowset in XML 
+format. A <code>WebRowSet</code> object uses a <code>WebRowSetXmlReader</code> object to read a rowset in 
+XML format and a <code>WebRowSetXmlWriter</code> object to write a rowset in XML format. 
+The XML version of a <code>WebRowSet</code> object contains its metadata, including its properties,
+in addition to its data. 
+<p><a name="1015995"></a>
+The default constructor for a <code>WebRowSet</code> requests an <code>RIXmlProvider</code> implementation
+so that the <code>WebRowSet</code> object will be able to read and write a rowset as 
+an XML document. It is also possible to set a <code>WebRowSet</code> object with a third-party 
+<code>SyncProvider</code> implementation that provides XML capabilities.
+<p>
+<a name="1010276"></a>
+</a>A <code>WebRowSet</code> object is designed to work well in a distributed client/server 
+application. It is similar to a <code>CachedRowSet</code> implementation in that both connect a 
+thin client to an application server. Thus, they are both good for providing data to 
+a thin client. The difference is that they use different protocols. Because a <code>CachedRowSet
+</code> object is serializable, it can be sent to another component using RMI/IIOP 
+(Remote Method Invocation/Internet Interoperability Protocol). A <code>WebRowSet</code> 
+object uses HTTP/XML (Hypertext Transfer Protocol/eXtensible Markup Language)
+to communicate with the middle tier, so that, for example, Web clients can 
+talk to Java servlets that provide data access.
+<p>
+<a name="1010277"></a>
+XML has become more and more important for Web services because of the 
+portability of data it provides. The JDBC <code>RowSet</code> Implementations specification 
+includes a standard <code>WebRowSet</code> XML Schema, available at <code>http://java.sun.com/xml/ns/jdbc/webrowset.xsd</code>, to which a standard <code>WebRowSet</code> object adheres. This 
+means that if two parties have the XML schema for a <code>WebRowSet</code> object, they can 
+use it to exchange rowsets in a common format even though they may store their 
+data internally in entirely different formats. This makes a <code>WebRowSet</code> object a powerful
+tool for data exchange.
+<p>
+<a name="1010998"></a>
+Because the Java platform provides portability of code and XML provides 
+portability of data, they are the ideal combination for Web services. Technologies 
+like Java<font size="-2"><sup>TM</sup></font> API for XML-based RPC, SOAP with Attachments API for Java<font size="-2"><sup>TM</sup></font>, 
+Java<font size="-2"><sup>TM</sup></font> Architecture for XML Binding, and Java<font size="-2"><sup>TM</sup></font> API for XML Registries make 
+developing Web services easier and easier. Plus the infrastructure that the J2EE 
+platform provides saves developers from having to program their own "plumbing" 
+for the management of distributed transactions, connection pooling, and security. 
+<p>
+<a name="1015983"></a>
+Being able to use a <code>WebRowSet</code> object for sending data adds even more to the 
+value of using the Java platform for Web services. For example, because it uses 
+the standard XML schema, a <code>WebRowSet</code> object can be part of a Web services message
+(generally using SOAP with Attachments API for Java technology).
+<p>
+<a name="1010278"></a>
+The following code fragment is a simple example that creates the <code>WebRowSet</code> 
+object <code>wrs</code>, populates it with the data of the <code>ResultSet</code> object <code>rs</code>, and then updates 
+a column value. The final two lines output <code>wrs</code> in XML format.
+<p>
+<pre><a name="1011035"></a>    WebRowSet wrs = new WebRowSetImpl();
+<a name="1011036"></a>    wrs.populate(rs);
+<a name="1011037"></a>    
+<a name="1011038"></a>    //perform updates
+<a name="1011039"></a>    wrs.absolute(2)
+<a name="1011040"></a>    wrs.updateString(1, "newString");
+<a name="1011041"></a>    
+<a name="1011043"></a>    FileWriter fWriter = new FileWriter("/share/net/output.xml");
+<a name="1011044"></a>    wrs.writeXml(fWriter);
+</pre><a name="1011079"></a>
+The machine that receives the XML output will do something similar to the 
+following to read it. Once <code>wrs</code> has read in the data and metadata in <code>fReader</code>, the 
+code operates on it just as it would on any other <code>WebRowSet</code> object.
+<p>
+<pre><a name="1011084"></a>    WebRowSet wrs = new WebRowsetImpl();
+<a name="1011085"></a>    
+<a name="1011086"></a>    FileReader fReader = new FileReader("/share/net/output.xml");
+<a name="1011087"></a>    wrs.readXml(fReader);
+<a name="1013319"></a>    
+<a name="1011089"></a>    wrs.absolute(2);
+<a name="1011090"></a>    String str = wrs.getString(1);
+</pre>
+<a name="1011105"></a>
+<h3>10.2.15	 &nbsp; &nbsp; FilteredRowSet Implementation</h3>
+<a name="1011109"></a>
+A <code>FilteredRowSet</code> object, an extension of a <code>CachedRowSet</code> object, lets a programmer
+use a filtered subset of data from a rowset. For example, suppose a <code>FilteredRowSet
+</code> object contains a fairly large set of rows. A programmer who wants to 
+perform operations on only a subset of those rows can specify a range of values, and 
+the <code>FilteredRowSet</code> object will return only values in that range. This filtering is 
+done by the method <code>next</code>, which is implemented to skip any rows that do not fall 
+within the specified range. Without this capability, the programmer would have to 
+make a connection to the data source, get a <code>ResultSet</code> object with the selected rows, 
+and populate a rowset with those rows. Because establishing a connection is very 
+expensive, far outweighing the cost of the memory needed to store a <code>FilteredRowSet
+</code> object, the ability to get a selected set of rows without making a new connection
+often results in a significant improvement in performance.
+<p><a name="1011162"></a>
+Suppose you have a <code>FilteredRowSet</code> object <code>frs</code> that contains all of the 
+employees in Company XYZ. You have figured the average salary for the company,
+including everyone in the average. Now you want to get information about 
+only the employees whose names range from Aaronson to Lee. The following 
+code fragment causes <code>frs</code> to make available only the rows where the values in the 
+column <code>NAMES</code> are in the range of Aaronson to Lee.
+<p>
+<a name="1011457"></a>
+In the following code fragment, the <code>FilteredRowSet</code> object <code>frs</code> is populated 
+with data from the <code>ResultSet</code> object <code>rs</code>. Then the code creates a <code>Range</code> object, 
+specifying that the last names Aaronson through Lee, which are in the column 
+<code>NAME</code>, make up the range of names that the method <code>next</code> can return.
+<p>
+<pre><a name="1011205"></a>    FilteredRowSet frs = new FilteredRowSetImpl();
+<a name="1011206"></a>    frs.populate(rs);
+<a name="1011207"></a>    
+<a name="1011208"></a>    Range names = new Range("Aaronson", "Lee", findColumn("NAME"));
+<a name="1011209"></a>    frs.setFilter(names);
+<a name="1011210"></a>    
+<a name="1011211"></a>    while (frs.next()) {
+<a name="1011263"></a>      String name = frs.getString("NAME");
+<a name="1011258"></a>      . . . // add each name to, for example, a mailing list
+<a name="1011243"></a>      // only names from "Aaronson" to "Lee" will be returned
+<a name="1011239"></a>    }
+</pre><a name="1016019"></a>
+If some of the data in the subset stored in a <code>FilteredRowSet</code> object needs to be 
+changed, it can be modified and synchronized with the data source. Only the modifications
+in the subset will be synchronized. If, however, the source of the data is 
+an SQL <code>VIEW</code> that is not updatable, indicated by the constant <code>SyncProvider.NONUPDATABLE_VIEW_SYNC</code>, the modifications to the <code>FilteredRowSet</code> object 
+will not be synchronized.
+<p>
+
+<a name="1011264"></a>
+<h3>10.2.16	 &nbsp; &nbsp; JoinRowSet Implementation</h3>
+<a name="1011265"></a>
+A <code>JoinRowSet</code> object lets a programmer combine data from two different <code>RowSet</code> 
+objects. This can be especially valuable when related data is stored in different data 
+sources. Any <code>RowSet</code> implementation can participate in a join, but it is typically two 
+<code>CachedRowSet</code> objects that are joined. With all of the relevant data combined into 
+one <code>JoinRowSet</code> object, an application can process the data just as it would for any 
+other kind of <code>RowSet</code> object.
+<p><a name="1011266"></a>
+The following code fragment demonstrates how the data from two <code>CachedRowSet
+</code> objects is joined into one <code>JoinRowSet</code> object. In this scenario, data from 
+the table <code>EMPLOYEES</code> is joined with data from the table <code>BONUS_PLAN</code>, thereby giving 
+information about each employee and his or her bonus plan all in one rowset. In 
+both of the original rowsets, the first column is the employee identification number,
+so that is the column used to match the data from one table with data from the 
+other. After the join, each row in the <code>JoinRowSet</code> object will contain the columns 
+from both rowsets that pertain to the same employee ID.
+<p>
+<a name="1011371"></a>
+The first line of code creates the <code>JoinRowSet</code> object <code>jrs</code>. Next, all the columns 
+from the table <code>EMPLOYEES</code> are used to populate the new <code>CachedRowSet</code> object <code>empl</code>, 
+the first column of <code>empl</code> is set as the match column, and <code>empl</code> is added to <code>jrs</code>. 
+Then, in similar fashion, all the columns from the table <code>BONUS_PLAN</code> are used to 
+populate the <code>CachedRowSet</code> object <code>bonus</code>, the first column of <code>bonus</code> is set as the 
+match column, and <code>bonus</code> is added to <code>jrs</code>. In both <code>empl</code> and <code>bonus</code>, the first column 
+is <code>EMPLOYEE_ID</code>, which is the primary key. It is the column both rowsets have in 
+common, and it can be used to match the information from <code>empl</code> about an 
+employee with the information in <code>bonus</code> about the same employee. The last lines 
+of code navigate <code>jrs</code> and retrieve a column value.
+<p>
+<pre><a name="1011269"></a>    JoinRowSet jrs = new JoinRowSetImpl();
+<a name="1011270"></a>    
+<a name="1011271"></a>    ResultSet rs1 = stmt.executeQuery("SELECT * FROM EMPLOYEES");
+<a name="1011272"></a>    CachedRowSet empl = new CachedRowSetImpl();
+<a name="1011273"></a>    empl.populate(rs1);
+<a name="1011274"></a>    empl.setMatchColumn(1); // The first column is EMPLOYEE_ID 
+<a name="1011275"></a>    jrs.addRowSet(empl);
+<a name="1011276"></a>    
+<a name="1011277"></a>    ResultSet rs2 = stmt.executeQuery("SELECT * FROM BONUS_PLAN");
+<a name="1011278"></a>    CachedRowSet bonus = new CachedRowSetImpl();
+<a name="1011279"></a>    bonus.populate(rs2);
+<a name="1011280"></a>    bonus.setMatchColumn(1); // The first column is EMPLOYEE_ID 
+<a name="1011281"></a>    jrs.addRowSet(bonus);
+<a name="1011283"></a>    
+<a name="1011310"></a>      // The jrs instance now joins the two rowsets. The application
+<a name="1011398"></a>      // can browse the combined data as if it were browsing one single
+<a name="1011403"></a>      // RowSet object.
+<a name="1011292"></a>    
+<a name="1011293"></a>    jrs.first();
+<a name="1011294"></a>    int employeeID = jrs.getInt(1);
+<a name="1011295"></a>    String employeeName = jrs.getString(2);
+</pre><a name="998974"></a>
+Similar to the case with <code>FilteredRowSet</code> objects, a <code>JoinRowSet</code> object can 
+have its modified data synchronized providing that the source from which the data 
+came is not a non-updatable SQL <code>VIEW</code>.
+<p>
+<pre><a name="1014650"></a>    
+<a name="1014659"></a>    
+</pre>
+
+<hr>
+<a href="GettingStartedTOC.fm.html">[Top]</a> <a href="mapping.html">[
+Prev]</a> <a href="appendixB.html">[Next]</a>
+<hr><br>
+
+
+<address>
+<a href="mailto:jdbc@eng.sun.com">jdbc@eng.sun.com</a>
+or
+<a href="mailto:jdbc-business@eng.sun.com">jdbc-business@eng.sun.com</a>
+</address>
+
+<i><a href="../../../relnotes/SMICopyright.html">
+Copyright</a> &#169; 1996-2004 Sun Microsystems, Inc.   All rights reserved.</i>
+
+
+
+</body>
+</html>

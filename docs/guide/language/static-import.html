@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<title>Static Import</title>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<!--TD WIDTH=60-->
+<TD>
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+<TD>
+<center>
+<h1>Static Import</h1>
+</center>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="./index.html">Language Contents</a></font>
+<p>
+</TR>
+</TABLE>
+
+<!-- Body text begins here -->
+
+<hr size=3 noshade>
+
+In order to access static members, it is necessary to qualify references
+with the class they came from.  For example, one must say:
+<blockquote>
+<pre>double r = <font color="#cc0000">Math.</font>cos(<font color="#cc0000">Math.</font>PI * theta);
+</pre>
+</blockquote>
+In order to get around this, people sometimes put static members into an
+interface and inherit from that interface.  This is a bad idea.  In fact, it's
+such a bad idea that there's a name for it: the <i>Constant Interface
+Antipattern</i> (see <A HREF="http://java.sun.com/docs/books/effective/"><i>Effective Java</i></A> Item 17).
+The problem is that a class's use of the static members of another class is a
+mere implementation detail.  When a class implements an interface, it becomes
+part of the class's public API.  Implementation details should not leak into
+public APIs.
+<p>
+The static import construct allows unqualified access to static members
+<i>without</i> inheriting from the type containing the static members.  Instead, the program <i>imports</i> the members, either individually:
+
+<blockquote>
+<pre>import static java.lang.Math.PI;
+</pre>
+</blockquote>
+or en masse:
+<blockquote>
+<pre>import static java.lang.Math.*;
+</blockquote>
+</pre>
+Once the static members have been imported, they may be used without
+qualification:
+<blockquote>
+<pre>double r = cos(PI * theta);
+</pre>
+</blockquote>
+The static import declaration is analogous to the normal import declaration.
+Where the normal import declaration imports classes from packages, allowing
+them to be used without package qualification, the static import declaration
+imports static members from classes, allowing them to be used without class
+qualification.
+
+<p>So when should you use static import?  <b>Very sparingly!</b> Only use it
+when you'd otherwise be tempted to declare local copies of constants, or to
+abuse inheritance (the Constant Interface Antipattern).  In other words, use
+it when you require frequent access to static members from one or two classes.
+If you overuse the static import feature, it can make your program unreadable
+and unmaintainable, polluting its namespace with all the static members you
+import.  Readers of your code (including you, a few months after you wrote it)
+will not know which class a static member comes from.  Importing <i>all</i> of
+the static members from a class can be particularly harmful to readability;
+if you need only one or two members, import them individually.  Used
+appropriately, static import can make your program <i>more</i> readable, by
+removing the boilerplate of repetition of class names.
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+
+<TD>
+   <FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+   All Rights Reserved.
+
+   </FONT>
+   <P>
+
+   <FONT SIZE="-1">
+   Please <a href="../../relnotes/contacts.html">send us comments and suggestions</a><BR>
+   </FONT>
+</TD>
+
+<TD ALIGN=RIGHT>
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+   <BR><BR>
+   <FONT SIZE="+1">
+   <i>Java Software</i>
+   </FONT>
+</TD>
+
+</TR>
+</TABLE>
+
+
+<PRE>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+
+</BODY>
+</HTML>

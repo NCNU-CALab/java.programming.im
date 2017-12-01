@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.02 [en] (X11; U; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Serialization Release Notes</TITLE>
+<!-- Changed by: Susan Snyder,  4-Nov-2003 -->
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+&nbsp;
+<TABLE summary="layout" BORDER=0 WIDTH="100%" >
+<TR>
+<TD WIDTH="60"><IMG SRC="/images/javalogo52x88.gif" ALT="Java" BORDER=0 HEIGHT=88 WIDTH=52>&nbsp;</TD>
+
+<TD>
+<CENTER>
+<H1>
+Serialization Changes and Enhancements<br>
+in J2SE <sup><font size=-1>TM</font></sup> 5.0</H1></CENTER>
+</TD>
+
+<TD width=15% ALIGN=center>
+   <font size="-1"><a href="../../index.html">
+  Documentation Contents </a>
+   </font>
+</TD>
+
+</TR>
+</TABLE>
+<!-- Body text begins here -->
+<blockquote>
+The following are enhancements to serialization in Java 2 Platform Standard Edition 5.0.
+For a summary of enhancements
+in previous releases, see <a href="relnotes.html"><b>Enhancements 
+in Previous Releases</b></a>.
+<dl>
+<dt><b>Support for serialization of enumerated type instances
+</b></dt>
+<dd>Support has been added to serialization to handle enumerated types, which are
+new in version 5.0.  The rules for serializing an enum instance differ from
+those for serializing an "ordinary" serializable object: the serialized form of
+an enum instance consists only of its enum constant name, along with
+information identifying its base enum type.  Deserialization behavior differs
+as well--the class information is used to find the appropriate enum class, and
+the <code>Enum.valueOf</code> method is called with that class and the received
+constant name in order to obtain the enum constant to return.
+</dd>
+<p>
+
+
+<p>
+<dt><b>Bug fix: java.io.StreamCorruptedException thrown due to
+java.lang.ClassNotFoundException</b></dt>
+<dd>
+In previous releases starting with version 1.4.0, a
+<code>ClassNotFoundException</code> thrown by the
+<code>ObjectInputStream.readClassDescriptor</code> method would be reflected to
+the top-level caller of <code>ObjectInputStream.readObject</code> as a
+<code>StreamCorruptedException</code> with an empty cause.  It is now reflected
+to the top-level caller as an <code>InvalidClassException</code> with the
+original <code>ClassNotFoundException</code> as the cause.
+</dd>
+<p>
+<dt><b>Bug fix: thread waiting on a java.io.ObjectStreamClass$EntryFuture for
+notification from [sic]</b></dt>
+<dd>In previous releases starting with version 1.4.0, the
+<code>ObjectStreamClass.lookup</code> method could deadlock if called from
+within the static initializer of the class represented by the method's
+<code>Class</code> argument.  Deadlock should no longer occur in this case.</dd>
+<p>
+<dt><b>Bug fix: no spec for serialVersionUID</b></dt>
+<dd>The javadoc for the <code>Serializable</code> interface has been expanded to
+more completely specify the role and usage of <code>serialVersionUID</code>s,
+and to emphasize the need to specify explicit <code>serialVersionUID</code>s
+for serializable classes.
+</dd>
+</dl>
+</blockquote>
+
+<!-- Body text ends here --><!-- ============================================================== -->
+<HR SIZE=3 NOSHADE>
+<TABLE summary="layout" BORDER=0 WIDTH="100%" >
+<TR VALIGN=TOP>
+<TD><FONT SIZE=-2><A HREF="../../relnotes/SMICopyright.html">Copyright &copy;</A>
+2004 <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A> All Rights
+Reserved.</FONT>&nbsp;
+<BR><FONT SIZE=-1>Please send comments to: <A HREF="mailto:rmi-comments@java.sun.com">rmi-comments@java.sun.com</A>&nbsp;</FONT></TD>
+
+<TD ALIGN=RIGHT><IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 HEIGHT=30 WIDTH=64>&nbsp;
+</TR>
+</TABLE>
+</BODY>
+</HTML>

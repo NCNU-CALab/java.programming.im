@@ -1,0 +1,150 @@
+<html>
+<head>
+<title>Server-Class Machine Detection</title>
+</head>
+<body bgcolor="#FFFFFF">
+<center>
+  <h2>Server-Class Machine Detection</h2>
+</center>
+
+<p>Starting with J2SE 5.0, when an application starts up, the launcher can attempt to
+  detect whether the application is running on a &quot;server-class&quot; machine 
+  and, if so, use the Java HotSpot Server Virtual Machine (<i>server VM</i>) instead 
+  of the Java HotSpot Client Virtual Machine (<i>client VM</i>). The aim is to 
+  improve performance even if no one configures the VM to reflect the application 
+  it's running. In general, the server VM starts up more slowly than the client 
+  VM, but over time runs more quickly.</p>
+  
+  <blockquote> 
+  <hr>
+  <b>Note: </b>For J2SE 5.0, the definition of a <i>server-class</i> machine is
+  one with at least 2 CPUs and at least 2GB of physical memory. 
+  <hr>
+</blockquote>
+
+<p>In J2SE 5.0, server-class detection occurs if neither <code>-server</code> nor
+  <code>-client</code> is specified when launching the application on an i586 
+  or Sparc 32-bit machine running Solaris or Linux. As the following table shows, 
+  the i586 Microsoft Windows platform uses the client VM by default. The remaining 
+  Sun-supported platforms use only the server VM.</p>
+<div align="center">
+  <table border="1">
+    <tr> 
+      <td colspan="2"> 
+        <div align="center"><b>Platform</b></div>
+      </td>
+      <td colspan="3"> 
+        <div align="center"><b>Default VM</b></div>
+      </td>
+    </tr>
+    <tr> 
+      <td><b> Architecture</b></td>
+      <td><b> OS</b></td>
+      <td> 
+        <div align="center"><b>client VM</b></div>
+      </td>
+      <td> 
+        <div align="center"> <b> if server-class, server VM;</b><br>
+          <b>otherwise, client VM</b> </div>
+      </td>
+      <td> 
+        <div align="center"><b>server VM</b></div>
+      </td>
+    </tr>
+    <tr> 
+      <td>SPARC 32-bit</td>
+      <td>Solaris</td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+    </tr>
+    <tr> 
+      <td rowspan="3">i586</td>
+      <td>Solaris</td>
+      <td> 
+        <div align="center"> &nbsp;</div>
+      </td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+    </tr>
+    <tr> 
+      <td>Linux</td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+    </tr>
+    <tr> 
+      <td>Microsoft Windows</td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+    </tr>
+    <tr> 
+      <td>SPARC 64-bit</td>
+      <td>Solaris</td>
+      <td> 
+        <div align="center">&#151;</div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+    </tr>
+    <tr> 
+      <td rowspan="2">AMD64</td>
+      <td>Linux</td>
+      <td> 
+        <div align="center">&#151;</div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+    </tr>
+    <tr> 
+      <td>Microsoft Windows</td>
+      <td> 
+        <div align="center">&#151;</div>
+      </td>
+      <td> 
+        <div align="center">&nbsp;</div>
+      </td>
+      <td> 
+        <div align="center"><font face="Arial, Helvetica, sans-serif"><b>X</b></font></div>
+      </td>
+    </tr>
+  </table>
+  <b>Legend: </b>&nbsp;&nbsp;<font face="Arial, Helvetica, sans-serif"><b>X</b></font> 
+  = default VM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#151; = client VM not provided for 
+  this platform</div>
+<p>For details of using command-line options for launching applications, see the 
+  <code>java</code> tool documentation for <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/solaris/java.html">Solaris</a>, 
+  <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/linux/java.html">Linux</a>, 
+  or <a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/windows/java.html">Microsoft 
+  Windows</a>.</p>

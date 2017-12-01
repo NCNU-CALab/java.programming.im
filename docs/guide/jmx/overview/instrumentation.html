@@ -1,0 +1,112 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="GENERATOR" content="Quadralay WebWorks Publisher Professional Edition 7.0.5.1025" />
+    <meta name="TEMPLATEBASE" content="book-no-index" />
+    <meta name="LASTUPDATED" content="Wed Jul 21 15:00:33 2004" />
+    <title>Instrumenting Your Resources for JMX Technology</title>
+	<link rel="StyleSheet" href="document.css" type="text/css" />
+	<link rel="StyleSheet" href="catalog.css" type="text/css" />
+    <link rel="Table of Contents" href="JMXoverviewTOC.html" />
+    <link rel="Previous" href="architecture.html" />
+    <link rel="Next" href="agent.html" />
+    <link rel="Index" href="appendixA.html" />
+  </head>
+
+  <body>
+<a href="#skip" title="Skip navigation bar"></a>
+    <table width="100%" summary="layout">
+      <tr><td align="left">
+        <a accesskey="c" href="JMXoverviewTOC.html">Contents</a> | 
+	<a accesskey="p" href="architecture.html">Previous</a> | 
+        <a accesskey="n" href="agent.html">Next</a>
+       </td>
+	   <td align="right"><i>Java Management Extensions (JMX) Technology Overview</i></td>
+      </tr>
+    </table>
+<hr size="8" width="35%" align="left" noshade>
+<a name="skip"></a>
+<a name="wp996881"> </a><h2 class="pChapNum">
+Chapter &#160; 3
+</h2>
+<a name="wp998567"> </a><h2 class="pChapTitle">
+Instrumenting Your Resources for JMX Technology
+</h2>
+<a name="wp998589"> </a><p class="pBody">
+This chapter outlines the concepts behind instrumenting resources for management using JMX technology, in the following sections:
+</p>
+<ul class="pBullet1"><a name="wp998590"> </a><div class="pBullet1"><li><a  href="instrumentation.html#wp998573"><span style="color: #3366CC">&quot;Manageable Resources&quot;</span></a></li></div>
+<a name="wp1000742"> </a><div class="pBullet1Plus"><li><a  href="instrumentation.html#wp998816"><span style="color: #3366CC">&quot;Managed Beans (MBeans)&quot;</span></a></li></div>
+<a name="wp998896"> </a><div class="pBullet1Last"><li><a  href="instrumentation.html#wp1000773"><span style="color: #3366CC">&quot;JVM Instrumentation&quot;</span></a></li></div>
+</ul>
+<a name="wp998573"> </a><h2 class="pHeading1">
+	Manageable Resources
+</h2>
+<a name="wp998817"> </a><p class="pBody">
+Different types of resource can be managed using JMX technology, for example an application, an implementation of a service, a device or a user. For a given resource to be managed by JMX technology, it must be developed in the Java language, or at least offer a Java language wrapper. It must also be instrumented by one or more Java objects known as managed beans (MBeans), in compliance with the JMX specification.
+</p>
+<a name="wp998834"> </a><p class="pBody">
+Developers of applications and devices are free to choose the granularity of objects that are instrumented as MBeans. An MBean might represent the smallest object in an application, or it could represent the entire application. Application components designed with their management interface in mind can typically be written as MBeans. MBeans can also be used as wrappers for legacy code without a management interface or as proxies for code with a legacy management interface.
+</p>
+<a name="wp998832"> </a><p class="pBody">
+
+</p>
+<a name="wp998816"> </a><h2 class="pHeading1">
+	Managed Beans (MBeans)
+</h2>
+<a name="wp998037"> </a><p class="pBody">
+The Java objects that implement resources and their instrumentation are called managed beans, or MBeans. MBeans must follow the design patterns and interfaces defined in the JMX specification (JSR 3). This ensures that all MBeans provide the instrumentation of managed resources in a standardized way.
+</p>
+<a name="wp998637"> </a><p class="pBody">
+The instrumentation of a given resource is provided by one or more MBeans that are either standard or dynamic. Standard MBeans are Java objects that conform to certain design patterns derived from the JavaBeansTM component model. Dynamic MBeans conform to a specific interface that offers more flexibility at runtime. 
+</p>
+<a name="wp998677"> </a><p class="pBody">
+The instrumentation of a resource allows it to be manageable through the agent level described in <a  href="agent.html#wp996882"><span style="color: #3366CC">Chapter&#160;4, &quot;Using JMX Agents&quot;</span></a>. MBeans do not require knowledge of the JMX agent with which they operate.
+</p>
+<a name="wp998681"> </a><p class="pBody">
+MBeans are designed to be flexible, simple, and easy to implement. Developers of applications, services, or devices can make their products manageable in a standard way without having to understand or invest in complex management systems. Existing objects can easily be evolved to produce standard MBeans or wrapped as dynamic MBeans, thus making existing resources manageable with minimum effort.
+</p>
+<a name="wp998686"> </a><p class="pBody">
+In addition, the instrumentation level also specifies a notification mechanism. This allows MBeans to generate and propagate notification events to components of the other levels.
+</p>
+<a name="wp998875"> </a><p class="pBody">
+The management interface of an MBean consists of:
+</p>
+<ul class="pBullet1"><a name="wp998876"> </a><div class="pBullet1"><li>Named and typed attributes that can be read and/or written</li></div>
+<a name="wp998877"> </a><div class="pBullet1Plus"><li>Named and typed operations that can be invoked</li></div>
+<a name="wp998878"> </a><div class="pBullet1Last"><li>Typed notifications that can be emitted by the MBean</li></div>
+</ul>
+<a name="wp998655"> </a><p class="pBody">
+The Java class of a standard MBean exposes the resource to be managed directly through its attributes and operations. Attributes are internal entities that are exposed through getter and setter methods. Operations are the other methods of the class that are available to managers. All these methods are defined statically in the MBean interface and are visible to a JMX agent through introspection. This is the most straightforward way of making a new resource manageable.
+</p>
+<a name="wp1000771"> </a><p class="pBody">
+A dynamic MBean is an MBean that defines its management interface at runtime. For example, a configuration MBean could determine the names and types of the attributes it exposes by parsing an XML file. 
+</p>
+<a name="wp1000773"> </a><h2 class="pHeading1">
+	JVM Instrumentation
+</h2>
+<a name="wp998860"> </a><p class="pBody">
+The Java Virtual Machine (JVM) is highly instrumented using JMX technology. You can easily start a JMX agent to access the built-in JVM instrumentation, and thereby monitor and manage the JVM remotely by means of JMX technology.
+</p>
+
+    <p>&#160;</p>
+    <hr class="pHr" />
+    <table width="100%" summary="layout">
+      <tr><td align="left">
+        <a accesskey="c" href="JMXoverviewTOC.html">Contents</a> | 
+	<a accesskey="p" href="architecture.html">Previous</a> | 
+        <a accesskey="n" href="agent.html">Next</a>
+       </td>
+        <td align="right">
+          <span class="copyright">Java Management Extensions (JMX) Technology Overview <br /> Java Management Extensions (JMX), Java 2 Platform, Standard Edition 5.0 </span>
+        </td>
+      </tr>
+    </table>
+
+    <p>&#160;</p>
+    <p class="copyright"><a 
+       href="../../../relnotes/SMICopyright.html">Copyright</a> &#169;
+       2004 Sun Microsystems, Inc. All rights reserved.</p>
+  </body>
+</html>

@@ -1,0 +1,349 @@
+<HTML>
+<HEAD>
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.02 [en] (X11; U; SunOS 5.6 sun4u) [Netscape]">
+   <TITLE>Java RMI Release Notes</TITLE>
+<!-- Changed by: Jen McGinn,  12-October-2001 -->
+<!-- Changed by: Ann Wollrath - SMI Software Development, 21-May-2002 -->
+<!-- Changed by: Susan Snyder - SMI Software Development, 23-June-2003 -->
+<!-- Changed by: Susan Snyder - SMI Software Development, 06-Nov-2003 -->
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+&nbsp;
+<TABLE BORDER=0 WIDTH="100%" SUMMARY="layout">
+<TR>
+<TD WIDTH="60"><IMG SRC="../../images/javalogo52x88.gif" ALT="Java" 
+BORDER=0 HEIGHT=88 WIDTH=52>&nbsp;</TD>
+
+<TD>
+<CENTER>
+<H1>
+Java<SUP><FONT SIZE="-2">TM</FONT></SUP> RMI Release Notes<br>
+<font size="-1">for J2SE<sup>TM</sup> 5.0</font></H1></CENTER>
+</TD>
+
+<TD width=15% ALIGN=center VALIGN=top WIDTH=60>
+   <font size="-1"><a href="index.html">
+	RMI&nbsp;Contents
+   </font>
+</TD>
+
+</TR>
+</TABLE>
+<!-- Body text begins here -->
+
+
+<B><FONT SIZE=+2>Enhancements in J2SE<SUP><FONT SIZE="-2">TM</FONT></SUP> 5.0
+</FONT></B>
+<blockquote>
+<dl>
+<dt><b>Dynamic Generation of Stub Classes</b></dt>
+<dd>
+This release adds support for the dynamic generation of
+stub classes at runtime, obviating the need to use the Java(tm)
+Remote Method Invocation (Java RMI) stub
+compiler, <code>rmic</code>, to pregenerate stub classes for remote
+objects.  Note that <code>rmic</code> must still be used to
+pregenerate stub classes for remote objects that need to support
+clients running on earlier versions.
+<p>
+When an application exports a remote object (using the
+constructors or static <code>exportObject</code> methods<a href="#callout"><SUP><FONT SIZE="-2">1</FONT></SUP></a> of the
+classes <code>java.rmi.server.UnicastRemoteObject</code> or
+<code>java.rmi.activation.Activatable</code>) and a pregenerated
+stub class for the remote object's class cannot be loaded, the
+remote object's stub will be a
+<code>java.lang.reflect.Proxy</code> instance (whose class is
+dynamically generated) with a
+<code>java.rmi.server.RemoteObjectInvocationHandler</code> as its
+invocation handler.
+<p>
+An existing application can be deployed to use dynamically
+generated stub classes unconditionally (that is, whether or not
+pregenerated stub classes exist) by setting the system property
+<code>java.rmi.server.ignoreStubClasses</code> to
+<code>"true"</code>.  If this property is set to
+<code>"true"</code>, pregenerated stub classes are never used.
+<p>
+Notes:
+<ul>
+<li>If a remote object has pre-5.0 clients, that remote object
+    should use a stub class pregenerated with <code>rmic</code> or
+    the client will get an <code>ClassNotFoundException</code>
+    deserializing the remote object's stub.
+    Pre-5.0 clients will not be able to load an instance of a
+    dynamically generated stub class, because such a class contains
+    an instance of <code>RemoteObjectInvocationHandler</code>, which
+    was not available prior to this release.
+<p>
+<li>Prior to the J2SE 5.0 release, exporting a remote object would
+    throw a <code>java.rmi.StubNotFoundException</code> if the
+    pregenerated stub class for the remote object's class could not
+    be loaded.  With the added support for dynamically generated stub
+    classes, exporting a remote object that has no pregenerated stub
+    class will silently succeed instead.  A user deploying a server
+    application to support pre-5.0 clients must still make sure to
+    pregenerate stub classes for the server's remote object classes,
+    even though missing stub classes are no longer reported at
+    export time.  Such errors will instead be reported to a pre-5.0 client
+    when it deserializes a dynamically generated stub class. 
+</ul>
+	<p><font size="-1">
+	<a name="callout"><SUP><FONT SIZE="-2">1</FONT></SUP></a> The static method
+	<code>UnicastRemoteObject.exportObject(Remote)</code> is declared to
+	return <code>java.rmi.server.RemoteStub</code> and therefore
+	cannot be used to export a remote object to use a dynamically
+	generated stub class for its stub.  An instance of a dynamically
+	generated stub class is a <code>java.lang.reflect.Proxy</code>
+	instance which is not assignable to <code>RemoteStub</code>.
+	</font>
+
+</dd>
+<p>
+<dt><b>Standard SSL/TLS Socket Factory Classes</b>
+<dd>
+This release adds standard Java RMI socket factory classes, <code><a
+href="../../api/javax/rmi/ssl/SslRMIClientSocketFactory.html">javax.rmi.ssl.SslRMIClientSocketFactory</a></code>
+and <code><a
+href="../../api/javax/rmi/ssl/SslRMIServerSocketFactory.html">javax.rmi.ssl.SslRMIServerSocketFactory</a></code>,
+which communicate over the Secure Sockets Layer (SSL) or Transport
+Layer Security (TLS) protocols using the Java Secure Socket Extension
+(JSSE). These socket factory classes provide a simple way to use JSSE
+with Java RMI, enabling enforcement of integrity, confidentiality
+(through encryption), server authentication, and (optionally) client
+authentication for remote method invocations. For more information on
+how to use custom socket factories with Java RMI, see the tutorial "<a
+href="socketfactory/index.html">Using Custom Socket Factories with Java
+RMI</a>". For more information on JSSE (including how to configure
+it), see the <a href="../security/jsse/JSSERefGuide.html">JSSE
+Reference Guide</a>. 
+<p>
+<dt><b>Launching <code>rmid</code> or a Java RMI Server from
+<code>inetd/xinetd</code></b></dt>
+<dd>
+A new feature, provided by the
+<code>System.inheritedChannel</code> method, allows an
+application to obtain a channel
+(<code>java.nio.channels.SocketChannel</code> or
+<code>java.nio.channels.ServerSocketChannel</code>, for example)
+inherited from a process that launched the virtual machine (VM).
+Such an inherited channel can be used to either service a single
+incoming connection (in the case of a
+<code>SocketChannel</code>) or accept multiple incoming
+connections (in the case of <code>ServerSocketChannel</code>).
+Therefore, Java networking applications launched by
+<code>inetd</code> (Solaris(tm) Operating System) or
+<code>xinetd</code> (Linux) can now obtain the
+<code>SocketChannel</code> or <code>ServerSocketChannel</code>
+inherited from <code>inetd</code>/<code>xinetd</code>.
+<p>
+With the addition of this feature, the Java RMI activation
+daemon <code>rmid</code> has been enhanced to support being
+launched from <code>inetd/xinetd</code> so that <code>rmid</code>
+can be started up only when it receives an incoming connection.
+For details on the enhancements to <code>rmid</code> to support
+this feature, see the tools page for <a
+href="../../tooldocs/solaris/rmid.html"><code>rmid</code> (for
+the Solaris Operating System)</a>.  For details on how to
+configure <code>inetd</code> to launch <code>rmid</code>, see the
+tutorial "<a href="inetd/rmid-inetd.html">Configuring
+<code>inetd</code> to Launch <code>rmid</code></a>".
+<p>
+An application using Java RMI can also be designed to be launched 
+from <code>inetd</code> or <code>xinetd</code>.  For an example
+on how to implement this technique, see the tutorial "<a
+href="inetd/launch-service.html">Designing Services to be Launched from 
+<code>inetd</code>."</a>
+<p>
+<dt><b>Serialization Enhancements</b></dt>
+<dd>See the <A HREF="../serialization/relnotes15.html">Serialization 
+Release Notes</a> for more information on enhancements and improvements to 
+Object Serialization in J2SE 5.0.
+
+</blockquote>
+<a name="changes1.5"></a>
+<B><FONT SIZE=+2>Changes in J2SE 5.0</FONT></B>
+<blockquote>
+<dl>
+<dt><b><code>rmic</code> default stub protocol version option now <code>-v1.2
+</code></b></dt>
+<dd>
+When <code>rmic</code> is run without an option to specify the JRMP
+stub protocol version to be used by the generated classes, it now
+behaves as if the <code>-v1.2</code> option were specified, instead of
+the <code>-vcompat</code> option as in previous releases.
+<p>
+This change means that by default, <code>rmic</code> does not
+generate any skeleton classes and generates stub classes that only
+implement the 1.2 stub protocol version.  If a remote implementation
+class needs to be built to support clients running on JDK 1.1, then
+the <code>-vcompat</code> option must now be specified explicitly.
+(Also, note that as described above, if a remote implementation class
+does not need to support clients running on any release prior to 5.0,
+then <code>rmic</code> does not need to be run at all for that class.)
+<p>
+See the tools documentation for <code>rmic</code> [<a
+href="../../tooldocs/solaris/rmic.html">Solaris and Linux</a>] [<a
+href="../../tooldocs/windows/rmic.html">Windows</a>] for more
+information about these command line options.
+<dt><b><code>rmic</code> no longer compiles arbitrary source files in the 
+class path</b></dt>
+<dd>
+In previous releases, <code>rmic</code> would sometimes, while
+processing its input class files, attempt to compile arbitrary
+<code>.java</code> source files that it encountered in the class path.
+In 5.0, <code>rmic</code> does not attempt to compile any source files
+other than those for the stub, skeleton, or tie classes that it
+generates.
+<p>
+The expectation is that the remote implementation classes passed to
+<code>rmic</code>, as well as all classes and interfaces that they
+depend on, have already been successfully compiled with
+<code>javac</code> before <code>rmic</code> is run.  If an existing
+build procedure depends on the previous behavior of <code>rmic</code>
+for compiling some of its application source files, then that build
+procedure will need to be modified to ensure that all necessary
+classes are correctly compiled with <code>javac</code> before running
+<code>rmic</code>.
+<p>
+</blockquote>
+<B><FONT SIZE=+2>Enhancements and Changes in Previous Releases</FONT></B>
+<blockquote>
+<dl>
+<dt><b>Server-side Stack Traces Now Retained in Remote Exceptions (since 1.4)
+</b></dt>
+<dd>
+The Java RMI runtime implementation will now preserve the
+server-side stack trace information of an exception that is thrown from
+a remote call, in addition to filling in the client-side stack trace as
+it did in previous releases.  Therefore, when such an exception becomes
+accessible to client code, its stack trace will now contain all of its
+original server-side trace data followed by the client-side trace.
+<p>
+This feature is made possible by the new "programmatic access to stack
+trace information" feature of <tt>java.lang.Throwable</tt> in J2SE 1.4, which
+included making a <code>Throwable</code>'s stack trace data part of its
+default serialized form.  What the client-side Java RMI runtime implementation now
+does to cooperate with this feature is to append the client-side trace
+to the unmarshalled server-side trace, rather than simply overwriting
+with the client-side trace as it did in previous releases.
+<p>
+Certain server applications may wish to prevent any server-side
+stack trace data from accompanying an exception to be marshalled as the
+result of a remote call (as part of the exception's default serialized
+form in J2SE 1.4), perhaps for reasons of performance or
+confidentiality.  In such cases, the implementation-specific system
+property
+<blockquote><pre>
+<a href="sunrmiproperties.html#suppressStackTraces">sun.rmi.server.suppressStackTraces</a>
+</pre></blockquote>
+can be set to "true" to cause the server-side Java RMI runtime
+implementation to clear the stack traces of all exceptions thrown from
+the current virtual machine as the result of remote method invocations.
+<p>
+<dt><b>Service Provider Interface for <code>RMIClassLoader</code> (since 1.4)</b></dt>
+<dd>
+Certain static methods of <code>java.rmi.server.RMIClassLoader</code>
+now delegate their behavior to an instance of a new service provider
+interface, <code>java.rmi.server.RMIClassLoaderSpi</code>.  The service
+provider can be configured to augment the Java RMI dynamic class loading
+behavior for a given application.  By default, the service provider
+implements the standard behavior of all of the static methods in
+<code>RMIClassLoader</code>.  See the class documentation of
+<code><a href="../../api/java/rmi/server/RMIClassLoader.html">RMIClassLoader</a>
+</code> and <code><a href="../../api/java/rmi/server/RMIClassLoaderSpi.html">
+RMIClassLoaderSpi</a></code> for more details.
+<p>
+<dt><b>Dynamic Server Host Name (since 1.4)</b></dt>
+<dd>The <code>java.rmi.server.hostname</code> property can now be
+dynamically updated to indicate that future exports should use a new
+host name.  Therefore, the new host name value will be contained in the stub
+for an object that is exported after the property is updated.
+<p>
+<dt><b>HTTP Fallback Is More Configurable (since 1.4.1)</b></dt>
+<dd>The implementation-specific system property
+<a href="sunrmiproperties.html#eagerHttpFallback"><code>
+sun.rmi.transport.proxy.eagerHttpFallback</code></a>
+has been added to allow additional control over when the Java RMI default socket
+factory will fall back to HTTP tunneling.  This property configures the
+default socket factory so that any SocketException thrown by an initial
+(direct) connection attempt will trigger HTTP tunneling; this more "eager"
+fallback strategy can be useful when dealing with firewalls which deny
+instead of ignore connection attempts to unauthorized ports.
+
+<p>
+<dt><b><code><A HREF="../../api/java/rmi/Naming.html">java.rmi.Naming.list</code>
+</a> Method No Longer Prepends a Scheme to Names Returned (since 1.4.1)</b></dt>
+<dd>
+In previous releases, the <code>Naming.list</code> method prepended
+the scheme <code>rmi:</code> to each name contained in the returned
+array of strings.  The <code>Naming.list</code> implementation now
+matches the specification, returning an array of names that are
+URL-formatted, but without the scheme component.
+ 
+<p>
+<dt><b><code><A HREF="../../api/java/rmi/activation/ActivationGroupDesc.html">
+java.rmi.activation.ActivationGroupDesc</code></a> (since 1.3)</b></dt>
+<dd>
+The <code>getClassName</code> method, which returns the group's class
+name, can now return <code>null</code>, indicating the system's default group
+implementation.  Previously, the <code>getClassName</code> method would
+return the name of the internal implementation class if the default
+group implementation was chosen when the descriptor was constructed.
+<p>
+Due to this change, if an application running in a 1.3 virtual machine registers an
+new activatable object with the <code>ActivationSystem</code>,
+<code>rmid</code> must also be upgraded to run 1.3, since a pre-1.3
+<code>rmid</code> will not be able to activate the newly registered
+activatable object.
+<p>
+<dt><b>The Java RMI Stub Compiler, <code>
+rmic</code> (since 1.3)</B></dt>
+<dd>
+By default, <code>rmic</code> [<a
+href="../../tooldocs/solaris/rmic.html">Solaris and Linux</a>] [<a
+href="../../tooldocs/windows/rmic.html">Windows</a>] now assumes that the destination
+directory for generated stubs is the package-named subdirectory of the
+current working directory. If the "<code>-d</code>" option is not
+specified, the result is the same as though it were specified with the
+current working directory "." as an argument. The "<code>-d</code>"
+may still be used to override the default destination directory.
+
+<p>Two new options, "<code>-idl</code>" and "<code>-iiop</code>" have been added to 
+generate IDL and stubs for IIOP, respectively. 
+<p>
+<dt><b>The Java RMI Activation Daemon, <code>
+rmid</code> (since 1.3)</B></dt>
+<dd>By default, <code>rmid</code> [<a
+href="../../tooldocs/solaris/rmid.html">Solaris and Linux</a>] [<a
+href="../../tooldocs/windows/rmid.html">Windows</a>] now requires a security policy file.
+<p>
+<dt><B>Serializing remote objects (since 1.2.2)</B></dt>
+<dd>Prior to 1.2.2, an attempt to pass an unexported remote object in a RMI
+call would result in a <code>java.rmi.StubNotFoundException</code>.
+This exception was a result of the RMI runtime's failure to locate a
+stub object during an attempt to replace a remote object implementation
+with its corresponding stub. In 1.2.2 and later releases, an unexported
+remote object passed in an RMI call will no longer result in an
+exception, but rather the remote object will be serialized instead of
+its stub.  If the remote object implementation is not serializable, an
+attempt to pass an unexported object in an RMI call will result in a
+<code>java.rmi.RemoteException</code> with the nested exception
+<code>java.io.NotSerializableException</code>.</dd>
+</dl>
+</blockquote>
+
+<!-- Body text ends here --><!-- ============================================================== -->
+<HR SIZE=3 NOSHADE>
+<TABLE BORDER=0 WIDTH="100%" SUMMARY="layout">
+<TR VALIGN=TOP>
+	<TD><FONT SIZE=-2><A HREF="../../relnotes/SMICopyright.html">Copyright &copy;</A>
+2004 <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A> All Rights
+Reserved.</FONT>&nbsp;
+<BR><FONT SIZE=-1>Please send comments to: <A HREF="mailto:rmi-comments@java.sun.com">rmi-comments@java.sun.com</A>&nbsp;</FONT></TD>
+
+	<TD ALIGN=RIGHT><IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 HEIGHT=30 WIDTH=64>&nbsp;
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

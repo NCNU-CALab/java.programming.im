@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta name="GENERATOR"
+ content="Mozilla/4.02 [en] (X11; U; SunOS 5.5.1 sun4u) [Netscape]">
+  <title>Java(tm) Platform Debugger Architecture</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+ alink="#ff0000" link="#0000ff" vlink="#000077">
+&nbsp;
+<table summary="layout" border="0" width="100%">
+  <tbody>
+    <tr>
+      <td width="60"><img src="../../images/javalogo52x88.gif"
+ alt="Java" border="0" height="88" width="52">&nbsp;</td>
+      <td>
+      <center>
+      <h1>Java<sup><font size="-2">TM</font></sup> Platform Debugger
+Architecture</h1>
+      </center>
+      </td>
+      <td align="right" valign="top" width="60"> <font size="-1"><a
+ href="../../index.html">Documentation
+Contents</a></font> </td>
+    </tr>
+  </tbody>
+</table>
+<!-- Body text begins here -->
+<blockquote>The Java Platform Debugger Architecture (JPDA) consists of
+three interfaces designed for use by debuggers in development
+environments for desktop systems. The Java Virtual Machine Tools
+Interface (JVMTI) defines the services a VM must provide for debugging
+(JVMTI is a replacement for the Java Virtual Machine Debug Interface
+(JVMDI) which has been deprecated). The Java Debug Wire Protocol (JDWP)
+defines the format of information and requests transferred between the
+process being debugged and the debugger front end, which implements the
+Java Debug Interface (JDI). The Java Debug Interface defines
+information and requests at the user code level.
+</blockquote>
+<b><font size="+2">Enhancements</font></b>
+<ul>
+  <li><a href="enhancements.html">JPDA Enhancements in the JDK 5.0</a> </li>
+</ul>
+<b><font size="+2">Design</font></b>
+<ul>
+  <li><b><a href="jpda.html">JPDA Overview</a></b></li>
+  <ul>
+    <b><li><a href="jpda.html#modularity">Modularity</a> </li>
+    <li><a href="jpda.html#walk-through">Walk-through</a> </li>
+    <li><a href="jpda.html#porting">Porting</a> </li>
+    </b>
+  </ul>
+  <li> <b><a href="architecture.html">Architecture</a></b></li>
+  <ul>
+    <li> <b><a href="architecture.html">Architecture Overview</a></b></li>
+    <li> <b><a href="architecture.html#interfaces">Debugger Interfaces</a></b></li>
+  </ul>
+  <ul>
+    <ul>
+      <li> <b><a href="architecture.html#jvmti">Java Virtual Machine
+Tool
+Interface</a></b></li>
+    </ul>
+    <ul>
+      <li> <b><a href="architecture.html#jdwp">Java Debugger Wire
+Protocol</a></b></li>
+      <li> <b><a href="architecture.html#jdi">Java Debug Interface</a></b></li>
+    </ul>
+  </ul>
+</ul>
+<b><font size="+2">Interface Reference</font></b>
+<ul>
+  <li> <b>Java Virtual Machine Tool Interface (JVMTI)</b></li>
+  <ul>
+    <p style="font-size: 90%;"> NOTE: JVMPI, the experimental Java
+Virtual Machine Profiling Interface has been deprecated and will be
+removed in the next major release. It has been replaced by JVMTI. </p>
+    <li> <b><a href="../jvmti/jvmti.html">Specification</a></b><br>
+      <br>
+    </li>
+  </ul>
+  <li style="margin-bottom: 0em;"> <b>Java Virtual Machine Debug
+Interface (JVMDI)</b></li>
+  <ul>
+    <p style="font-size: 90%;"> NOTE: JVMDI has been deprecated and
+will be removed in the next major release. It has been replaced by
+JVMTI. </p>
+    <li> <b><a href="jvmdi-spec.html">Specification</a></b>
+(Deprecated)<br>
+      <br>
+    </li>
+  </ul>
+  <li> <b>Java Debug Wire Protocol (JDWP)</b></li>
+  <p> </p>
+  <ul>
+    <li> <b><a href="jdwp-spec.html">Specification</a></b><br>
+      <br>
+    </li>
+  </ul>
+  <li> <b>Java Debug Wire Protocol Interface</b></li>
+  <p> </p>
+  <ul>
+    <li> <b><a href="jdwpTransport.html">Specification</a></b><br>
+      <br>
+    </li>
+  </ul>
+  <li> <b>Java Debug Interface (JDI)</b></li>
+  <p> </p>
+  <ul>
+    <li> <b><a href="jdi/index.html">Specification</a></b></li>
+  </ul>
+</ul>
+<p>
+<b><font size="+2">Implementation</font></b>
+</p>
+<ul>
+  <li> <b><a href="conninv.html">Connection and Invocation Details</a></b></li>
+</ul>
+<p>
+</p>
+<p><b><font size="+2">More Information</font></b>
+</p>
+<ul>
+  <li> <b><a href="http://java.sun.com/products/jpda">JPDA Home Page</a></b></li>
+</ul>
+<p>
+<b><font size="+2">Examples</font></b>
+</p>
+<ul>
+  <li> <b><a href="examples.html">Example JDI Applications</a></b></li>
+</ul>
+<blockquote>The <tt>demo/jpda/examples.jar</tt> file in the JDK
+software contains JPDA examples, including source code for the <tt>jdb</tt>
+Java Debugger and the prototype <tt>javadt</tt> GUI debugger. </blockquote>
+<!-- Body text ends here -->
+<!-- ============================================================== -->
+<hr noshade="noshade" size="3">
+<table summary="layout" border="0" width="100%">
+  <tbody>
+    <tr valign="top">
+      <td><font size="-2">Copyright &copy; 2004 <a
+ href="http://www.sun.com/">Sun
+Microsystems, Inc.</a> All Rights Reserved.</font>&nbsp;
+      <p><font size="-1">Please send comments to: <a
+ href="http://java.sun.com/j2se/mail/debuggingfeedback.html">Debugging
+Feedback</a>&nbsp;</font></p>
+      </td>
+      <td align="right"><img src="../../images/sunlogo64x30.gif"
+ alt="Sun" border="0" height="30" width="64"></td>
+    </tr>
+  </tbody>
+</table>
+&nbsp;
+</body>
+</html>

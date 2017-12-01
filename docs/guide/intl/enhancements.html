@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+   <TITLE>Internationalization Enhancements</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" VLINK="#000077">
+
+<P><TABLE BORDER=0 WIDTH="100%" summary="layout">
+   <TR>
+      <TD WIDTH=60>
+         <P><IMG SRC="../../images/javalogo52x88.gif" ALT="Java"
+         WIDTH=52 HEIGHT=88 BORDER=0 ALIGN=bottom>
+      </TD><TD>
+         <H1><CENTER>Internationalization Enhancements</CENTER></H1>
+      </TD><TD WIDTH=60>
+         <P>
+      </TD></TR>
+</TABLE><!-- Body text begins here --></P>
+
+<P>This page provides an overview of internationalization
+enhancements in JDK 5.0:</P>
+
+<UL>
+   <LI><A HREF="#core">Core Java Internationalization</A>
+   
+   <LI><A HREF="#desktop">Desktop Java Internationalization</A>
+</UL>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="core"></A>Core Java Internationalization</H2>
+
+<H4>Unicode 4.0 and Supplementary Character Support</H4>
+
+<P>Character handling is now based on version 4.0 of the Unicode
+standard. This affects the <CODE>Character</CODE> and
+<CODE>String</CODE> classes in the <CODE>java.lang package</CODE>,
+the collation and bidirectional text analysis functionality in the
+<CODE>java.text package</CODE>, character classes in the
+<CODE>java.util.regex</CODE> package, and many other parts of the
+JDK. As part of this upgrade, support for supplementary characters
+has been specified by the JSR 204 expert group and implemented
+throughout the JDK. For more information, see the article
+<A HREF="http://java.sun.com/developer/technicalArticles/Intl/Supplementary/">Supplementary
+Characters in the Java Platform</A>, the
+<A HREF="http://jcp.org/en/jsr/detail?id=204">Java Specification
+Request 204</A> and the
+<CODE><A HREF="../../api/java/lang/Character.html">Character</A></CODE>
+class documentation.</P>
+
+<H4>Big Number Support in DecimalFormat</H4>
+
+<P>The
+<CODE><A HREF="../../api/java/text/DecimalFormat.html">DecimalFormat</A></CODE>
+class has been enhanced to format and parse <CODE>BigDecimal</CODE>
+and <CODE>BigInteger</CODE> values without loss of precision.
+Formatting of such values is enhanced automatically; parsing into
+BigDecimal needs to be enabled using the
+<CODE><A HREF="../../api/java/text/DecimalFormat.html#setParseBigDecimal(boolean)">setParseBigDecimal</A></CODE>
+method.</P>
+
+<H4>Vietnamese Support in java.text and java.util Functionality</H4>
+
+<P>Vietnamese is now supported in all locale sensitive functionality
+in the <CODE>java.util</CODE> and <CODE>java.text packages</CODE>.
+See the <A HREF="locale.doc.html">Supported Locales</A> document for
+complete information on supported locales and writing systems.</P>
+
+<P>
+<HR>
+</P>
+
+<H2><A NAME="desktop"></A>Desktop Java Internationalization</H2>
+
+<H4>Multilingual Text Rendering</H4>
+
+<P>To render multilingual text, using logical fonts, 2D now takes
+advantage of installed host OS fonts for all supported writing
+systems. For example, if you run in a Thai locale environment, but
+have Korean fonts installed, both Thai and Korean are rendered. The
+JRE now also automatically detects physical fonts that are installed
+into its lib/fonts/fallback directory and adds these physical fonts
+to all logical fonts for 2D rendering.</P>
+
+<H4>Use of Unicode APIs on Windows</H4>
+
+<P>AWT now uses the Unicode APIs on Windows 2000/XP. As a result,
+some of its components can handle text without being restricted by
+Windows locale settings. For example, AWT text components can accept
+and display text in the Devanagari writing system regardless of the
+Windows locale settings.</P>
+
+<P><!-- Body text ends here --><!-- ============================================================== -->
+<HR SIZE="3" NOSHADE>
+<TABLE BORDER=0 WIDTH="100%" summary="layout">
+   <TR>
+      <TD VALIGN=top>
+         <P><FONT
+         SIZE="-2"><A HREF="../../relnotes/SMICopyright.html">Copyright
+         &copy;</A></FONT><FONT SIZE="-2"> 2004 </FONT><FONT
+         SIZE="-2"><A HREF="http://www.sun.com/">Sun Microsystems,
+         Inc.</A></FONT><FONT SIZE="-2"> All Rights Reserved.</FONT>
+         </P>
+         
+         <P><FONT
+         SIZE="-1"><A HREF="http://developers.sun.com/contact/feedback.jsp?referer=http://java.sun.com/j2se/1.5.0/docs/guide/intl/enhancements.html&category=api&mailsubject=Internationalization">Contact
+         us</A></FONT>
+      </TD><TD VALIGN=top align=RIGHT>
+         <P ALIGN=RIGHT><IMG SRC="../../images/sunlogo64x30.gif"
+         ALT="Sun" WIDTH=64 HEIGHT=30 BORDER=0 ALIGN=bottom><BR>
+         
+         <I><FONT SIZE="+1">Java Software</FONT></I><FONT SIZE="+1">
+         </FONT>
+      </TD></TR>
+</TABLE></P>
+</BODY>
+</HTML>

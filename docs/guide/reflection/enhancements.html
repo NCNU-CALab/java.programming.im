@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
+  <title>Reflection changes</title>
+</head>
+
+<body>
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<TD WIDTH="60">
+</TD>
+
+<TD>
+  <center>
+     <h2>Enhancements to java.lang.Class and java.lang.Reflect</h2>
+  </center>
+</TD>
+
+
+<TD ALIGN=RIGHT VALIGN=TOP WIDTH="100">
+   <font size="-1"><a href="index.html">Reflection</a></font>
+</TD>
+</TR>
+</TABLE>
+
+
+
+<font size="+1"><b>Enhancements in 5.0</b></font>
+<p></p>
+The changes in java.lang.Class and java.lang.reflect include:<br>
+<br>
+<ul>
+  <li><b>Support for generics</b> - In particular, the changes support
+structural program reflection on generic type
+information. In other words, they make it possible to examine a type,
+method, constructor or field declaration and obtain generic type
+information. Specifically, one can determine whether a type, method or
+constructor declares any type variables, and reflect&nbsp; those type
+variables to the application program (so that one may learn their names
+and bounds, for example). One can also obtain the non-erased form of
+the type of a field,&nbsp; a method or constructor parameter, a method
+return type or the throws clause of a method or constructor. The
+generified form of a type name is available via toGenericString().
+However, note that we do not provide any support for determining which
+generic invocation an instance belongs to.<br>
+  </li>
+  <li><b>Support for annotations</b> - This includes the ability to obtain
+annotations on types, methods, fields, constructors and formal
+parameters of methods and constructors that have been marked as
+available at run-time, using the getAnnotation() method. One can also
+determine whether an interface is
+an annotation type.<br>
+  </li>
+  <li><b>Support for enums</b> - One can determine whether a class is an enum,
+and whether a field represents an enum constant.</li>
+  <li><b>Support for var args</b> - One can determine whether a method or
+constructor is a of variable arity.</li>
+  <li><b>Convenience methods</b> - for establishing whether a class is local,
+anonymous or a member class, and what a type's simple and cannoical
+names are. One can also determine whether a member is synthetic (an
+artifiact by the implementation).<br>
+  </li>
+  <li><b>The generification of class java.lang.Class</b> - This allows the use
+of instances of java.lang.Class as type tokens.&nbsp; See
+section 8 of the generics <a
+ href="http://java.sun.com/j2se/1.5/pdf/generics-tutorial.pdf">tutorial</a>
+for examples. </li>
+</ul>
+
+<br>
+
+<font size="+1"><b>Enhancements in 1.4.0</b></font>
+<ul>
+<li><b>Performance enhancements</b> - Beginning with J2SDK 1.4.0, certain reflective operations, specifically 
+<a href="../../api/java/lang/reflect/Field.html">java.lang.reflect.Field</a>,
+<a href="../../api/java/lang/reflect/Method.html#invoke(java.lang.Object, java.lang.Object...">java.lang.reflect.Method.invoke()</a>,
+<a href="../../api/java/lang/reflect/Constructor.html#newInstance(java.lang.Object...">java.lang.reflect.Constructor.newInstance()</a>, and <a href="../../api/java/lang/Class.html#newInstance()">Class.newInstance()</a>,
+have been rewritten for higher performance.  Reflective
+invocations and instantiations are several times faster than in
+previous releases. 
+</ul>
+
+</body>
+</html>

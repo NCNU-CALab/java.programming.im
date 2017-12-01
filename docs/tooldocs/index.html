@@ -1,0 +1,762 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<title>JDK Development Tools</title>
+
+<STYLE type="text/css">
+<!--
+.SansSerif        { font-family: Arial, Helvetica, sans-serif; }
+.ContentList      { font-size: 90%; style: margin-left: 3.4em; }
+.Note             { margin-left: 4em; margin-right: 4em; font-size: 90%; }
+h2                { font-family: Arial, Helvetica, sans-serif; }
+h3                { margin-left: 1.4em; margin-bottom: .1em; font-family: Arial, Helvetica, sans-serif; }
+li                { margin-left: 1.7em; }
+-->
+</STYLE>
+
+</HEAD>
+
+<BODY bgcolor="white">
+<table BORDER="0" WIDTH="100%" summary="layout">
+<tr>
+<td>
+<IMG SRC="../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</td>
+
+<td>
+<center>
+<h1>JDK Tools and Utilities</h1>
+</center>
+</td>
+
+<td ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="../index.html">Documentation Contents</a></font>
+</td>
+</tr>
+</table>
+
+<br>
+
+<!-- ======================== Body text begins here ===================== -->
+
+
+<div style="background-color: #EEEEEE; margin-left: 1.7em; margin-right: 1.7em;">
+<br>
+
+<h3>General</h3>
+
+<UL class="ContentList">
+<LI><a href="#general"><b class="SansSerif">General Information</b></a> (file structure, 
+classpath, how classes are found, changes)
+</UL>
+
+
+<h3>Standard JDK Tools and Utilities</h3>
+
+<UL class="ContentList">
+<li><a href="#basic"><b class="SansSerif">Basic Tools</b></a> (javac, java, javadoc, apt, 
+appletviewer, jar, jdb, javah, javap, extcheck) 
+<li><a href="#security"><b class="SansSerif">Security Tools</B></a> (keytool, jarsigner, policytool, kinit, klist, ktab) 
+<li><a href="#intl"><b class="SansSerif">Internationalization Tools</B></a> (native2ascii) 
+<li><a href="#rmi"><b class="SansSerif">Remote Method Invocation (RMI) Tools</b></a> 
+(rmic, rmiregistry, rmid, serialver) 
+<li><a href="#idl"><b class="SansSerif">Java IDL and RMI-IIOP Tools</b></a> (tnameserv, idlj, 
+orbd, servertool)
+<li><a href="#deployment"><b class="SansSerif">Java Deployment Tools</b></a> 
+(pack200, unpack200)
+<li><a href="#plugin"><b class="SansSerif">Java Plug-in Tools</b></a> (htmlconverter)    
+<li><a href="#javaws"><b class="SansSerif">Java Web Start Tools</b></a> (javaws)
+</ul>
+
+
+<h3>Experimental JDK Tools and Utilities</h3>
+<p class="Note">
+<b class="SansSerif">NOTE</b> - The tools described in this section are unsupported and <b>experimental</b> 
+in nature and should be used with that in mind.
+They might not be available in future JDK versions.
+</p>
+<UL class="ContentList">
+<li><a href="#manage"><b class="SansSerif">Monitoring and Management Tools</b></a> 
+(jconsole, jps, jstat, jstatd)
+<li><a href="#debug"><b class="SansSerif">Troubleshooting Tools</b></a> 
+(jinfo, jmap, jsadebugd, jstack)
+</ul>
+
+<br>
+
+</div>
+
+<p style="font-size: 90%; margin-left: 2em; margin-right: 2em;">
+<b>NOTE</b> - Some tools have separate reference pages for Windows, Linux and Solaris 
+to accommodate minor differences in configuration and usage -- for example, the character 
+used to specify directory separators may be different.
+</p>
+
+<br>
+
+<!-- =================================================== -->
+<hr>
+<h2>
+<a name=general>
+General Information
+</a>
+</h2>
+<p>
+The following documents contain important information you will need to
+know to get the most out of the SDK tools.
+</P>
+
+
+<table BORDER="0" summary="SDK Overview Information">
+<tr>
+<td>
+<B>JDK File Structure</B>
+</ul>
+</td>
+<td NOWRAP>
+[<A href="solaris/jdkfiles.html">Solaris</A>]
+[<A href="linux/jdkfiles.html">Linux</A>]
+[<A href="windows/jdkfiles.html">Windows</A>]
+</td>
+</tr>
+
+<tr>
+<td>
+<B>Setting the Classpath</B>
+</ul>
+</td>
+<td NOWRAP>
+[<A href="solaris/classpath.html">Solaris and Linux</A>] 
+[<A href="windows/classpath.html">Windows</A>]
+</td>
+</tr>
+
+<tr>
+<td>
+<B>How Classes are Found</B>
+</ul>
+</td>
+<td NOWRAP>
+[<A href="findingclasses.html">Solaris, Linux and Windows</A>] 
+</td>
+</tr>
+
+<tr>
+<td>
+<B>Tool Changes in Java 2 SDK, v1.4</B>
+</ul>
+</td>
+<td NOWRAP>
+[<A href="tools-changes.html">Solaris, Linux and Windows</a>]
+</td>
+</tr>
+</table>
+
+</ul>
+<p>
+
+<hr>
+<h2>
+<a name=basic>
+Basic Tools
+</a>
+</h2>
+
+These tools are the foundation of the JDK. They are the tools you use 
+to create and build applications.
+<p>
+
+<table BORDER="0" WIDTH="100%" summary="List of Basic JDK Tools with 
+Links to Reference Pages">
+<tr>
+<th align=left> 
+Tool Name
+</th>
+<th align=left>
+Brief Description
+</th>
+<th align=left NOWRAP>
+Links to Reference Pages
+</th>
+</tr>
+
+<tr>
+<td width="13%" VALIGN="TOP"><B>javac</B></td>
+<td width="70%" VALIGN="TOP">The compiler for the Java programming language.</td>
+<td width="17%" VALIGN="TOP" NOWRAP>[<A href="solaris/javac.html">Solaris and Linux</A>] [<A href="windows/javac.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>java</B></td>
+<td VALIGN="TOP">The launcher for Java applications. In this 
+release, a single launcher is used both for development and deployment.<BR>
+The old deployment launcher, <B>jre</B>, is no longer 
+provided.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/java.html">Solaris and Linux</A>] [<A href="windows/java.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>javadoc</B></td>
+<td VALIGN="TOP">API documentation generator.<BR>
+See <a href="../guide/javadoc/index.html">Javadoc Tool</a> page for doclet and taglet APIs.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/javadoc.html">Solaris and 
+Linux</A>] [<A href="windows/javadoc.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>apt</B></td>
+<td VALIGN="TOP">Annotation processing tool.<BR>
+See <a href="../guide/apt/index.html">Annotation Processing Tool</a>
+for program annotation processing.
+</td>
+<td VALIGN="TOP" NOWRAP>[<A href="./share/apt.html">Solaris, 
+Linux, and Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>appletviewer</B></td>
+<td VALIGN="TOP">Run and debug applets without a web 
+browser.</td>
+<td VALIGN="TOP" NOWRAP>[<A 
+href="solaris/appletviewer.html">Solaris and Linux</A>] [<A 
+href="windows/appletviewer.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>jar</B></td>
+<td VALIGN="TOP">Create and manage Java Archive (JAR) files.<BR>
+See <a href="../guide/jar/index.html">Java Archive Files</a> page for 
+the JAR specification.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/jar.html">Solaris and 
+Linux</A>] [<A href="windows/jar.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>jdb</B></td>
+<td VALIGN="TOP">The Java Debugger.<BR>
+See <a href="../guide/jpda/index.html">JPDA</a> for the debugger architecture specifications.
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/jdb.html">Solaris and 
+Linux</A>] [<A href="windows/jdb.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>javah</B></td>
+<td VALIGN="TOP">C header and stub generator. Used to write 
+native methods.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/javah.html">Solaris and 
+Linux</A>] [<A href="windows/javah.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>javap</B></td>
+<td VALIGN="TOP">Class file disassembler</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/javap.html">Solaris and 
+Linux</A>] [<A href="windows/javap.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>extcheck</B></td>
+<td VALIGN="TOP">Utility to detect Jar conflicts.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/extcheck.html">Solaris 
+and Linux</A>] [<A href="windows/extcheck.html">Windows</A>]</td>
+</tr>
+</table>
+
+<hr>
+<h2>
+<a name=security>
+Security Tools
+</a>
+</h2>
+
+These security tools help you set security policies on your system and create
+apps that can work within the scope of security policies set at remote sites. 
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Security Tools with
+Links to Reference Pages">
+<tr>
+<th align=left>
+Tool Name
+</th>
+<th align=left>
+Brief Description
+</th>
+<th align=left NOWRAP>
+Links to Reference Pages
+</th>
+</tr>
+
+<tr>
+<td width="13%" VALIGN="TOP"><B>keytool</B></td>
+<td width="70%" VALIGN="TOP">Manage keystores and certificates.</td>
+<td width="17%" VALIGN="TOP" NOWRAP>[<A href="solaris/keytool.html">Solaris and 
+Linux</A>] [<A href="windows/keytool.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>jarsigner</B></td>
+<td VALIGN="TOP">Generate and verify JAR signatures.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/jarsigner.html">Solaris 
+and Linux</A>] [<A href="windows/jarsigner.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>policytool</B></td>
+<td VALIGN="TOP">GUI tool for managing policy files.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/policytool.html">Solaris 
+and Linux</A>] [<A href="windows/policytool.html">Windows</A>]</td>
+</tr>
+</table>
+<p>
+
+These security tools help you obtain, list, and manage Kerberos tickets.
+
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Kerberos Related 
+Security Tools with Links to Reference Pages">
+<tr>
+<th align=left>
+Tool Name
+</th>
+<th align=left>
+Brief Description
+</th>
+<th align=left NOWRAP>
+Links to Reference Pages
+</th>
+</tr>
+
+<tr>
+<td width="13%" VALIGN="TOP">
+<B>kinit</B></td> 
+<td width="70%" VALIGN="TOP">
+Tool for obtaining Kerberos v5 tickets. 
+Equivalent functionality is available on the Solaris 
+operating environment via the kinit tool. For example, for Solaris 8, 
+see the <a href="http://docs.sun.com/?q=kinit&p=/doc/806-0624/6j9vek58d&a=view">kinit reference page</a>.
+</td> 
+<td width="17%" VALIGN="TOP" NOWRAP>
+[<A href="linux/kinit.html">Linux</A>] [<A href="windows/kinit.html">Windows</A>]</td> 
+</tr>
+
+<tr>
+<td VALIGN="TOP">
+<B>klist</B></td> 
+<td VALIGN="TOP">
+Command-line tool to list entries in credential cache and key tab. 
+Equivalent functionality is available on the Solaris operating environment 
+via the klist tool. For example, for Solaris 8, see the 
+<a href="http://docs.sun.com/?q=kinit&p=/doc/806-0624/6j9vek58e&a=view">klist reference page</a>.
+</td> 
+<td VALIGN="TOP" NOWRAP>
+[<A href="linux/klist.html">Linux</A>] [<A href="windows/klist.html">Windows</A>]</td> 
+</tr>
+
+<tr>
+<td VALIGN="TOP">
+<B>ktab</B></td> 
+<td VALIGN="TOP">
+Command-line tool to help the user manage entires in the key
+table. Equivalent functionality is available on the Solaris operating 
+environment via the kadmin tool. For example, for Solaris 8, see the 
+<a href="http://docs.sun.com/?q=kadmin&p=/doc/816-0211/6m6nc66th&a=view">kadmin reference page</a>.</td> 
+<td VALIGN="TOP" NOWRAP>
+[<A href="linux/ktab.html">Linux</A>] [<A href="windows/ktab.html">Windows</A>]</td> 
+</tr>
+</table>
+
+<hr>
+<h2>
+<a name=intl>
+Internationalization Tools
+</a>
+</h2>
+
+This tool helps to create localizable apps.
+
+<p>
+<table BORDER="0" WIDTH="100%" summary="Internationalization Tool with
+Links to Reference Pages">
+<tr>
+<th align=left>
+Tool Name
+</th>
+<th align=left>
+Brief Description
+</th>
+<th align=left NOWRAP>
+Links to Reference Pages
+</th>
+</tr>
+
+<tr>
+<td width="13%" VALIGN="TOP"><B>native2ascii</B></td>
+<td width="70%" VALIGN="TOP">Convert text to Unicode Latin-1.</td>
+<td width="17%" VALIGN="TOP" NOWRAP>[<A 
+href="solaris/native2ascii.html">Solaris and Linux</A>] [<A 
+href="windows/native2ascii.html">Windows</A>]</td>
+</tr>
+</table>
+
+
+<hr>
+<h2>
+<a name=rmi>
+Remote Method Invocation (RMI) Tools
+</a>
+</h2>
+
+These tools help to create apps that interact over the Web or other network.
+
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Remote Method Invocation (RMI) 
+JDK Tools with Links to Reference Pages">
+<tr>
+<th align=left>
+Tool Name 
+</th>
+<th align=left>
+Brief Description
+</th>
+<th align=left NOWRAP>
+Links to Reference Pages
+</th>
+</tr>
+
+<tr>
+<td width="13%"VALIGN="TOP"><B>rmic</B></td>
+<td width="70%"VALIGN="TOP">Generate stubs and skeletons for remote 
+objects.</td>
+<td width="17%"VALIGN="TOP" NOWRAP>[<A href="solaris/rmic.html">Solaris and 
+Linux</A>] [<A href="windows/rmic.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>rmiregistry</B></td>
+<td VALIGN="TOP">Remote object registry service.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/rmiregistry.html">Solaris 
+and Linux</A>] [<A href="windows/rmiregistry.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>rmid</B></td>
+<td VALIGN="TOP">RMI activation system daemon.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/rmid.html">Solaris and 
+Linux</A>] [<A href="windows/rmid.html">Windows</A>]</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><B>serialver</B></td>
+<td VALIGN="TOP">Return class serialVersionUID.</td>
+<td VALIGN="TOP" NOWRAP>[<A href="solaris/serialver.html">Solaris 
+and Linux</A>] [<A href="windows/serialver.html">Windows</A>]</td>
+</tr>
+</table>
+
+
+<hr>
+<h2>
+<a name=idl>
+Java IDL and RMI-IIOP Tools
+</a>
+</h2>
+
+These tools are used when creating applications that use OMG-standard IDL and 
+CORBA/IIOP.
+
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Java IDL and RMI-IIOP Tools">
+<tr>
+<th align=left>
+Tool Name
+</th>
+<th align=left>
+Brief Description 
+</th>
+</tr>
+
+<tr>
+<td width="13%" VALIGN="TOP"><A 
+href="../guide/idl/jidlNaming.html"><B>tnameserv</B></A></td>
+<td width="87%" VALIGN="TOP">Provides access to the naming service.</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><a 
+href="../guide/rmi-iiop/toJavaPortableUG.html"><B>idlj</B></a></td>
+<td VALIGN="TOP">Generates .java files that map an OMG IDL 
+interface and enable an application written in the Java programming language
+to use CORBA functionality.</td>
+</tr>
+<tr>
+<td VALIGN="TOP"><A 
+href="../guide/idl/orbd.html"><B>orbd</B></A></td>
+<td VALIGN="TOP">Provides support for clients to 
+transparently locate and invoke persistent objects on servers in the CORBA environment. 
+ORBD is used instead of the Transient Naming Service, <tt>tnameserv</tt>.  ORBD includes 
+both a Transient Naming Service and a Persistent Naming Service. 
+The <b>orbd</b> tool incorporates the functionality of a Server Manager, 
+an Interoperable Naming Service, and a Bootstrap Name Server.  
+When used in conjunction with the <tt>servertool</tt>, 
+the Server Manager locates, registers, and activates a 
+server when a client wants to access the server.   </td>
+</tr>
+<tr>
+<td VALIGN="TOP"><A 
+href="../guide/idl/servertool.html"><B>servertool</B></A></td>
+<td VALIGN="TOP">Provides ease-of-use interface for the 
+application programmers to register, unregister, startup, and shutdown a server.</td>
+</tr>
+</table>
+ 
+<hr>
+<a name=deployment id="deployment"> </a>
+<h2>Java Deployment Tools</h2>
+Utilities for use in conjunction with deployment of java applications and applets 
+on the web. 
+<p> 
+<table BORDER="0" WIDTH="100%" summary="List of deployment tools">
+<tr> 
+<th width="13%" align=left> Tool Name </th>
+<th align=left> Brief Description </th>
+</tr>
+<tr> 
+<td VALIGN="TOP"<A href="share/pack200.html"><b>pack200</b></A></td>
+<td VALIGN="TOP">Transforms a JAR file into a compressed <code>pack200</code> file 
+using the Java <code>gzip</code> compressor. The compressed packed files are highly 
+compressed JARs, which can be directly deployed, saving bandwidth and reducing 
+download time.</td>
+</tr>
+<tr> 
+<td VALIGN="TOP"<A href="share/unpack200.html"><b>unpack200</b></A></td>
+<td VALIGN="TOP">Transforms a packed file produced by <code>pack200</code> into a 
+JAR file. </td>
+</tr>
+</table>
+
+<hr>
+<h2>
+<a name=plugin>
+Java Plug-in Tools
+</a>
+</h2>
+
+Utilities for use in conjunction with the Java Plug-in.
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Java Plug-in Tools with
+Links to Reference Pages">
+<tr>
+<th align=left>
+Tool Name
+</th>
+<th align=left>
+Brief Description with Links to Reference Pages
+</th>
+</tr>
+
+<tr>
+<td width=13%" VALIGN="TOP"><a href="../guide/plugin/developer_guide/html_converter.html"><b>htmlconverter</b></a></td>
+<td width=87%" VALIGN="TOP"> Converts an HTML page (file) containing applets to the 
+<code>OBJECT</code> / <code>EMBED</code> tag format for Java Plug-in. </td>
+</tr>
+</table>
+
+<hr>
+<a name=javaws id="javaws"></a>
+<h2> Java Web Start Tools </h2>
+Utilities for use in conjunction with the Java Web Start.
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Java Web Start Tools with
+Links to Reference Pages">
+<tr>
+<th width=13% align=left> Tool Name </th>
+<th align=left> Brief Description </th>
+</tr>
+<tr>
+<td VALIGN="TOP"><a href="../guide/javaws/developersguide/javaws.html"><b>javaws</b></a></td>
+<td VALIGN="TOP">Command line tool for launching 
+Java Web Start and setting various options. <br>
+See <a href="../guide/javaws/developersguide/contents.html">
+Java Web Start Guide</a> for more information. </td>
+</tr>
+</table>
+
+
+<hr>
+<h2><a name="manage">Monitoring and Management Tools</a></h2>
+<P>
+You can use the following tools to monitor JVM performance and resource consumption.
+The tools described in this section are unsupported and <b>experimental</b>,
+and should be used with that in mind.
+They may not be available in future JDK versions.
+</P>
+<p>
+Platform support:
+</p>
+<UL>
+<LI>jconsole: all platforms.</LI>
+<LI>jps, jstat, and jstatd:  all platforms except Windows 98 and Windows ME.</LI>
+</UL>
+<p>
+For more information, see
+<a href="../guide/management/index.html">Monitoring and Management for the Java Platform</a>.
+<!--
+<a href="../api/java/lang/management/package-summary.html">
+<code>java.lang.management</code>
+-->
+</a>
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of Monitoring and Management Tools with Links to Reference Pages">
+<tr>
+<th align=left> Tool Name </th>
+<th align=left> Brief Description</th>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jconsole.html">
+<b>jconsole</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b>: Java Monitoring and Management Console -
+JMX-compliant graphical tool for monitoring a Java virtual machine.
+It can monitor both local and remote JVMs.
+</td>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jps.html">
+<b>jps</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b>: JVM Process Status Tool -
+Lists instrumented HotSpot Java virtual machines on a target system.
+</td>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jstat.html">
+<b>jstat</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b>: JVM Statistics Monitoring Tool -
+Attaches to an instrumented HotSpot Java virtual machine and collects and logs
+performance statistics as specified by the command line options. 
+</td>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jstatd.html">
+<b>jstatd</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b>: JVM jstat Daemon -
+Launches an 
+RMI server application that monitors for the creation and termination of 
+instrumented HotSpot Java virtual machines and
+provides a interface to allow remote monitoring tools to attach to 
+Java virtual machines running on the local system.
+</td>
+</tr>
+</table>
+
+
+<hr>
+<h2>
+<a name=debug>
+Troubleshooting Tools
+</a>
+</h2>
+The following tools can be used for specific troubleshooting tasks.
+The tools described in this section are unsupported and <b>experimental</b> 
+in nature and should be used with that in mind.  They may not be available
+in future JDK versions.  
+<p>
+These tools are <b>not currently available on Windows platforms<!-- or on
+the Linux Itanium platform--></b>.
+<p>
+<table BORDER="0" WIDTH="100%" summary="List of experimental troubleshooting tools">
+<tr>
+<th align=left> Tool Name </th>
+<th align=left> Brief Description</th>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jinfo.html"> <b>jinfo</b> </a>
+</td>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b> - </a> Configuration Info for Java - 
+Prints configuration information for 
+for a given process or core file or a remote debug server.
+</td>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jmap.html">
+<b>jmap</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b> - Memory Map for Java - 
+Prints shared object memory maps or heap memory details of a given 
+process or core file or a remote debug server.
+</td>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jsadebugd.html">
+<b>jsadebugd</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b> - Serviceability Agent Debug Daemon for Java - 
+Attaches to a process or core file and acts as a debug server.
+</td>
+</tr>
+<tr>
+<td width=13%" VALIGN="TOP">
+<a href="./share/jstack.html">
+<b>jstack</b></td>
+</a>
+<td width=87%" VALIGN="TOP">
+<b>Experimental</b> - Stack Trace for Java -
+Prints a stack trace of threads for a given process or 
+core file or remote debug server.
+</td>
+</tr>
+</table>
+
+
+<hr SIZE=3 NOSHADE>
+<table BORDER="0" WIDTH="100%" summary="layout">
+<tr VALIGN=TOP>
+<td>
+<p><FONT SIZE="-2">
+<A href="../relnotes/SMICopyright.html">Copyright</A> &#169; 2002-2004
+<A href="http://www.sun.com">Sun Microsystems, Inc.</A>
+All Rights Reserved.</FONT></P>
+</td>
+<td ALIGN=RIGHT>
+<IMG SRC="../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+<BR>
+<FONT SIZE="+1">
+<i>Java Software</i>
+</FONT>
+</td>
+</tr>
+</table>
+<pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</BODY>
+
+</HTML>
+

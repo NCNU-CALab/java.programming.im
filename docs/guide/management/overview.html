@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head>
+<meta name="generator" content="HTML Tidy for Windows (vers 1st March 2004), see www.w3.org">
+<meta http-equiv="content-type" content="text/html; charset=us-ascii"><title>Overview of Java Management and Monitoring</title>
+
+<link rel="stylesheet" href="doc.css" type="text/css"></head><body>
+<h1>Overview of Monitoring and Management</h1>
+<ul>
+<li><a href="#features">Key Features</a></li>
+<li><a href="#mbeans">What are MBeans?</a></li>
+<li><a href="#mxbeans">Platform MBeans</a></li>
+<li><a href="#platform_mbean_svr">Platform MBean Server</a></li>
+<li><a href="#loggingmxbean">Logging Management</a></li>
+</ul>
+<h2><a name="features" id="features"></a>Key Features</h2>
+<p>Starting with J2SE 5.0, the Java platform includes significant
+monitoring and management features:</p>
+<UL>
+<LI>JVM Instrumentation
+<LI>Monitoring and Management APIs
+<LI>Tools
+<LI>Integrated JMX
+</UL>
+
+<h3>JVM Instrumentation</h3>
+<p>The Java virtual machine (JVM) is instrumented for monitoring
+and management, providing built-in ("out-of-the-box") management
+capabilities for for both remote and local access.&nbsp; For more
+information, see <a href="agent.html">JMX Monitoring and
+Management</a> and <a href="SNMP.html">SNMP Monitoring and
+Management.</a></p>
+
+<p>The JVM include a <a href="#platform_mbean_svr">platform
+MBean server</a> (management agent) and <a href="#mxbeans">platform MBeans</a>
+that JMX management applications can use.  These are implementations of the monitoring and management
+API described below.</p>
+
+<P>
+Example code is provided in the <code><i>JDK_HOME</i>/demo/management</code> directory.
+</P>
+
+<h3>Monitoring and Management APIs</h3>
+<p>The <a href="../../api/java/lang/management/package-summary.html">java.lang.management</a>
+package provides the interface for monitoring and managing the JVM.
+</p>
+
+<P>
+The API provides access to information such as:</p>
+<ul>
+<li>Number of classes loaded and threads running</li>
+<li>Virtual machine uptime, system properties, and JVM input
+arguments</li>
+<li>Thread state, thread contention statistics, and stack trace of
+live threads</li>
+<li>Memory consumption</li>
+<li>Garbage collection statistics</li>
+<li>Low memory detection</li>
+<li>On-demand deadlock detection</li>
+<li>Operating system information</li>
+</ul>
+<p>
+The API includes <a href="#loggingmxbean">logging monitoring and management</a> capabilities.
+The <a href="../../api/java/util/logging/LoggingMXBean.html">java.util.logging.LoggingMXBean</a>
+interface provides for management of the logging facility.</p>
+<p>The <a href="extension/index.html">com.sun.management</a>
+package contains Sun Microsystems' platform extension to the
+management API.</p>
+
+<h3>Tools</h3>
+<p>A graphical JMX monitoring tool, <code>jconsole</code>, enables
+you to monitor the performance of a JVM and instrumented applications, providing information to help
+you optimize performance. For
+more information, see <a href="jconsole.html">Using
+jconsole</a>. Other command-line tools are also available: see <a href="../../tooldocs/index.html#manage">J2SE Monitoring and
+Management Tools</a> for more information.</p>
+
+<h3>Integrated JMX</h3>
+<p><a href="../jmx/spec.html">Java Management Extensions (JMX) API</a> version 1.2. The JMX API allows you to instrument applications for monitoring and management. The RMI connector
+allows this instrumentation to be remotely accessible. This API,
+formerly an optional extension, is now included in J2SE.</p>
+
+<h2><a name="mbeans" id="mbeans"></a>What are MBeans?</h2>
+<p>MBeans are <i>managed beans</i>, Java objects that represent
+resources to be managed.&nbsp; An MBean has a <em>management
+interface</em> consisting of:</p>
+<ul>
+<li>Named and typed attributes that can be read and written</li>
+<li>Named and typed operations that can be invoked</li>
+<li>Typed notifications that can be emitted by the MBean</li>
+</ul>
+<p>For example, an MBean representing an application's
+configuration could have attributes representing the different
+configuration parameters, such as a cache size. Reading the
+<code>CacheSize</code> attribute would return the current size of
+the cache. Writing <code>CacheSize</code> would update the size of
+the cache, potentially changing the behavior of the running
+application. An operation such as <code>save</code> could store the
+current configuration persistently. The MBean could send a
+notification such as <code>ConfigurationChangedNotification</code>
+when the configuration changes.</p>
+<p>MBeans can be standard or dynamic. Standard MBeans are Java
+objects that conform to design patterns derived from the JavaBeans
+component model. Dynamic MBeans define their management interface
+at runtime.</p>
+<p>A <i>standard MBean</i> exposes the resource to be managed
+directly through its attributes and operations. Attributes are
+exposed through "getter" and "setter" methods. Operations are the
+other methods of the class that are available to managers. All
+these methods are defined statically in the MBean interface and are
+visible to a JMX agent through introspection. This is the most
+straightforward way of making a new resource manageable.</p>
+<p>A <i>dynamic MBean</i> is an MBean that defines its management
+interface at runtime. For example, a configuration MBean could
+determine the names and types of the attributes it exposes by
+parsing an XML file.</p>
+<h3>MBean Server</h3>
+<p>To be useful, an MBean must be registered in an <em>MBean
+Server</em>, also called an <i>MBean agent</i>. An MBean Server is
+a repository of MBeans. Each MBean is registered with a unique name
+within the MBean Server. Usually the only access to the MBeans is
+through the MBean Server. In other words, code does not access an
+MBean directly, but rather accesses the MBean by name through the
+MBean Server.&nbsp;</p>
+<p>Starting with release 5.0, J2SE includes a built-in
+<i>platform MBean server</i>.&nbsp; For more information, see
+<a href="mxbeans.html#mbean_server">Using the Platform MBean
+Server</a>.</p>
+<h3>Creating and Registering MBeans</h3>
+<p>There are two ways to create an MBean. One is to construct a
+Java object that will be the MBean, then use the <a href="../../api/javax/management/MBeanServer.html#registerMBean(java.lang.Object, javax.management.ObjectName)" target="_blank"><code>registerMBean</code></a> method to register
+it in the MBean Server. The other is to create and register the
+MBean in a single operation using one of the <a href="../../api/javax/management/MBeanServer.html#createMBean(java.lang.String, javax.management.ObjectName)" target="_blank"><code>createMBean</code></a> methods.</p>
+<p>The <code>registerMBean</code> method is simpler for local use,
+but cannot be used remotely. The <code>createMBean</code> method
+can be used remotely, but sometimes requires attention to class
+loading issues. An MBean can perform actions when it is registered
+in or unregistered from an MBean Server if it implements the
+<a href="../../api/javax/management/MBeanRegistration.html" title="interface in javax.management" target="_blank"><code>MBeanRegistration</code></a> interface.</p>
+<h3>Instrumenting Applications</h3>
+<p>General instruction on instrumenting your applications for JMX
+management is beyond the scope of this document.&nbsp; J2SE
+includes extensive JMX documentation, including:</p>
+<ul>
+<li><a href="../jmx/overview/JMXoverviewTOC.html">JMX Technology
+Overview</a></li>
+<li><a href="../jmx/spec.html">JMX API Specification</a></li>
+<li><a href="../jmx/tutorial/tutorialTOC.html">JMX Tutorial</a>&nbsp;&nbsp;</li>
+<li><a href="../jmx/examples.html">JMX Examples</a></li>
+</ul>
+<h2><a name="mxbeans" id="mxbeans"></a>Platform MBeans</h2>
+<p>A <i>platform MBean</i> (also called an MXBean) is an MBean for
+monitoring and managing the Java Virtual Machine (JVM).&nbsp; Each
+MXBean encapsulates a part of JVM functionality such as the JVM's
+class loading system, JIT compilation system, garbage collector, and so on.&nbsp; The <code>java.lang.management</code>
+package defines the platform MXBeans.</p>
+<p>Table 1 lists all the platform MBeans and the aspect of the VM
+that they manage. Each platform MXBean has a unique <a href="../../api/javax/management/ObjectName.html" title="class in javax.management" target="_blank"><code>javax.management.ObjectName</code></a> for
+registration in the platform MBeanServer.&nbsp; A JVM may have
+zero, one, or more than one instance of each MXBean, depending on
+its function, as shown in the table.&nbsp;</p>
+<table cellspacing="1" width="90%" summary="Description of the MBeans" align="center" cellpadding="2">
+<caption>Platform MBeans</caption>
+<tbody>
+<tr>
+<th>Interface</th>
+<th>Manages</th>
+<th valign="middle">Object Name</th>
+<th valign="top">Instances Per VM</th>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/ClassLoadingMXBean.html" title="interface in java.lang.management">ClassLoadingMXBean</a></code></td>
+<td>Class loading system</td>
+<td valign="middle"><code>java.lang:type=ClassLoading</code></td>
+<td valign="middle">One</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/CompilationMXBean.html" title="interface in java.lang.management">CompilationMXBean</a></code></td>
+<td>Compilation system</td>
+<td valign="middle"><code>java.lang:type=Compilation</code></td>
+<td valign="middle">Zero or one</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/GarbageCollectorMXBean.html" title="interface in java.lang.management">GarbageCollectorMXBean</a></code></td>
+<td>Garbage collector</td>
+<td valign="middle"><code>java.lang:type=GarbageCollector,<br>
+name=<i>collectorName</i></code></td>
+<td valign="middle">One or more</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/MemoryManagerMXBean.html" title="interface in java.lang.management">MemoryManagerMXBean</a></code>
+<BR>(sub-interface of GarbageCollectorMXBean)</td>
+<td>Memory pool</td>
+<td valign="middle"><code>java.lang:type=MemoryManager,<br>
+name=<i>managerName</i></code></td>
+<td valign="middle">One or more</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/MemoryPoolMXBean.html" title="interface in java.lang.management">MemoryPoolMXBean</a></code></td>
+<td>Memory<br>
+</td>
+<td valign="middle"><code>java.lang:type=MemoryPool,<br>
+name=<i>poolName</i></code></td>
+<td valign="middle">One or more</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/MemoryMXBean.html" title="interface in java.lang.management">MemoryMXBean</a></code></td>
+<td>Memory system</td>
+<td valign="middle"><code>java.lang:type=Memory</code></td>
+<td valign="middle">One</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/OperatingSystemMXBean.html" title="interface in java.lang.management">OperatingSystemMXBean</a></code></td>
+<td>Underlying operating system</td>
+<td valign="middle">
+<code>java.lang:type=OperatingSystem</code></td>
+<td valign="middle">One</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/RuntimeMXBean.html" title="interface in java.lang.management">RuntimeMXBean</a></code></td>
+<td>Runtime system</td>
+<td valign="middle"><code>java.lang:type=Runtime</code></td>
+<td valign="middle">One</td>
+</tr>
+
+<tr>
+<td><code><a href="../../api/java/lang/management/ThreadMXBean.html" title="interface in java.lang.management">ThreadMXBean</a></code></td>
+<td>Thread system</td>
+<td valign="middle"><code>java.lang:type=Threading</code></td>
+<td valign="middle">One</td>
+</tr>
+
+</tbody>
+</table>
+<h2><a name="platform_mbean_svr" id="platform_mbean_svr"></a>Platform MBean Server</h2>
+<p>The <em>Platform MBean Server</em> can be shared by different
+managed components running within the same Java Virtual Machine.
+You can access the Platform MBean Server with the method <a href="../../api/java/lang/management/ManagementFactory.html#getPlatformMBeanServer()" target="_blank"><code>ManagementFactory.getPlatformMBeanServer()</code></a>.
+The first call to this method, creates the platform
+<tt>MBeanServer</tt> and registers the platform MXBeans using their
+unique ObjectNames. Subsequently, it returns the initially created
+platform <tt>MBeanServer</tt>.</p>
+<p>MXBeans that get created and destroyed dynamically, for example,
+memory pools and managers, will automatically be registered and
+deregistered into the platform <tt>MBeanServer</tt>.&nbsp; If the
+system property <tt>javax.management.builder.initial</tt> is set,
+the platform <tt>MBeanServer</tt> creation will be done by the
+specified <a href="../../api/javax/management/MBeanServerBuilder.html" title="class in javax.management" target="_blank"><code>MBeanServerBuilder</code></a>.</p>
+<p>Use the platform MBeanServer to register other MBeans besides
+the platform MXBeans. This enables all MBeans to be published
+through the same <tt>MBeanServer</tt> and makes network publishing
+and discovery easier.</p>
+<h2><a name="loggingmxbean" id="loggingmxbean"></a>Logging
+Management</h2>
+<p>The LoggingMXBean enables you to:</p>
+<ul>
+<li>Get the name of the log level associated with the specified
+logger.</li>
+<li>Get the list of currently registered loggers.</li>
+<li>Get the name of the parent for the specified logger.</li>
+<li>Sets the specified logger to the specified new level.</li>
+</ul>
+<p>The&nbsp;unique ObjectName of the LoggingMXBean is:
+<code>java.util.logging:type=Logging</code>, kept in
+<code>LogManager.LOGGING_MXBEAN_NAME.</code></p>
+
+<p>There is a single global instance of the <tt>LoggingMXBean</tt>,
+which you can get by calling <code>LogManager.getLoggingMXBean()</code>. <br>
+</p>
+
+
+<p></p>
+
+</body></html>

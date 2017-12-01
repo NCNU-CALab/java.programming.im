@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii"><title>SNMP Monitoring and Management</title>
+
+<link rel="stylesheet" href="doc.css" type="text/css"></head><body>
+<h1>SNMP Monitoring and Management</h1>
+<p>Simple Network Management Protocol (SNMP) is an industry standard
+for network management. Objects managed by SNMP are arranged in
+management information bases (MIBs). The SNMP agent publishes the
+standard MIB for the Java virtual machine instrumentation. The
+standard MIB is defined by Java Specification Request (JSR) 163.
+For more information, see <a href="http://jcp.org/en/jsr/detail?id=163">JSR 163</a>.
+</p><ul>
+<li><a href="#enabling_snmp">Enabling the SNMP agent</a></li>
+<li><a href="#ACL">Access Control List File</a></li>
+<li><a href="#snmp_properties">SNMP Management
+Properties</a></li>
+</ul>
+<h2><a name="enabling_snmp" id="enabling_snmp"></a>Enabling the SNMP Agent</h2>
+<p>To monitor a Java virtual machine (JVM) with SNMP:</p>
+<ol>
+<li>Enable a SNMP agent when you start the JVM. You can enable the
+SNMP agent for:
+<ul>
+<li><a href="#single_user">Single-user environment</a></li>
+<li><a href="#multi_user">Multi-user environment</a></li>
+</ul>
+</li>
+<li>Monitor the JVM with an SNMP-compliant tool.</li>
+</ol>
+<p>For general information on setting system properties when you
+start the JVM, see <a href="agent.html#sysprops">Setting System Properties</a>.</p>
+<h3><a name="single_user" id="single_user"></a>Single-user
+Environment</h3>
+<p>To enable the SNMP agent for a single user environment, set this system property when you
+start the JVM:</p>
+<p><code>com.sun.management.snmp.port=<i>portNum</i></code></p>
+<p>where <i>portNum</i> is the port number to use for
+monitoring.&nbsp; Setting this property starts an SNMP agent that
+listens on the specified port number for incoming SNMP
+requests.</p>
+<p>Copy the ACL template file in
+<code><i>JRE_HOME</i>/lib/management/snmp.acl.template</code> 
+to <code><i>JRE_HOME</i>/lib/management/snmp.acl</code>, 
+make it readable and writeable by only the owner, and add community
+strings as needed.</p>
+<h3><a name="multi_user" id="multi_user"></a>Multi-user
+environment</h3>
+<p>To enable the SNMP agent for a multi-user installation of the JRE, set the following
+system properties when you start the JVM:</p>
+<pre>com.sun.management.snmp.port=<i>portNum</i>
+com.sun.management.snmp.acl.file=<i>ACLFilePath</i>
+</pre>
+<p>where <i>portNum</i> is the port number to use for monitoring,
+and <i>ACLFilePath</i> is the path to the ACL file.</p>
+<p>Copy the ACL template file from
+<code><i>JRE_HOME</i>/lib/management/snmp.acl.template</code> to
+a file named <code>snmp.acl</code> in
+your home directory, make it readable and writeable by only the
+owner, and add community strings as needed.</p>
+<h2><a name="ACL" id="ACL"></a>Access Control List File&nbsp;</h2>
+<p>An Access Control List (ACL) template file is provided at
+<code><i>JRE_HOME</i>/lib/management/snmp.acl.template</code>. Copy
+this file to <code><i>JRE_HOME</i>/lib/management/snmp.acl</code>
+or to your home directory. Ensure that only you have read and write
+permissions, since the file contains unencrypted SNMP community
+strings.&nbsp; For security reasons, the system checks that only
+the owner has read and write permissions on the file and exits with
+an error if not. Thus, in a multi-user environment, put this file
+in private location such as your home directory.</p>
+<p>Sample ACL entries:</p>
+<pre>#The communities public and private are allowed access from the local host.<br>acl = {<br>        {<br>          communities = public, private<br>          access = read-only<br>          managers = localhost<br>        }<br>      }<br># Traps are sent to localhost only<br>trap = {<br>          {<br>            trap-community = public<br>            hosts = localhost<br>          }<br>        }<br></pre>
+<h2><a name="snmp_properties" id="snmp_properties"></a>SNMP Monitoring and Management Properties</h2>
+<p>You can set monitoring and management properties in a
+configuration file or on the command line. Properties specified on
+the command line override properties in a configuration file. The
+default location for the configuration file is
+<code><i>JRE_HOME</i>/lib/management/management.properties</code>,
+where <i>JRE_HOME</i> is the directory where the JDK is installed.
+The JVM reads this file if the command-line property
+<code>com.sun.management.snmp.port</code> is set. JMX management
+uses the same configuration file.</p>
+<p>You can specify a different location for the configuration file
+with the command-line option:</p>
+<pre>com.sun.management.config.file=<i>ConfigFilePath</i>
+</pre>
+<p>where <i>ConfigFilePath</i> is the path to the configuration
+file. </p>
+<p>You must specify all system properties when you start the JVM.
+After the JVM has started, changes to system properties (for
+example, via <code>setProperty</code> method), to the password
+file, ACL file, or configuration file have no effect.</p>
+
+<p>The following table describes all the SNMP management properties.</p>
+
+<table border="1" cellpadding="2" cellspacing="2">
+<caption><a name="SNMP_props_tbl" id="SNMP_props_tbl"></a>SNMP
+Management and Monitoring Properties</caption>
+<tbody>
+<tr>
+<th>Property Name</th>
+<th>Description</th>
+<th valign="top">Default</th>
+</tr>
+<tr>
+<td><code>com.sun.management.snmp.<br>
+trap</code></td>
+<td>Remote port to which the SNMP agent sends traps. </td>
+<td>162</td>
+</tr>
+<tr>
+<td><code>com.sun.management.snmp.<br>
+interface</code></td>
+<td>Optional. The local host InetAddress, to force the SNMP agent
+to bind to the given InetAddress.  This is for multi-home hosts if
+one wants to listen to a specific subnet only.</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><code>com.sun.management.snmp.<br>
+acl.file</code></td>
+<td>Path to a valid ACL file. After the JVM has started, modifying
+the ACL file has no effect.</td>
+<td>
+<code><i>JRE_HOME</i>/lib/management/snmp.acl</code></td>
+</tr>
+</tbody>
+</table>
+
+<h3>Configuration Errors</h3>
+<p>If any errors occur during start up of the the SNMP agent,
+the JVM will throw an exception and exit. Configuration errors include:</p>
+<ul>
+<li>Failure to bind to the port number</li>
+<li>Password file is readable by anyone other than the owner. </li>
+<li>Invalid SNMP ACL file</li>
+</ul>
+<p>If your application runs a security manager, then additional
+permissions are required in the security permissions file.</p>
+<p></p>
+</body></html>

@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<HTML>
+
+<HEAD>
+
+     <TITLE>Security Enhancements in J2SE 5</TITLE>
+
+</HEAD>
+
+
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR>
+
+<TD WIDTH="60">
+
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+
+</TD>
+
+
+
+<TD>
+
+<center>
+
+           <h1>Security Enhancements in the Java 2 Platform Standard Edition 5</h1>
+
+</center>
+
+</TD>
+
+</TR>
+</TABLE>
+
+
+
+<!-- Body text begins here -->
+
+<font size="+2"><b>Enhancements in J2SE 5</b></font>
+<P>
+<blockquote>
+
+Here are the differences between the v1.4 and J2SE 5 releases of the Java 2 SDK: 
+<UL>
+<LI>Introduced SSLEngine which allows for non-blocking SSL/TLS implementations 
+    by abstracting the SSL/TLS layer from the I/O layer. For details see the 
+    the <a href="jsse/JSSERefGuide.html">JSSE Reference Guide</a>.</LI>
+
+<P>
+   <LI>Support for the pluggability of third-party SSL/TLS providers restricted 
+    to a limited set of cipher suites. For details see the
+    the <a href="jsse/JSSERefGuide.html">JSSE Reference Guide</a>.</LI>
+
+<P>
+   <LI>More enhancements in JSSE, including support for Kerberos
+    ciphersuites; the CertPath-based TrustManager is the default JSSE 
+    TrustManager; and JSSE also uses JCE for encryption exclusively. For details 
+    see the <a href="jsse/JSSERefGuide.html">JSSE Reference Guide</a>.</LI>
+
+<P>
+   <LI>Support for PKCS#11 as a JCE provider, which enables J2SE to 
+    provide better support for hardware acceleration and Smartcards.
+    configured into J2SE for use by applications. For details see the
+    <a href="p11guide.html">PKCS#11 Guide</a>.</LI>
+
+<P>
+   <LI>Major enhancements in JCE: new APIs facilitating support for ECC;
+    support for RSA encryption and several additional algorithms in the 
+    SunJCE provider. For details see the <a href="jce/JCERefGuide.html#WhatsNew">JCE  
+    Enhancements</a>.</LI>
+
+<P>
+   <LI>Support for the Time-Stamp Protocol (TSP) defined in 
+    <a href="http://www.ietf.org/rfc/rfc3161.txt">RFC 3161</a>. For details 
+    see the <a href="time-of-signing-beta1.html">Signature Timestamp Support</a>.</LI>
+
+<P>
+   <LI>Support for the On-Line Certificate Status Protocol (OCSP) as 
+    defined in <a href="http://www.ietf.org/rfc/rfc2560.txt">RFC 2560</a>.
+    For details see the <a href="pki-tiger-beta1.html">PKI 
+Enhancements</a>.</LI>
+
+<P>
+   <LI>More PKI enhancements, including minor CertPath API additions, improved
+    PKIX compliance (<a href="http://www.ietf.org/rfc/rfc3280.txt">RFC 3280</a>),
+    an enhanced PKCS#12 keystore implementation.
+    For details see the <a href="pki-tiger-beta1.html">PKI  
+Enhancements</a>.</LI>
+
+  <P>
+   <LI>Support for the <a href="http://www.ietf.org/rfc/rfc2222.txt">Simple 
+    Authentication and Security Layer</a>, or SASL, and several popular 
+    SASL mechanisms via the Java SASL API. For details see the 
+    <a href="sasl/sasl-refguide.html">Java SASL reference guide</a>.</LI>
+
+<P>
+   <LI>Enhancements to the Java Kerberos implementation, including
+TGT renewal and support for Triple DES encryption. For details
+see the <a href="jgss/jgss-tiger.html">JGSS/Kerberos  
+Enhancements</a>.</LI>
+<P>
+   <LI>Support for SSL/TLS-based RMI Socket Factories. For details
+    see the
+    <a href="../../api/javax/rmi/ssl/package-summary.html">SSL/TLS-based
+   RMI Socket Factory classes</a>.
+</UL>
+
+</blockquote>
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+<P><FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 1995-2004
+
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+
+    All Rights Reserved.</FONT></P>
+
+   <FONT SIZE="-1">
+
+   Please send comments to: <a href="mailto:java-security@sun.com">java-security@sun.com</a>. This is not a subscription list.
+
+   </FONT>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+
+   <BR>
+
+
+   </FONT>
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+
+
+
+</BODY>
+
+</HTML>
+
+
+
+
+

@@ -1,0 +1,177 @@
+<HTML>
+<HEAD>
+<title>Varargs</title>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<!--TD WIDTH=60-->
+<TD>
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+<TD>
+<center>
+<h1>Varargs</h1>
+</center>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="./index.html">Language Contents</a></font>
+<p>
+</TR>
+</TABLE>
+
+<!-- Body text begins here -->
+
+
+<hr size=3 noshade>
+
+In past releases, a method that took an arbitrary number of values required
+you to create an array and put the values into the array prior to invoking the
+method.  For example, here is how one used the
+<a href="../../api/java/text/MessageFormat.html"><code>MessageFormat</code></a>
+class to format a message:
+<blockquote>
+<pre>Object[] arguments = {
+    new Integer(7),
+    new Date(),
+    "a disturbance in the Force"
+};
+
+String result = MessageFormat.format(
+    "At {1,time} on {1,date}, there was {2} on planet "
+     + "{0,number,integer}.", arguments);
+</pre>
+</blockquote>
+
+<p>It is still true that multiple arguments must be passed in an
+array, but the varargs feature automates and hides the process.
+Furthermore, it is upward compatible with preexisting APIs.  So, for
+example, the <code>MessageFormat.format</code> method now has this
+declaration:
+
+<pre>    public static String format(String pattern,
+                                <font color="#009900">Object...</font> arguments);
+</pre>
+
+<p>The three periods after the final parameter's type
+indicate that the final argument may be passed as an array <i>or</i> as a
+sequence of arguments.  Varargs can be used <i>only</i> in the final
+argument position.  Given the new varargs declaration for
+<code>MessageFormat.format</code>, the above invocation may be replaced by the
+following shorter and sweeter invocation:
+<blockquote>
+<pre>String result = MessageFormat.format(
+    "At {1,time} on {1,date}, there was {2} on planet "
+    + "{0,number,integer}.",
+    <font color="#009900">7</font>, new Date(), "a disturbance in the Force");
+</pre>
+</blockquote>
+
+<p>There is a strong synergy between <a href="autoboxing.html">autoboxing</a>
+and varargs, which is illustrated in the following program using reflection:
+
+<blockquote>
+<pre><b>// Simple test framework</b>
+public class Test {
+    public static void main(String[] args) {
+        int passed = 0;
+        int failed = 0;
+        for (String className : args) {
+            try {
+                Class c = Class.forName(className);
+                <font color="#009900">c.getMethod("test").invoke(c.newInstance());</font>
+                passed++;
+            } catch (Exception ex) {
+                <font color="#009900">System.out.printf("%s failed: %s%n", className, ex);</font>
+                failed++;
+            }
+        }
+        System.out.printf("passed=%d; failed=%d%n", passed, failed);
+    }
+}
+</pre>
+</blockquote>
+
+<p>This little program is a complete, if minimal, test framework. It
+takes a list of class names on the command line. For each class
+name, it instantiates the class using its parameterless constructor and
+invokes a parameterless method called test. If the instantiation or
+invocation throws an exception, the test is deemed to have failed. The
+program prints each failure, followed by a summary of the test
+results. The reflective instantiation and invocation no longer require
+explicit array creation, because the <code>getMethod</code> and
+<code>invoke</code> methods accept a variable argument list.  The program
+also uses the new 
+<a href="../../api/java/io/PrintStream.html#printf(java.lang.String, java.lang.Object...)"><code>printf</code></a> 
+facility, which relies on varargs.  The program reads much more naturally 
+than it would without varargs.
+
+<p>So when should you use varargs?  As a client, you should take advantage of
+them whenever the API offers them.  Important uses in core APIs include
+reflection, message formatting, and the new <code>printf</code></a> facility.
+As an API designer, you should use them sparingly,
+only when the benefit is truly compelling.  Generally speaking, you should not
+overload a varargs method, or it will be difficult for programmers to figure
+out which overloading gets called.
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+
+<TD>
+   <FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+   All Rights Reserved.
+
+   </FONT>
+   <P>
+
+   <FONT SIZE="-1">
+   Please <a href="../../relnotes/contacts.html">send us comments and suggestions</a><BR>
+   </FONT>
+</TD>
+
+<TD ALIGN=RIGHT>
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+   <BR><BR>
+   <FONT SIZE="+1">
+   <i>Java Software</i>
+   </FONT>
+</TD>
+
+</TR>
+</TABLE>
+
+
+<PRE>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+
+</BODY>
+</HTML>

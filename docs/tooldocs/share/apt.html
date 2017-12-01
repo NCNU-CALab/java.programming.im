@@ -1,0 +1,140 @@
+<html><head><title>apt man page</title></head>
+<body>
+
+<h2>NAME</h2>
+<tt>apt</tt> - annotation processing tool
+
+<h2>SYNOPSIS</h2>
+
+<tt>
+apt [-classpath <i>classpath</i>] [-sourcepath <i>sourcepath</i>] 
+[-d <i>directory</i>] [-s <i>directory</i>]
+[-factorypath <i>path</i>] [-factory <i>class</i>]
+[-print] [-nocompile] [-A<i>key</i>[<i>=val</i>] ...] [<i>javac option</i>] sourcefiles [@files]
+</tt>
+
+<h2>PARAMETERS</h2>
+
+Options may be in any order. For a discussion of parameters which
+apply to a specific option, see OPTIONS below.
+
+<dl><dt>sourcefiles
+
+     </dt><dd>     Zero or more source files to be processed.
+
+     </dd><dt>@files
+
+	</dt><dd> One or more files that list source files or other options
+</dd></dl>
+
+
+<h2>DESCRIPTION</h2>
+
+The tool <tt>apt</tt>, annotation processing tool, includes a set of
+new reflective APIs and supporting infrastructure to process program
+annotations. The <tt>apt</tt> reflective APIs provide a build-time,
+source-based, read-only view of program structure. These reflective
+APIs are designed to cleanly model the
+Java<sup><small>TM</small></sup> programming language's type system
+after the addition of generics. First, <tt>apt</tt> runs annotation
+processors that can produce new source code and other files. Next,
+<tt>apt</tt> can cause compilation of both original and generated
+source files, easing development.  The reflective APIs and other APIs
+used to interact with the tool are subpackages of
+<tt>com.sun.mirror</tt>.
+
+<p>A fuller discussion of how the tool operates as well as
+instructions for developing with <tt>apt</tt> are in 
+<a href="../../guide/apt/GettingStarted.html">
+<b>Getting Started with <tt>apt</tt></b>.</a>
+
+<a name=options>
+<h2>OPTIONS</h2>
+<a/>
+
+<h3><tt>apt</tt> specific options</h3>
+
+<dl>
+
+<dt>	<tt>-s</tt> <i>dir</i>
+
+<dd> Specify the directory root under which processor-generated source
+files will be placed; files are placed in subdirectories based
+			on package namespace.
+
+
+
+<dt>	<tt>-nocompile</tt>
+
+<dd>	Do not compile source files to class files.
+
+
+<dt>	<tt>-print</tt>
+
+<dd> Print out textual representation of specified types; perform no
+annotation processing or compilation.
+
+
+<dt>	<tt>-A</tt>[<i>key</i>[<tt>=</tt><i>val</i>]]
+
+<dd> Options to pass to annotation processors -- these are not
+    interpreted by <tt>apt</tt> directly, but are
+    made available for use by
+   individual processors
+
+<dt>   <tt>-factorypath</tt> <i>path</i>
+<dd> Specify where to find annotation processor factories; if this
+option is used, the classpath is <i>not</i> searched for factories.
+
+<dt>   <tt>-factory</tt> <i>classname</i>
+
+<dd>   Name of annotation processor factory to use; bypasses default discovery process
+
+</dl>
+
+<h3>Options shared with <tt>javac</tt></h3>
+
+<dl>
+
+<dt>	<tt>-d</tt> <i>dir</i>
+
+<dd> Specify where to place processor and javac generated class files
+
+<dt>	<tt>-cp</tt> <i>path</i> or <tt>-classpath</tt> <i>path</i> 
+
+<dd> Specify where to find user class files and annotation processor
+factories.  If <tt>-factorypath</tt> is given, the classpath is not
+searched for factories.
+
+</dl>
+
+
+Consult the javac(1) man page for information on <tt>javac</tt>
+options.
+
+<h2>NOTES</h2>
+
+The <tt>apt</tt> tool and its associated APIs may be changed or superseded in
+future j2se releases.
+
+<h2>SEE ALSO</h2>
+
+<table border="0" summary="html man pages for java operating systems">
+<tr>
+<td>javac</td>
+<td NOWRAP>
+[<a href="../solaris/javac.html">Solaris and Linux</a>]
+[<a href="../windows/javac.html">Windows</a>]
+</td>
+</tr>
+<tr>
+<td>java</td>
+<td NOWRaP>
+[<a href="../solaris/java.html">Solaris</a>]
+[<a href="../linux/java.html">Linux</a>]
+[<a href="../windows/java.html">Windows</a>]
+</td>
+</tr>
+</table>
+
+</body></html>

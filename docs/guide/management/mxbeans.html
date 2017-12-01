@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html><head>
+
+  <meta http-equiv="content-type" content="text/html; charset=us-ascii"><title>Using the Platform MBean Server and Platform MBeans</title>
+  
+  <link rel="stylesheet" href="doc.css" type="text/css"></head><body>
+<h1>Using the Platform MBean Server and Platform MBeans</h1>
+
+<ul>
+
+<li><a href="#mbean_server">Using the Platform MBean Server</a></li>
+<li><a href="#access_mxbeans">Accessing Platform MBeans</a></li>
+<li><a href="#extension">Using Sun's Platform Extension</a></li>
+<li><a href="#thread_cm">Monitoring Thread Contention</a></li>
+<li><a href="#low_memory">Detecting Low Memory<br>
+    </a></li>
+</ul>
+
+<h2><a name="mbean_server" id="mbean_server"></a>Using the Platform
+MBean Server</h2>
+
+<p>An MBean server is a repository of MBeans that provides
+management applications access to MBeans. Applications do not
+access MBeans directly, but instead access them through the MBean
+server with their unique <code>ObjectName</code>. An MBean server
+implements the interface <a href="../../api/javax/management/MBeanServer.html" title="interface in javax.management"><code>javax.management.MBeanServer</code></a>.
+</p>
+
+<p>J2SE 5.0 introduces the <em>platform MBean server</em>, an MBean
+server built-in to the JVM, which can be shared by all managed
+components running in the JVM. You access the platform MBean server
+with the method <a href="../../api/java/lang/management/ManagementFactory.html#getPlatformMBeanServer()">
+<code>ManagementFactory.getPlatformMBeanServer()</code></a>.&nbsp;
+Of course, you can also create your own MBean server using the
+<a href="../../api/javax/management/MBeanServerFactory.html" title="class in javax.management"><code>MBeanServerFactory</code></a>
+class.&nbsp; However, there is
+generally no need for more than one MBean server, so using the platform MBean server is recommended.<br>
+</p>
+
+<h2><a name="access_mxbeans" id="access_mxbeans">Accessing Platform
+MBeans</a></h2>
+
+<p><a href="overview.html#mxbeans">Platform MBeans</a> (MXBeans)
+were introduced previously.&nbsp; A management application can
+access platform MBeans three different ways:</p>
+
+<ul>
+
+<li>Directly
+  <ul>
+    <li><a href="#method1">Using ManagementFactory</a></li>
+    <li><a href="#method3">Using an MXBean proxy</a>.</li>
+  </ul>
+</li>
+<li>Indirectly, <a href="#method2">using MBeanServerConnection</a>.</li>
+</ul>
+
+<h3><a name="method1" id="method1"></a>Using ManagementFactory</h3>
+
+<p>An application can directly call the methods of a platform
+MBean running in the same Java virtual machine.&nbsp; To do so, use
+the static methods of the <a href="../../api/java/lang/management/ManagementFactory.html"><code>ManagementFactory</code></a>
+class.&nbsp; <code>ManagementFactory</code>&nbsp; has accessor
+methods for each platform MBean such as
+<code>getClassLoadingMXBean()</code>,
+<code>getGarbageCollectorMXBeans()</code>,
+<code>getRuntimeMXBean()</code>, and so on.&nbsp; In the cases
+where there are more than one platform MBean, the method returns a
+<code>List</code> of platform MBeans.</p>
+
+<p>For example, the following code uses the static method of
+<code>ManagementFactory</code> to get the platform MBean
+<code>RuntimeMXBean</code>, and then gets the vendor name from the
+platform MBean:</p>
+
+<pre>RuntimeMXBean mxbean = ManagementFactory.getRuntimeMXBean();<br>String vendor = mxbean.getVmVendor(); <br></pre>
+
+<h3><a name="method3" id="method3"></a>Using an MXBean Proxy</h3>
+
+<p>An application can also call platform MBean methods through an
+MXBean proxy.  To do so, construct an MXBean proxy instance that
+forwards the method calls to a given MBeanServer by calling the
+static method <a href="../../api/java/lang/management/ManagementFactory.html#newPlatformMXBeanProxy(javax.management.MBeanServerConnection, java.lang.String, java.lang.Class)">
+<code>ManagementFactory.newPlatformMXBeanProxy()</code></a>. An
+application typically constructs a proxy to remotely access a
+platform MBean of another JVM.</p>
+
+<p>For example, the following code does the same thing as the
+previous example, but using an MXBean proxy:</p>
+
+<pre>MBeanServerConnection mbs;<br>...<br>// Get a MBean proxy for RuntimeMXBean interface<br>RuntimeMXBean proxy =<br>    ManagementFactory.newPlatformMXBeanProxy(mbs,<br>                                             ManagementFactory.RUNTIME_MXBEAN_NAME,<br>                                             RuntimeMXBean.class);<br>// Get standard attribute "VmVendor"<br>String vendor = proxy.getVmVendor();<br></pre>
+
+<h3><a name="method2" id="method2"></a>Using
+MBeanServerConnection</h3>
+
+<p>An application can indirectly call platform MBean methods
+through an <code>MBeanServerConnection</code> connecting to the
+platform MBeanServer of a running JVM.  You use the
+<code>getAttribute()</code> method of
+<code>MBeanServerConnection</code> to get an attribute of a
+platform MBean, providing the MBean's <code>ObjectName</code> and
+the attribute name as parameters.</p>
+
+<p>For example, the following code does the same thing as the
+previous two examples, but uses an indirect call through
+<code>MBeanServerConnection</code>:</p>
+
+<pre>MBeanServerConnection mbs;<br>...<br>try {<br>  ObjectName oname = new ObjectName(ManagementFactory.RUNTIME_MXBEAN_NAME);<br>  // Get standard attribute "VmVendor"<br>  String vendor = (String) mbs.getAttribute(oname, "VmVendor");<br>} catch (....) {<br>  // Catch the exceptions thrown by ObjectName constructor<br>  // and MBeanServer.getAttribute method<br>  ...<br>}<br></pre>
+<h2><a name="extension" id="extension">Using Sun's Platform Extension</a></h2>
+
+
+
+
+
+<p>JVM implementations may extend the management interface by
+defining interfaces for platform-specific metrics and management
+operations. The static factory methods in the
+<tt>ManagementFactory</tt> class will return the MBeans with the
+platform extension.  <br>
+</p>
+<p>The <code>com.sun.management</code> package
+contains Sun Microsystems' platform extensions.&nbsp; The following examples show how to access a platform-specific
+attribute from Sun's implementation of the
+<tt>RuntimeMXBean</tt>.</p>
+
+
+<h3>Direct Access<br>
+</h3>
+
+
+<p>This example illustrates direct access to the Sun-specific
+MXBean interface:</p>
+
+<pre>com.sun.management.OperatingSystemMXBean mxbean =<br>  (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();<br><br>// Get the number of processors<br>int numProcessors = mxbean.getAvailableProcessors();<br><br>// Get the Sun-specific attribute Process CPU time<br>long cpuTime = mxbean.getProcessCpuTime();<br></pre>
+
+<h3>Access Through MBeanServerConnection</h3>
+
+
+<p>This example illustrates access to the Sun-specific MXBean
+interface via <tt>MBeanServerConnection:</tt></p>
+
+<pre>MBeanServerConnection mbs;<br><br>// Connect to a running JVM (or itself) and get MBeanServerConnection<br>// that has the JVM MXBeans registered in it<br>...<br><br>try {<br>    // Assuming the OperatingSystem MXBean has been registered in mbs<br>    ObjectName oname = new ObjectName(ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME);<br><br>    // Get standard attribute "OperatingSystem"<br>    String vendor = (String) mbs.getAttribute(oname, "OperatingSystem");<br><br>    // Check if this MXBean contains Sun's extension<br>    if (mbs.isInstanceOf(oname, "com.sun.management.RuntimeMXBean")) {<br>        // Get platform-specific attribute "ProcessCpuTime"<br>        BarType bar = (String) mbs.getAttribute(oname, "ProcessCpuTime");<br>    }<br>} catch (....) {<br>    // Catch the exceptions thrown by ObjectName constructor<br>    // and MBeanServer methods<br>    ...<br>}<br></pre>
+
+
+<h2><a name="thread_cm" id="thread_cm"></a>Monitoring Thread Contention and CPU Time<br>
+</h2>
+
+<p>The <a href="../../api/java/lang/management/ThreadMXBean.html"><code>ThreadMXBean</code></a> platform MBean provides support for monitoring thread contention and thread CPU time.<code><br>
+</code></p>
+<p>The Sun HotSpot JVM supports thread
+contention monitoring. Use the 
+<code>ThreadMXBean.isThreadContentionMonitoringSupported()</code>
+method to determine if a JVM supports thread contention monitoring.
+Thread contention monitoring is disabled by default. Use the
+<code>setThreadContentionMonitoringEnabled()</code> method to
+enable it.<br>
+</p>
+<p>The Sun HotSpot JVM supports measuring
+ thread CPU time on most platforms.  The CPU time provided by this interface has nanosecond precision
+ but not necessarily nanosecond accuracy.<br>
+</p>
+<p>Use the <code>isThreadCpuTimeSupported()</code> to determine
+ if a JVM supports measuring of the CPU time for any 
+ thread and <code>isCurrentThreadCpuTimeSupported()</code> to determine if a JVM supports measuring of 
+ the CPU time for the current  thread.
+ A Java virtual machine implementation that supports CPU time measurement 
+ for any thread will also support that for the current thread.
+
+ </p>
+<p>
+
+ </p>
+<p>
+ A JVM may disable thread CPU time measurement.
+ Use the <code>isThreadCpuTimeEnabled()</code> method to determine if thread CPU time measurement is enabled
+. Use the <code>setThreadCpuTimeEnabled()</code>
+ method to enable/disable this thread CPU time measurement.&nbsp;
+
+ </p>
+
+
+<h2><a name="low_memory" id="memory"></a>Detecting Low Memory</h2>
+
+<p>Memory use is an important attribute of the memory system. It
+can indicate:</p>
+
+<ul>
+
+<li>Memory consumption of an application</li>
+<li>Workload being imposed on the automatic memory management
+system</li>
+<li>Potential memory leakage.</li>
+</ul>
+
+<p>As described below, there are two kinds of memory thresholds you can
+use to detect low memory conditions: a usage threshold and a collection
+usage threshold.&nbsp; You can detect low
+memory conditions using either of these thresholds with
+<a href="#Polling">polling</a> or <a href="#ThresholdNotification">threshold notification</a>.</p>
+<p><b>Note</b>: Memory monitoring is intended for load-balancing or
+workload distribution: for example, an application could stop
+receiving new workload when its memory usage exceeds a certain
+threshold. Memory monitoring is not intended to enable an
+application to detect and recover from a low memory
+condition.</p>
+
+<p>For more information, see the API reference for <a href="../../api/java/lang/management/MemoryPoolMXBean.html">MemoryPoolMXBean</a>.
+</p>
+
+<h3>Memory Thresholds</h3>
+
+<p>A memory pool may have two kinds of memory thresholds: a <a href="#UsageThreshold">usage
+threshold</a> and a <a href="#CollectionThreshold">collection usage threshold</a>. Either one of these thresholds may not be supported by a particular memory pool.</p>
+
+<h4><a name="UsageThreshold" id="UsageThreshold">Usage
+Threshold</a></h4>
+
+<p>The <i>usage
+threshold</i> is a manageable attribute of some memory pools.&nbsp; It enables monitoring
+memory use with low overhead.  Setting the threshold to a positive
+value enables usage threshold checking for a memory pool. Setting
+the usage threshold to zero disables usage threshold checking. The default value is supplied
+by the JVM.
+</p>
+
+<p>A JVM performs usage threshold checking on a memory pool at the
+most appropriate time, typically during GC. Each memory pool
+increments a usage threshold count whenever the usage crosses the
+threshold.</p>
+
+<p>Use the <code>isUsageThresholdSupported()</code>method to
+determine whether a memory pool supports a usage threshold, since a
+usage threshold is not appropriate for some memory pools. For
+example, in a generational garbage collector (such as the HotSpot
+VM), most of the objects are allocated in the young generation,
+from the "eden" memory pool. The eden pool is designed to be filled
+up; garbage collecting the eden memory pool will free most of its memory space
+since it is expected to contain mostly short-lived objects
+unreachable at garbage collection time. So, it is not appropriate
+for the eden memory pool to support a usage threshold.</p>
+
+<h4><a name="CollectionThreshold" id="CollectionThreshold">Collection Usage Threshold</a></h4>
+
+<p><i>Collection usage threshold</i> is a manageable attribute of
+some garbage-collected memory pools.  After a JVM has performed
+garbage collection on a memory pool, some memory in the pool will
+still be in use. The collection usage threshold allows you to set a
+value for this memory.  Use the <code>isCollectionUsageThresholdSupported()</code> method 
+of MemoryPoolMXBean to determine if the pool supports a collection
+usage threshold.<br>
+</p>
+
+<p>A JVM may check the collection usage threshold on a memory pool
+when it performs GC. Set the collection usage threshold to a
+positive value to enable checking. Set the collection usage
+threshold to zero (the default) to disable checking.</p>
+
+<h3><a name="Polling" id="Polling">Using Polling<br>
+</a></h3>
+
+<p>An application can continuously monitor its memory usage by
+calling either the <code>getUsage()</code> method for all memory
+pools or the <code>isUsageThresholdExceeded()</code> method for
+memory pools that support a usage threshold.</p>
+
+<p>The following example has a thread dedicated to task
+distribution and processing. At every interval, it determines if it
+should receive and process new tasks based on its memory usage. If
+the memory usage exceeds its usage threshold, it redistributes
+outstanding tasks to other VMs and stops receiving new tasks until
+the memory usage returns below the threshold.</p>
+
+<pre>pool.setUsageThreshold(myThreshold);<br>....<br>boolean lowMemory = false;<br>while (true) {<br>  if (pool.isUsageThresholdExceeded()) {<br>    lowMemory = true;<br>    redistributeTasks();  // redistribute tasks to other VMs<br>    stopReceivingTasks();  // stop receiving new tasks<br>  } else {<br>    if (lowMemory) { // resume receiving tasks<br>      lowMemory = false;<br>      resumeReceivingTasks();<br>    }<br>    // processing outstanding task<br>    ...<br>  }<br>  // sleep for sometime<br>  try {<br>    Thread.sleep(sometime);<br>  } catch (InterruptedException e) {<br>    ...<br>  }<br>}         <br></pre>
+
+<p>The above example does not differentiate the case where the
+memory usage has temporarily dropped below the usage threshold from
+the case where the memory usage remains above the threshold
+between two iterations. You can use the usage threshold count
+returned by <code>getUsageThresholdCount()</code>to determine if
+the memory usage has returned below the threshold between two
+polls.<br>
+</p>
+<p>To test collection usage threshold instead, you would use the <code>isCollectionUsageThresholdSupported()</code>, <code>isCollectionThresholdExceeded()</code> and <code>getCollectionUsageThreshold()</code> methods similarly.</p>
+
+
+<h3><a name="ThresholdNotification" id="ThresholdNotification">Using Threshold Notifications</a></h3>
+
+<p>When the&nbsp; the <code>MemoryMXBean</code> detects that a memory pool has reached or exceeded
+its usage threshold, it emits a <i>usage threshold exceeded</i> notification. The
+<code>MemoryMXBean</code> will not issue another usage threshold
+exceeded notification until the usage has fallen below the
+threshold and then exceeded it again.&nbsp; Similarly, when the memory
+usage after garbage collection exceeds the collection usage threshold,
+the <code>MemoryMXBean</code> emits a <i>collection usage threshold exceeded</i> notification.<br>
+</p>
+
+<p>The example code below implements the same logic as in the
+polling example, but uses usage threshold notification to detect
+low memory conditions. Upon receiving notification, the listener
+notifies another thread to perform actions such as to redistribute
+outstanding tasks, stop receiving tasks, or resume receiving
+tasks.</p>
+
+<p>In general, design the <tt>handleNotification</tt> method to do
+a minimal amount of work, to avoid causing delay in delivering
+subsequent notifications. Perform time-consuming actions in a
+separate thread. Since multiple threads can concurrently invoke the
+notification listener, the listener should properly synchronize the
+tasks it performs.</p>
+
+<pre>class MyListener implements javax.management.NotificationListener {<br>  public void handleNotification(Notification notification, Object handback)  {<br>    String notifType = notification.getType();<br>    if (notifType.equals(MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED)) {<br>      // potential low memory, redistribute tasks to other VMs &amp; stop receiving new tasks.<br>      lowMemory = true;<br>      notifyAnotherThread(lowMemory);<br>    }<br>  }<br>}<br><br>// Register MyListener with MemoryMXBean<br>MemoryMXBean mbean = ManagementFactory.getMemoryMXBean();<br>NotificationEmitter emitter = (NotificationEmitter) mbean;<br>MyListener listener = new MyListener();<br>emitter.addNotificationListener(listener, null, null);<br></pre>
+
+<p>Assuming this memory pool supports a usage threshold, you can
+then set the threshold to some value (representing a number of
+bytes), above which the app will not accept new tasks.</p>
+
+<pre>pool.setUsageThreshold(myThreshold);<br></pre>
+
+<p>After this point, usage threshold detection is enabled and
+MyListener will handle notification.<br>
+</p>
+
+</body></html>

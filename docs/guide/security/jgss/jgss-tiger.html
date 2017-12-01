@@ -1,0 +1,198 @@
+<!--[Targeted for programmers.]-->
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>Java GSS/Kerberos in J2SE 5
+   </title>
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1>
+
+<hr SIZE=3 NOSHADE WIDTH="100%"></h1>
+
+<center>
+<h1>
+Java Generic Security Services (Java GSS) and Kerberos
+<br>
+Enhancements for J2SE 5
+</h1></center>
+
+<hr SIZE=3 NOSHADE WIDTH="100%">
+
+
+<!--
+
+Fixed 4837364: KerberosLoginModule should support TGT renews
+Fixed 4642044: add SunJSSE support for the Kerberos cipher suites
+	(com.sun.net.ssl.client/com.sun.net.ssl.server index names
+	for Krb5LoginModule)
+-->
+
+<p>
+<strong>IMPORTANT NOTE:</strong> The APIs and features described in this document
+are SUBJECT TO CHANGE.
+<p>
+
+
+<p>
+The following enhancements were made to the Java GSS/Kerberos implementation
+in J2SE 5.
+Please send feedback related to these new features to 
+<a href=mailto:java-security@sun.com>java-security@sun.com</a>.
+<ul>
+<li><B>Support for Triple DES encryption type.</B><BR>
+
+Prior to J2SE 5, only the DES encryption type was supported. J2SE 5 
+supports both DES and Triple DES encryption type.  This improves
+interoperability of the J2SE Kerberos implementation with other
+Kerberos implementations, such as Solaris 10 and MIT Kerberos.
+<P>
+Triple DES encryption type is specified in the Kerberos configuration
+file under the "<TT>libdefaults</TT>" section.  It is specified as
+"<TT>des3-cbc-sha1</TT>" with following tags: <TT>default_tkt_enctypes</TT>,
+<TT>default_tgs_enctypes</TT>, <TT>permitted_enctypes</TT>.  
+"<TT>dec3-cbc-sha1</TT>" has the following aliases:
+<BLOCKQUOTE>
+<PRE>
+des3-hmac-sha1
+des3-cbc-sha1-kd
+des3-cbc-hmac-sha1-kd
+</PRE>
+</BLOCKQUOTE>
+
+For example, the libdefaults section in the configuration file might
+include the following.
+<BLOCKQUOTE>
+<PRE>
+default_tkt_enctypes = des3-cbc-sha1 des-cbc-md5 des-cbc-crc
+default_tgs_enctypes = des3-cbc-sha1 des-cbc-md5 des-cbc-crc
+permitted_enctypes   = des3-cbc-sha1 des-cbc-md5 des-cbc-crc
+</PRE>
+</BLOCKQUOTE>
+<TT>default_tkt_enctypes</TT> is used to specify the encryption types to use
+for the session key in the ticket-granting-ticket.  It is used by the
+client to restrict the encryption types of session keys that will be
+used to communicate with the KDC.  The default value is "<TT>des-cbc-md5
+des-cbc-crc des3-cbc-sha1</TT>"
+<p>
+<TT>default_tgs_enctypes</TT> is used to specify the encryption types to use
+for the session key in service tickets. It is used by the client to
+restrict the encryption types of session keys that are shared by the
+client and server. The default value is "<TT>des-cbc-md5 des-cbc-crc
+des3-cbc-sha1</TT>".
+<p>
+<TT>permitted_enctypes</TT> is used to specify the encryption types permitted
+to be used by a service.  It is used by the server to restrict the
+encryption types of session keys that it will accept.
+The default value is "<TT>des-cbc-md5 des-cbc-crc des3-cbc-sha1</TT>".
+<p>
+
+<li><B>TCP vs. UDP Preference Configuration</B><BR>
+
+J2SE now supports the use of the "<TT>udp_preference_limit</TT>" property in
+the Kerberos configuration file (<TT>krb5.conf</TT>).
+<P>
+When sending a message to the KDC, the J2SE Kerberos library will use
+TCP if the size of the message is above <TT>udp_preference_list</TT>. If the
+message is smaller than <TT>udp_preference_list</TT>, then UDP will be tried at
+most three times. If the KDC indicates that the request is too big,
+the J2SE Kerberos library will use TCP.
+<P>
+
+<li><B>IPv6 Support in Kerberos</B><BR>
+
+J2SE now supports IPv6 addresses in Kerberos tickets.  Prior to J2SE
+5, only IPv4 addresses were supported in tickets.
+<P>
+
+
+<li><strong>TGT Renewals</strong><br>
+
+The <a href="http://java.sun.com/products/jaas/">Java 
+Authentication and Authorizaton Server (JAAS)</a>
+Kerberos login module in JDK 5.0,
+<a href="../jaas/spec/com/sun/security/auth/module/Krb5LoginModule.html"><tt>Krb5LoginModule</tt></a>,
+ now supports Ticket Granting Ticket (TGT) renewal.  This allows
+long-running services to renew their TGT automatically without user
+interaction or requiring the services to restart.  
+<p>
+
+With this feature, if <tt>Krb5LoginModule</tt> obtains an expired
+ticket from the ticket cache, the TGT will be automatically renewed
+and be added to Subject of the caller who requested the ticket.  If
+the ticket cannot be renewed for any reason, then
+<tt>Krb5LoginModule</tt> will use its configured callback handler to
+retrieve a username and password to acquire a new TGT.
+
+<p>
+To use this feature, configure <tt>Krb5LoginModule</tt> to use the
+ticket cache and set the newly introduced <tt>renewTGT</tt> option to
+<tt>true</tt>. Here is an example of a JAAS login configuration file
+that requests TGT renewal.
+<blockquote><pre>
+server {
+  com.sun.security.auth.module.Krb5LoginModule required
+        principal=<em>principal@your_realm</em>
+	useTicketCache=true
+	renewTGT=true;
+};
+</pre></blockquote>
+
+Note that if <tt>renewTGT</tt> is set to true, then
+<tt>useTicketCache</tt> must also be set to true; otherwise, it
+results in a configuration error.
+
+<p>
+<li><strong>Login Entry Names for SunJSSE</strong><br>
+
+In JDK 5.0, the SunJSSE provider has added support for the Kerberos 
+cipher suites,
+as described in <a href="http://www.ietf.org/rfc/rfc2712.txt">RFC 2712</a>
+and the <a href="../jsse/JSSERefGuide.html#WhatsNew">What's New in 
+JSSE in J2SE 5</a> in the JSSE Reference Guide. 
+The following JAAS login configuration index names are reserved for
+this feature.
+
+<blockquote><pre>
+com.sun.net.ssl.server
+com.sun.net.ssl.client
+</pre></blockquote>
+
+When a JSSE application uses the Kerberos cipher suites
+without explicit JAAS program, the SunJSSE provider will use these
+index names to find and configure the JAAS login module to acquire the
+necessary Kerberos credentials.
+
+For example, such an application might have the following JAAS
+configuration file.
+
+<blockquote><pre> com.sun.net.ssl.server {
+  com.sun.security.auth.module.Krb5LoginModule required
+        principal=<em>service_principal@your_realm</em>
+        useKeyTab=true
+        keyTab=<em>keytab_name</em>
+	storeKey=true;
+};
+</pre></blockquote>
+
+If the entry is not found, the default "other" index name will be
+used.  The service name for TLS is "host". For example, a TLS
+service running on a machine named "raven.abc.com" in the realm named
+"KRBNT-OPERATIONS.ABC.COM" would have the service principal name
+<blockquote><pre>
+host/raven.abc.com@KRBNT-OPERATIONS.ABC.COM
+</pre></blockquote>
+There are no restrictions on the TLS client; it may use any valid
+Kerberos principal name.
+<p>
+When a JSSE application uses the Kerberos cipher suites with
+explicit JAAS program, it can use any index name, including the ones
+listed above.
+</ul>
+
+
+<P> 
+<HR>
+<P>
+</html>

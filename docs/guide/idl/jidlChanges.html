@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+   <TITLE>Changes in CORBA Features Between J2SE 1.4.x and 5.0</TITLE>
+<!-- Changed by: carson 7/2002 -->
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000077" 
+ALINK="#FF0000">
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<TD WIDTH=30>
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 
+WIDTH=52 HEIGHT=88>
+</TD>
+
+
+<TD ALIGN=CENTER>
+     <H1>Changes in CORBA Features Between J2SE 1.4.x and 5.0</H1>
+</TD>
+
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+   <a href="../../index.html"><FONT SIZE="-1">J2SE Documentation 
+Contents</FONT></a> 
+</TD>
+</TR>
+
+</TABLE>
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+-->
+<p>
+
+
+
+
+
+This release of the Java<sup><font size=-2>TM</sup></font> 2 Platform 
+Standard Edition (J2SE), contains the following enhancements  to CORBA,
+Java IDL, and Java RMI-IIOP technology:  
+
+<p>
+<ul>
+
+<li>Enhancement 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4674929.html">4674929</a>.
+Additional  serviceability features 
+for the J2SE ORB provide a logging framework based on J2SE 1.4 logging APIs.  When an error
+ is encountered and an OMG minor code is generated, this minor code will now be translated to a Java error code for error logging.  
+The ORB will also include the
+standard minor codes as specified by the OMG specifications.
+<p>
+
+<li>Enhancement
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4607440.html">4607440</a>.  
+Better performance of the default ORB in J2SE in high volume deployments,
+including better scalability and performance.
+<p>
+
+<li>Enhancement
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4629589.html">4629589</a>.  
+Added Object Reference Template (ORT) to ORB. An Object Reference Template
+ is an extension to portable interceptors that supports
+portable server activation frameworks, load balancing, fault tolerance,
+dynamic bridging, and other advanced features. 
+<p>
+<li>Enhancement 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4674944.html">4674944</a>.  
+Added on-the-wire interoperability.  This includes identifying and incorporating any
+ resolutions and/or updates from the OMG of any interoperability issues since CORBA 2.3.1 
+  that affect on-the-wire
+interoperability for the J2EE Application Servers, and incorporating those resolutions into the J2SE ORB.  
+<p>
+<li>When the  J2SE 5.0 ORB marshals an <code>org.omg.CORBA.SystemException</code>
+response, it adds an <code>ExceptionDetailMessage</code> (i.e., a <code>ServiceContext
+with ServiceId 14</code>) as defined in:
+<P>
+<PRE>
+    /**
+     * CORBA formal/02-06-01: 13.7.1:
+     * ExceptionDetailMessage identifies a CDR encapsulation of a wstring,
+     * encoded using GIOP 1.2 with a TCS-W of UTF-16.  This service context
+     * may be sent on Reply messages with a reply_status of SYSTEM_EXCEPTION
+     * or USER_EXCEPTION. The usage of this service context is defined
+     * by language mappings. 
+     *
+     * IDL/Java: ptc/02-01-22: 1.15.2: 
+     * When a System Exception is marshaled, its GIOP Reply message shall
+     * include an associated ExceptionDetailMessage service context. The
+     * callee's stack trace is often very valuable debugging information but
+     * may contain sensitive or unwanted information. The wstring within the
+     * service context will therefore contain additional information relating
+     * to the exception, for example the result of calling either
+     * printStackTrace(PrintWriter) or getMessage() on the exception. When
+     * unmarshaling a System Exception on the client side, the wstring from
+     * any ExceptionDetailMessage service context shall become the Java error
+     * message in the unmarshaled exception object.
+     */
+</PRE>
+
+<P>When the J2SE 5.0 ORB unmarshals an <code>org.omg.CORBA.SystemException</code>
+response it constructs the <code>SystemException</code> with the contents of the
+<code>ExceptionDetailMessage</code> as the <code>message</code> argument to the
+<code>SystemException</code> constructor.</P>
+
+<P><strong>NOTE:</strong> The content of the message may change.  In  J2SE 5.0, the message contains
+the server side stack trace.  The following code example  (note: all details
+may change) of  a stack trace on the client side for an
+exception generated on the server-side (note the server-side stack
+trace in the exception's message):</P>
+
+<PRE>
+org.omg.CORBA.FREE_MEM: ----------BEGIN server-side stack trace----------
+org.omg.CORBA.FREE_MEM: idlIConnect  vmcid: 0x0  minor code: 0  completed: No
+	at corba.exceptiondetailsc.idlIServantConnect.raise_system_exception(idlIServantConnect.java:23)
+	at corba.exceptiondetailsc._idlIImplBase._invoke(_idlIImplBase.java:42)
+	at com.sun.corba.ee.impl.protocol.CorbaServerRequestDispatcherImpl.dispatchToServant(CorbaServerRequestDispatcherImpl.java:647)
+	at com.sun.corba.ee.impl.protocol.CorbaServerRequestDispatcherImpl.dispatch(CorbaServerRequestDispatcherImpl.java:190)
+	at com.sun.corba.ee.impl.protocol.CorbaMessageMediatorImpl.handleRequestRequest(CorbaMessageMediatorImpl.java:1653)
+	at com.sun.corba.ee.impl.protocol.CorbaMessageMediatorImpl.handleRequest(CorbaMessageMediatorImpl.java:1513)
+	at com.sun.corba.ee.impl.protocol.CorbaMessageMediatorImpl.handleInput(CorbaMessageMediatorImpl.java:895)
+	at com.sun.corba.ee.impl.protocol.giopmsgheaders.RequestMessage_1_2.callback(RequestMessage_1_2.java:172)
+	at com.sun.corba.ee.impl.protocol.CorbaMessageMediatorImpl.handleRequest(CorbaMessageMediatorImpl.java:668)
+	at com.sun.corba.ee.impl.transport.SocketOrChannelConnectionImpl.dispatch(SocketOrChannelConnectionImpl.java:375)
+	at com.sun.corba.ee.impl.transport.SocketOrChannelConnectionImpl.read(SocketOrChannelConnectionImpl.java:284)
+	at com.sun.corba.ee.impl.transport.ReaderThreadImpl.doWork(ReaderThreadImpl.java:73)
+	at com.sun.corba.ee.impl.orbutil.threadpool.ThreadPoolImpl$WorkerThread.run(ThreadPoolImpl.java:382)
+----------END server-side stack trace----------  vmcid: 0x0  minor code: 0  completed: No
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:274)
+	at com.sun.corba.ee.impl.protocol.giopmsgheaders.MessageBase.getSystemException(MessageBase.java:791)
+	at com.sun.corba.ee.impl.protocol.giopmsgheaders.ReplyMessage_1_2.getSystemException(ReplyMessage_1_2.java:97)
+	at com.sun.corba.ee.impl.protocol.CorbaMessageMediatorImpl.getSystemExceptionReply(CorbaMessageMediatorImpl.java:546)
+	at com.sun.corba.ee.impl.protocol.CorbaClientRequestDispatcherImpl.processResponse(CorbaClientRequestDispatcherImpl.java:407)
+	at com.sun.corba.ee.impl.protocol.CorbaClientRequestDispatcherImpl.marshalingComplete(CorbaClientRequestDispatcherImpl.java:303)
+	at com.sun.corba.ee.impl.protocol.CorbaClientDelegateImpl.invoke(CorbaClientDelegateImpl.java:132)
+	at org.omg.CORBA.portable.ObjectImpl._invoke(ObjectImpl.java:457)
+	at corba.exceptiondetailsc._idlIStub.raise_system_exception(_idlIStub.java:20)
+	at corba.exceptiondetailsc.Client.main(Client.java:87)
+
+------------------------------------------------------------------------------
+
+</PRE>
+</li>
+</UL>
+
+<P> See <A href="compliance.html">Official 
+Specifications for CORBA support in J2SE 5.0</A>  for 
+information on how <a href="index.html">Java IDL</a> and <a 
+href="../rmi-iiop/index.html">Java RMI-IIOP</a> comply with the CORBA Specifications.
+
+
+
+<p>
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+
+
+<TD>
+   <FONT SIZE="-2">
+   <A HREF="../../relnotes/SMICopyright.html">Copyright</a> &#169; 
+2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+    All Rights Reserved.
+    </FONT>
+
+ 
+</TD>
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 
+HEIGHT=30>
+   <BR><BR>
+   <FONT SIZE="+1">
+   <i>Java Software</i>
+   </FONT>
+
+</TD>
+
+
+</TR>
+</TABLE>
+
+
+</body>
+</html>

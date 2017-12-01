@@ -1,0 +1,478 @@
+<html><head>
+   
+<title>Getting Started Using Java RMI</title>
+</head>
+<body text="#000000" bgcolor="#ffffff" link="#0000ff" vlink="#000077" alink="#ff0000">
+ 
+<table border="0" width="100%" summary="layout">
+<tbody><tr>
+<td width="60"><img src="/images/javalogo52x88.gif" alt="Java" border="0" height="88" width="52"> </td>
+
+<td>
+<ul>
+<center>
+<h1>
+Getting Started Using Java<sup><font
+size=-2>TM</font></sup> RMI</h1></center>
+</ul>
+</td>
+
+<td width="15%" align="center" valign="top">
+   <font size="-1"><a href="../../../index.html">
+	Documentation Contents</a>
+   </font>
+</td>
+</tr>
+</tbody></table>
+ 
+<P>This tutorial shows you the steps to follow to create a distributed
+version of the classic Hello World program using Java<sup><font
+size=-2>TM</font></sup> Remote Method Invocation (Java RMI). While you work
+through this example, you will probably come up with a number of
+related questions.  You are encouraged to look for answers in the <a
+href="../faq.html">Java RMI FAQ</a> and the <A   
+HREF="http://archives.java.sun.com/archives/rmi-users.html">archives of the
+RMI-USERS mailing list</a>.If you'd like to subscribe to 
+the RMI-USERS mailing list, click <A HREF="../subscribe.html"><i>here</i></A>.
+
+<P>The distributed Hello World example uses a simple client to make a
+remote method invocation to a server which may be running on a remote host.
+The client receives the "Hello, world!" message from the server.
+
+<P>This tutorial has the following steps:
+<uL>
+	<LI><A HREF="#1">Define the remote interface</A>
+	<LI><A HREF="#2">Implement the server</A>
+	<LI><A HREF="#3">Implement the client</A>
+	<LI> <A HREF="#4">Compile the source files</A>
+	<LI> <A HREF="#5">Start the Java RMI registry, server, and client</A>
+</uL>
+
+The files needed for this tutorial are:
+<UL>
+	<LI> <A HREF="Hello.java"> <code>Hello.java</code></A> -  a remote
+	interface
+
+	<LI> <code><A HREF="Server.java">Server.java</A></code> -  a
+	remote object implementation that implements the remote interface
+
+	<LI><code><A HREF="Client.java">Client.java</A></code> -  a simple
+	client that invokes a method of the remote interface
+
+</UL>
+
+<B>Note:</B> For the remainder of this tutorial, the terms
+"remote object implementation" and "implementation class" are used
+interchangeably to refer to the class <code>example.hello.Server</code>,
+which implements a remote interface.
+
+<p>
+</blockquote>
+</p><hr>
+<h2>
+<a name="1"></a>Define the remote interface</h2>
+<blockquote>
+
+A remote object is an instance of a class that implements a <i>remote
+interface</i>.  A remote interface extends the interface
+<code>java.rmi.Remote</code> and declares a set of <i>remote methods</i>.
+Each <i>remote method</i> must declare
+<code>java.rmi.RemoteException</code> (or a superclass of
+<code>RemoteException</code>) in its <code>throws</code> clause, in
+addition to any application-specific exceptions.
+	
+
+<P>Here is the interface definition for the remote interface used in this
+example, <code>example.hello.Hello</code>.  It declares just one method,
+<code>sayHello</code>, which returns a string to the caller:
+
+<blockquote>
+<pre>
+package example.hello;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface Hello extends Remote {
+    String sayHello() throws RemoteException;
+}
+</pre>
+</blockquote>
+
+Remote method invocations can fail in many additional ways compared to
+local method invocations (such as network-related communication problems
+and server problems), and remote methods will report such failures by
+throwing a <code>java.rmi.RemoteException</code>.&nbsp; For more
+information about the issues of failure and recovery in distributed systems,
+see <I> <A
+HREF="http://research.sun.com/research/techrep/1994/abstract-29.html"> A
+Note on Distributed Computing.</A></I>
+
+</blockquote>
+
+<h2>
+<a name="2">Implement the server</a></h2>
+<blockquote>
+A "server" class, in this context, is the class which has a
+<code>main</code> method that creates an instance of the remote object
+implementation, exports the remote object, and then binds that
+instance to a name in a Java RMI <i>registry</i>. The class
+that contains this <code>main</code> method could be the
+implementation class itself, or another class entirely.
+
+<P>In this example, the <code>main</code> method for the server
+is defined in the class <code>Server</code> which also implements
+the remote interface <code>Hello</code>.
+
+The server's <code>main</code> method does the following: 
+<ul>
+    <li><a href="#21">Create and export a remote object</a>
+    <li><a href="#22">Register the remote object with a Java RMI registry</a>
+</ul>
+
+Here is the source code for the class <code>Server</code>.
+Descriptions for writing this server class follow the source code:
+<blockquote>
+<pre>
+package example.hello;
+	
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+	
+public class Server implements Hello {
+	
+    public Server() {}
+
+    public String sayHello() {
+	return "Hello, world!";
+    }
+	
+    public static void main(String args[]) {
+	
+	try {
+	    Server obj = new Server();
+	    Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);
+
+	    // Bind the remote object's stub in the registry
+	    Registry registry = LocateRegistry.getRegistry();
+	    registry.bind("Hello", stub);
+
+	    System.err.println("Server ready");
+	} catch (Exception e) {
+	    System.err.println("Server exception: " + e.toString());
+	    e.printStackTrace();
+	}
+    }
+}
+</pre>
+</blockquote>
+
+<p>The implementation class <code>Server</code> implements the
+remote interface <code>Hello</code>, providing an implementation
+for the remote method <code>sayHello</code>.  The method
+<code>sayHello</code> does not need to declare that it throws any
+exception because the method implementation itself does not throw
+<code>RemoteException</code> nor does it throw any other checked
+exceptions.
+
+<p><b>Note:</b> A class can define methods not specified in the remote
+interface, but those methods can only be invoked within the virtual machine
+running the service and cannot be invoked remotely.
+
+<a name="21"></a><h3>Create and export a remote object</h3>
+
+The <code>main</code> method of the server needs to create the remote
+object that provides the service.  Additionally, the remote
+object must be <i>exported</i> to the Java RMI runtime so that it
+may receive incoming remote calls.  This can be done as follows:
+<blockquote>
+<pre>
+Server obj = new Server();
+Hello stub = (Hello) UnicastRemoteObject.exportObject(obj, 0);
+
+</pre>
+</blockquote>
+The static method <code>UnicastRemoteObject.exportObject</code>
+exports the supplied remote object to receive incoming remote method
+invocations on an anonymous TCP port and returns the stub for the
+remote object to pass to clients.  As a result of the
+<code>exportObject</code> call, the runtime may begin to listen on a
+new server socket or may use a shared server socket to accept incoming
+remote calls for the remote object.  The returned stub implements the
+same set of remote interfaces as the remote object's class and
+contains the host name and port over which the remote object can be
+contacted.
+
+<p><b>Note:</b> As of the J2SE 5.0 release, stub classes for
+remote objects no longer need to be pregenerated using the
+<code>rmic</code> stub compiler, unless the remote object needs
+to support clients running in pre-5.0 VMs.  If your application
+needs to support such clients, you will need to generate stub
+classes for the remote objects used in the application and deploy
+those stub classes for clients to download.  For details on how
+to generate stub classes, see the tools documentation for
+<code>rmic</code> [<a
+href="../../../tooldocs/solaris/rmic.html">Solaris</a>, <a
+href="../../../tooldocs/windows/rmic.html">Windows</a>].  For
+details on how to deploy your application along with pregenerated
+stub classes, see the <a href="../codebase.html">codebase tutorial</a>.
+
+<a name="22"></a><h3>Register the remote object with a Java RMI registry</h3>
+
+<p>For a caller (client, peer, or applet) to be able to invoke a
+method on a remote object, that caller must first obtain a stub
+for the remote object.  For bootstrapping, Java RMI provides a
+registry API for applications to bind a name to a remote object's
+stub and for clients to look up remote objects by name in order
+to obtain their stubs.
+
+<P>A Java RMI registry is a simplified name service that allows
+clients to get a reference (a stub) to a remote object. In general,
+a registry is used (if at all) only to locate the first
+remote object a client needs to use.  Then, typically, that first
+object would in turn provide application-specific support for
+finding other objects.  For example, the reference can be
+obtained as a parameter to, or a return value from, another
+remote method call. For a discussion on how this works, please
+take a look at <a href="../Factory.html"><i>Applying the Factory
+Pattern to Java RMI</i></a>.
+
+<P>Once a remote object is registered on the server, callers can look up
+the object by name, obtain a remote object reference, and then 
+invoke remote methods on the object.
+
+<P>The following code in the server obtains a stub for a registry
+on the local host and default registry port and then uses the
+registry stub to bind the name "Hello" to the remote object's
+stub in that registry:
+
+<blockquote>
+<pre>
+Registry registry = LocateRegistry.getRegistry();
+registry.bind("Hello", stub);
+</pre>
+</blockquote>
+
+The static method <code>LocateRegistry.getRegistry</code> that
+takes no arguments returns a stub that implements the remote
+interface <code>java.rmi.registry.Registry</code> and sends
+invocations to the registry on server's local host on the default
+registry port of <code>1099</code>.  The <code>bind</code> method
+is then invoked on the <code>registry</code> stub in order to
+bind the remote object's stub to the name "<code>Hello"</code> in
+the registry.
+
+<p><b>Note:</b> The call to
+<code>LocateRegistry.getRegistry</code> simply returns an
+appropriate stub for a registry.  The call does not check to see
+if a registry is actually running.  If no registry is running on
+TCP port 1099 of the local host when the <code>bind</code> method
+is invoked, the server will fail with a
+<code>RemoteException</code>.
+
+</blockquote>
+
+<h2>
+<a name="3">Implement the client</a></code></h2>
+<blockquote>
+
+<p>The client program obtains a stub for the registry on the server's host, looks up the remote object's stub by name in the registry, and
+then invokes the <code>sayHello</code> method on the remote object
+using the stub.
+
+<p>Here is the source code for the client:
+<blockquote>
+<pre>
+package example.hello;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+public class Client {
+
+    private Client() {}
+
+    public static void main(String[] args) {
+
+	String host = (args.length &lt; 1) ? null : args[0];
+	try {
+	    Registry registry = LocateRegistry.getRegistry(host);
+	    Hello stub = (Hello) registry.lookup("Hello");
+	    String response = stub.sayHello();
+	    System.out.println("response: " + response);
+	} catch (Exception e) {
+	    System.err.println("Client exception: " + e.toString());
+	    e.printStackTrace();
+	}
+    }
+}
+</pre>
+</blockquote>
+
+<p>This client first obtains the stub for the registry by
+invoking the static <code>LocateRegistry.getRegistry</code>
+method with the hostname specified on the command line. If no
+hostname is specified, then <code>null</code> is used as the
+hostname indicating that the local host address should be used.
+
+<p>Next, the client invokes the remote method <code>lookup</code>
+on the registry stub to obtain the stub for the remote object
+from the server's registry.
+
+<p>Finally, the client invokes the <code>sayHello</code> method
+on the remote object's stub, which causes the following actions to
+happen:
+<ul>
+<li>The client-side runtime opens a connection to the server
+using the host and port information in the remote object's stub
+and then serializes the call data.
+<li>The server-side runtime accepts the incoming call, dispatches
+the call to the remote object, and serializes the result (the
+reply string "Hello, world!") to the client. 
+<li> The client-side runtime receives, deserializes, and returns
+the result to the caller. 
+</ul>
+<p>The response message returned from the remote invocation on
+the remote object is then printed to <code>System.out</code>.
+
+</blockquote>
+
+<h2>
+<a name="4">Compile the source files</a></h2>
+
+<blockquote>
+
+<p>The source files for this example can be compiled as follows:
+
+<blockquote>
+<pre>
+javac -d <b><i>destDir</i></b> Hello.java Server.java Client.java
+</pre>
+</blockquote>
+where <b><i>destDir</i></b> is the destination directory to put
+the class files in.
+
+<p><b>Note:</b> If the server needs to support clients running on
+pre-5.0 VMs, then a stub class for the remote object
+implementation class needs to be pregenerated using the
+<code>rmic</code> compiler, and that stub class needs to be made
+available for clients to download.  See the <a
+href="../codebase.html">codebase tutorial</a> for more details.
+
+</blockquote>
+
+<h2>
+<a name="5"></a>Start the Java RMI registry, server, and client</h2>
+<blockquote>
+
+<p>To run this example, you will need to do the following:
+<ul>
+<li><a href="#51">Start the Java RMI registry</a>
+<li><a href="#52">Start the server</a>
+<li><a href="#53">Run the client</a>
+</ul>
+
+<a name="51"></a><h3>Start the Java RMI registry</h3> <p>To start
+the registry, run the <code>rmiregistry</code> command on the
+server's host.  This command produces no output (when successful)
+and is typically run in the background.  For more information,
+see the tools documentation for <code>rmiregistry</code> [<a
+href="../../../tooldocs/solaris/rmiregistry.html">Solaris</a>, <a
+href="../../../tooldocs/windows/rmiregistry.html">Windows</a>].
+
+<P>For example, on the Solaris(tm) Operating System:
+<blockquote>
+<pre>rmiregistry &amp;</pre>
+</blockquote>
+<P>Or, on Windows platforms:
+<blockquote>
+<pre>start rmiregistry </pre>
+</blockquote>
+
+<P>By default, the registry runs on TCP port 1099. To start a registry on
+a different port, specify the port number from the command line. For
+example, to start the registry on port 2001 on a Windows platform:
+
+<blockquote>
+<pre>start rmiregistry 2001</pre>
+</blockquote>
+
+<p>
+If the registry will be running on a port other than 1099, you'll need to
+specify the port number in the calls to
+<code>LocateRegistry.getRegistry</code> in the
+<code>Server</code> and <code>Client</code> classes. For example,
+if the registry is running on port 2001 in this
+example, the call to <code>getRegistry</code> in the server would
+be:
+<blockquote>
+<pre>Registry registry = LocateRegistry.getRegistry(2001);
+</pre>
+</blockquote>
+<p>
+
+<a name="52"></a><h3>Start the server</h3>
+<p>To start the server, run the <code>Server</code> class using
+the <code>java</code> command as follows:
+<p>On the Solaris Operating System:
+<blockquote>
+<pre>
+java -classpath <i><b>classDir</b></i> example.hello.Server &amp;
+</pre>
+</blockquote>
+<p>On Windows platforms:
+<blockquote>
+<pre>
+start java -classpath <i><b>classDir</b></i> example.hello.Server
+</pre>
+</blockquote>
+
+<p>where <i><b>classDir</b></i> is the root directory of the
+class file tree (see <i><b>destDir</b></i> in the section "<a
+href="#4">Compiling the source files</a>").
+
+<p>The output from the server should look like this:
+<blockquote>
+<pre>
+Server ready
+</pre>
+</blockquote>
+<p>The server remains running until the process is terminated by
+the user (typically by killing the process).
+<a name="53"></a><h3>Run the client</h3>
+<p>Once the server is ready, the client can be run as follows:
+<blockquote>
+<pre>
+java  -classpath <i><b>classDir</b></i> example.hello.Client
+</pre>
+</blockquote>
+<p>where <i><b>classDir</b></i> is the root directory of the
+class file tree (see <i><b>destDir</b></i> in the section "<a
+href="#4">Compiling the source files</a>").
+
+<p>The output from the client is the following message:
+<blockquote>
+<pre>
+response: Hello, world!
+</pre>
+</blockquote>
+<br>
+</blockquote>
+<p>
+
+
+<!-- Body text ends here --><!-- ============================================================== -->
+</p><hr size="3" noshade="noshade">
+<table border="0" width="100%" summary="layout">
+<tbody><tr valign="top">
+<td><font size="-2"><a href="http://java.sun.com/j2se/1.4.2/docs/relnotes/SMICopyright.html">Copyright ©</a>
+2004 <a href="http://www.sun.com/">Sun Microsystems, Inc.</a> All Rights
+Reserved.</font> 
+<br><font size="-1">Please send comments to: <a href="mailto:rmi-comments@java.sun.com"><code>rmi-comments@java.sun.com</code></a> </font></td>
+
+<td align="right"><img src="/images/sunlogo64x30.gif" alt="Sun" border="0" height="30" width="64"> 
+</td></tr>
+</tbody></table>
+</body></html>
