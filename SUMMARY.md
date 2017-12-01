@@ -16,3 +16,4 @@
 * [工程型計算機](example/engineering-calculator.md)
 * [八皇后問題](example/eight-queens-puzzle.md)
 * [井字遊戲](example/OX-game.md)
+* [河內塔](example/tower-of-hanoi.md)
