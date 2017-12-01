@@ -1,0 +1,1053 @@
+<HTML>
+<HEAD>
+<title>J2SE(TM) 5.0 New Features</title>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<!--TD WIDTH=60-->
+<TD>
+   <IMG SRC="../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+<TD>
+<center>
+<h1 style="font-size: 150%;">New Features and Enhancements<br>J2SE 5.0</h1>
+</center>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="../index.html">Contents</a></font>
+<p>
+</TR>
+</TABLE>
+
+<!-- Body text begins here -->
+
+
+<hr size=3 noshade>
+<p>
+<blockquote>  
+
+Java 2 Platform Standard Edition 5.0 is a major feature
+release.  The features listed below are introduced in 5.0 since
+the previous major release (1.4.0).  
+
+<!-- USE WORDING LIKE THIS FOR DOT-DOT RELEASES
+Version 5.0 of the Java 2 Standard Edition was a major feature
+release.  The features listed below are those introduced in 5.0 (since 1.4).  
+Version 1.4.2 is a maintenance release and introduces the minor enhancements 
+and changes (since 1.4.1) listed at
+<a href="http://java.sun.com/j2se/1.4.2/changes.html">Enhancements 
+and Changes in J2SE 1.4.2</a> on the web site.
+-->
+<p>
+
+For highlights of the new features, also see 
+<a href="http://java.sun.com/developer/technicalArticles/releases/j2se15/">
+J2SE<sup><font size=-2>TM</font></sup> 5.0 in a Nutshell</a>.  
+For issues, see <a href="http://java.sun.com/j2se/1.5.0/relnotes.html">JDK 5.0 release notes</a>.
+<p>
+
+<!--
+For recent updates to this page, see the corresponding page 
+<a href="http://java.sun.com/j2se/1.5.0/docs/relnotes/features.html">New 
+Features</a> on java.sun.com.
+-->
+</font>
+
+</blockquote>
+
+<blockquote> 
+<dl> 
+<dt><a href="#performance"><b>Performance Enhancements</b></a>
+<dt><a href="#lang"><b>Java Language Features</b></a> 
+    <dd><a href="#generics">Generics</a> 
+    <dd><a href="#forloop">Enhanced for Loop</a> 
+    <dd><a href="#boxing">Autoboxing/Unboxing</a> 
+    <dd><a href="#enums">Typesafe Enums</a> 
+    <dd><a href="#varargs">Varargs</a> 
+    <dd><a href="#static_import">Static Import</a> 
+    <dd><a href="#annotations">Metadata</a> (Annotations)
+
+<dt><a href="#vm"><b>Virtual Machine</b></a> 
+    <dd><a href="#vm_classdatashare">Class Data Sharing</a> 
+    <dd><a href="#vm_gc_ergo">Garbage Collector Ergonomics</a> 
+    <dd><a href="#vm_sclass">Server-Class Machine Detection</a> 
+    <dd><a href="#vm_threads">Thread Priority Changes</a> 
+    <dd><a href="#vm_fatal_err">Fatal Error Handling</a> 
+    <dd><a href="#vm_high_precision">High-Precision Timing Support</a> 
+      <!--
+  <dd><a href="#vm_server">Sever VM</a>
+  <dd><a href="#vm_client">Client VM</a>
+  -->
+
+<dt><a href="#base_libs"><b>Base Libraries</b></a> 
+    <dd><a href="#java.lang">Lang and Util Packages</a> 
+    <dd><a href="#networking">Networking</a> 
+      <!--
+  <dd><a href="#nio">New I/O</a>
+  -->
+
+<dd><a href="#security">Security</a> 
+    <dd><a href="#core_i18n">Internationalization</a> 
+    <dd><a href="#envars">Improved Support for Environment Variables</a> 
+    <dd><a href="#processbuilder">ProcessBuilder</a> 
+    <dd><a href="#formatter">Formatter</a> 
+    <dd><a href="#scanner">Scanner</a> 
+    <dd><a href="#reflection">Reflection</a> 
+    <dd><a href="#beans">JavaBeans<sup><font size="-2">TM</font></sup> Component 
+      Architecture</a> 
+    <dd><a href="#collect">Collections Framework</a> 
+    <dd><a href="#jaxp">Java API for XML Processing (JAXP)</a> 
+    <dd><a href="#bitman">Bit Manipulation Operations</a> 
+    <dd><a href="#math">Math</a> 
+    <dd><a href="#instrument">Instrumentation</a> 
+    <dd><a href="#serialization">Serialization</a> 
+    <dd><a href="#concurrency">Concurrency Utilities</a> 
+    <dd><a href="#threads">Threads</a> 
+      <!--
+  <dd><a href="#fp">Floating-Point Exceptions</a>
+  -->
+    <dd><a href="#mm">Monitoring and Management</a> 
+
+<dt><a href="#integration_libs"><b>Integration Libraries</b></a> 
+    <dd><a href="#rmi">Remote Method Invocation (RMI)</a> 
+    <dd><a href="#jdbc">Java Database Connectivity (JDBC)</a> 
+      
+  <dd><a href="#corba">CORBA, Java IDL, and Java RMI-IIOP</a> 
+
+    <dd><a href="#jndi">Java Naming and Directory Interface<sup><font size="-2">TM</font></sup> 
+      (JNDI)</a> 
+
+<dt><a href="#ui"><b>User Interface</b></a> 
+    <dd><a href="#ui_i18n">Internationalization</a> 
+    <dd><a href="#js">Java Sound Technology</a> 
+    <dd><a href="#2d">Java 2D<sup><font size="-2">TM</font></sup> Technology</a> 
+    <dd><a href="#imageio">Image I/O</a> 
+      <!--
+  <dd><a href="#ja">Fonts for Japanese Locale</a>
+  <dd><a href="#inputmethods">Input Methods</a> 
+  -->
+    <dd><a href="#awt">AWT</a> 
+    <dd><a href="#swing">Swing</a> 
+
+<dt><a href="#deploy"><b>Deployment</b></a> 
+    <dd><a href="#deploy_general">General Deployment</a> 
+      <!--      
+  <dd><a href="#applets">Applets</a> 
+  <dd><a href="#plugin">Java Plug-in Technology</a>
+  -->
+    <dd><a href="#deploy_jws">Java Web Start</a> 
+      <!-- 
+  <dd><a href="#update">Java Update</a>
+  -->
+    <dt><a href="#tools"><b>Tools and Tool Architecture</b></a> 
+    <dd><a href="#jvmti">Java Virtual Machine Tool Interface (JVMTI)</a> 
+    <dd><a href="#jpda">Java Platform Debugger Architecture (JPDA)</a> 
+      <!--
+  <dd><a href="#jvmpi">Java Virtual Machine Profiler Interface (JVMPI)</a> 
+  <dd><a href="#jvmdi">Java Virtual Machine Debug Interface (JVMDI)</a> 
+  -->
+    <dd><a href="#javac">Java Compiler (javac)</a> 
+    <dd><a href="#javadoc">Javadoc Tool</a> 
+    <dd><a href="#apt">Annotation Processing Tool (<code>apt</code>)</a> 
+      <!--
+  <dd><a href="#jarsigner">Jarsigner Tool</a> 
+  -->
+<dt><a href="#platform"><b>OS & Hardware Platforms</b></a> 
+    <dd><a href="#platform_configs">Supported System Configurations</a> 
+    <dd><a href="#platform_proc64">64-Bit AMD Opteron Processors</a> 
+
+</dl>
+</blockquote>
+
+
+
+<!--=====================================================-->
+
+<hr>
+<a name="performance"></a>
+<h2>Performance Enhancements</h2>
+<blockquote>
+For a  synopsis of performance enhancements, see <a href="../guide/performance/speed.html">Performance Enhancements</a>.
+
+</blockquote>
+
+
+<!--=====================================================-->
+
+<hr>
+<a name=lang></a>
+<h2>
+Java<sup><font size=-2>TM</font></sup> Language Features
+</h2>
+<blockquote>
+
+For more information see 
+<a href="../guide/language/index.html">New Language Features</a>.
+
+<a name="generics"></a>
+<h3>
+<a href="../guide/language/generics.html">Generics</A>
+</h3>
+This long-awaited enhancement to the type system allows a
+type or method to operate on objects of various types while providing
+compile-time type safety.  It adds compile-time type safety to the
+Collections Framework and eliminates the drudgery of casting.
+Refer to <a href="http://jcp.org/en/jsr/detail?id=14">JSR 14</a>.
+
+<a name="forloop"></a>
+<h3>
+<a href="../guide/language/foreach.html">Enhanced for Loop</a>
+</h3>
+This new language construct eliminates the drudgery
+and error-proneness of iterators and index variables when iterating over
+collections and arrays.
+Refer to <a href="http://jcp.org/en/jsr/detail?id=201">
+JSR 201 </a>.
+
+<a name="boxing"></a>
+<h3>
+<a href="../guide/language/autoboxing.html">Autoboxing/Unboxing</a>
+</h3>
+This facility eliminates the drudgery of manual
+conversion between primitive types (such as int) and wrapper types (such
+as Integer).
+Refer to <a href="http://jcp.org/en/jsr/detail?id=201"> 
+JSR 201 </a>.
+
+<a name="enums"></a>
+<h3>
+<a href="../guide/language/enums.html">Typesafe Enums</a>
+</h3>
+This flexible object-oriented enumerated type facility
+allows you to create enumerated types with arbitrary methods and
+fields.  It provides all the benefits of the Typesafe Enum pattern
+("Effective Java," Item 21) without the verbosity and the error-proneness.
+Refer to <a href="http://jcp.org/en/jsr/detail?id=201">JSR 201</a>.
+
+<a name="varargs"></a>
+<h3>
+<a href="../guide/language/varargs.html">Varargs</a>
+</h3>
+This facility eliminates the need for manually boxing up
+argument lists into an array when invoking methods that accept
+variable-length argument lists.
+Refer to <a href="http://jcp.org/en/jsr/detail?id=201">JSR 201</a>.
+
+<a name="static_import"></a>
+<h3>
+<a href="../guide/language/static-import.html">Static Import</a>
+</h3>
+This facility lets you avoid qualifying static members
+with class names without the shortcomings of the "Constant Interface
+antipattern."
+Refer to <a href="http://jcp.org/en/jsr/detail?id=201">JSR 201</a>.
+
+<a name="annotations"></a>
+<h3>
+<a href="../guide/language/annotations.html">Metadata</a> (Annotations)
+</h3>
+This language feature lets you avoid writing boilerplate code
+under many circumstances by enabling tools to generate it from
+annotations in the source code. This leads to a "declarative"
+programming style where the programmer says what should be done and
+tools emit the code to do it.  Also it eliminates the need for
+maintaining "side files" that must be kept up to date with changes in
+source files.  Instead the information can be maintained <i>in</i> the
+source file.
+Refer to <a href="http://jcp.org/en/jsr/detail?id=175">JSR 175</a>.
+
+</blockquote>
+
+<!-- -------------------------------------------------------- -->
+<hr>
+<a name=vm></a>
+<h2>Virtual Machine</h2>
+
+<blockquote>
+<a name=vm_classdatashare></a>
+<h3>
+<a href="../guide/vm/class-data-sharing.html">Class Data Sharing</a>
+</h3>
+The class data sharing feature is aimed at reducing application startup 
+time and footprint.
+The installation process loads a set of classes from the system jar file
+into a private, internal representation, then dumps that representation 
+to a "shared archive" file.
+During subsequent JVM invocations, the shared archive is memory-mapped
+in, saving the cost of loading those classes and allowing much of the 
+JVM's metadata for these classes to be shared among multiple JVM processes.  
+For more information, click the above link.
+
+<a name=vm_gc_ergo></a>
+<h3>
+<a href="../guide/vm/gc-ergonomics.html">Garbage Collector Ergonomics</a>
+</h3>
+The parallel collector has been enhanced to monitor and adapt to the memory needs 
+    of the application. You can specify performance goals for applications and 
+    the JVM will tune the size of the Java heap to meet those performance goals 
+    with the smallest application footprint consistent with those goals. The goal 
+    of this adaptive policy is to eliminate the need to tune command-line options 
+    to achieve the best performance. For a synopsis of garbage collection features, 
+    click the above link. 
+
+<a name=vm_sclass></a>
+<h3>
+<a href="../guide/vm/server-class.html">Server-Class Machine Detection</a>
+</h3>
+At application startup, the launcher can attempt to detect whether 
+the application is running on a "server-class" machine.
+
+<a name=vm_threads></a>
+<h3>
+<a href="../guide/vm/thread-priorities.html">Thread Priority Changes</a>
+</h3>
+Thread priority mapping has changed somewhat allowing
+Java threads and native threads that do not have explicitly set priorities 
+to compete on an equal footing.
+
+<a name=vm_fatal_err></a>
+<h3>
+Fatal Error Handling
+</h3>
+The fatal error reporting mechanism has been enhanced to provide 
+improved diagnostic output and reliability.
+
+<a name=vm_high_precision></a>
+<h3>
+High-Precision Timing Support
+</h3>
+The method 
+<a href="../api/java/lang/System.html#nanoTime()"><code>System.nanoTime()</code></a> 
+has been added, providing access to a
+nanosecond-granularity time source for relative time measurements. The
+actual precision of the time values returned by System.nanoTime() is
+platform-dependent. 
+</blockquote>
+
+
+<!-- -------------------------------------------------------- -->
+<hr>
+<a name=base_libs></a>
+<h2>Base Libraries</h2>
+<blockquote>
+
+<a name="java.lang"></a>
+<h3><a href="../guide/lang/enhancements.html">Lang and Util Packages</a></h3>
+For a  synopsis of java.lang and java.util enhancements, click the above link.
+<p></p>
+
+<a name="networking"></a>
+<h3><a href="../guide/net/enhancements-1.5.0.html">Networking</a></h3>
+For a  synopsis of added networking features, click the above link.
+
+<a name="security"></a>
+<h3><a href="../guide/security/index.html">Security</a></h3>
+This release of J2SE offers significant enhancements for security.
+It provides better support for security tokens, support for more
+security standards (SASL, OCSP, TSP), improvements for scalability
+(SSLEngine) and performance, plus many enhancements in the crypto
+and Java GSS areas. For details see the above link.
+<!--
+Also refer to 
+<a href="http://jcp.org/en/jsr/detail?id=28">JSR 28</a>. 
+-->
+
+<a name="core_i18n"></a>
+<h3><a href="../guide/intl/index.html">Internationalization</a></h3>
+Enhancements are as follows:
+<ul>
+<li>
+Character handling is now based on version 4.0 of the Unicode standard. 
+This affects the <code>Character</code> and 
+<code>String</code> classes in the <code>java.lang package</code>, 
+the collation and bidirectional text analysis
+functionality in the <code>java.text package</code>, character classes in the
+<code>java.util.regex</code> package, and many other parts of the J2SE. 
+As part of this upgrade, support for supplementary characters has been
+specified by the JSR 204 expert group and implemented throughout the
+J2SE. 
+See the article
+<a href="http://java.sun.com/developer/technicalArticles/Intl/Supplementary/">
+Supplementary Characters in the Java Platform</a>, the 
+<a href="http://jcp.org/en/jsr/detail?id=204">
+Java Specification Request 204</a>, and the 
+<a href="../api/java/lang/Character.html"><code>Character
+</code>
+</a>
+class documentation for more information.
+<li>
+The <a href="../api/java/text/DecimalFormat.html">DecimalFormat</a> class
+has been enhanced to format and parse 
+<code>BigDecimal</code> and <code>BigInteger</code> values 
+without loss of precision. Formatting of such values is
+enhanced automatically; parsing into BigDecimal needs to be enabled
+using the
+<a href="../api/java/text/DecimalFormat.html#setParseBigDecimal(boolean)"><code>setParseBigDecimal</code></a>
+method.
+<li>
+Vietnamese is now supported in all locale sensitive functionality
+in the <code>java.util</code> and <code>java.text</code> packages. 
+See the
+<a href="../guide/intl/locale.doc.html">Supported Locales</a>
+document for complete information on supported locales and writing
+systems.
+</ul>
+
+<a name="envars"></a>
+<h3>
+<a href="../api/java/lang/System.html#getenv(java.lang.String)">
+Improved Support for Environment Variables</a> 
+</h3>
+The <code><a href="../api/java/lang/System.html#getenv(java.lang.String)">
+System.getenv(String)</a></code> 
+method is no longer deprecated.  
+The new <code><a href="../api/java/lang/System.html#getenv()">System.getenv()</a></code>
+method allows access to the process environment as a 
+<code>Map&lt;String,String&gt;</code>. 
+
+<a name="processbuilder"></a>
+<h3>
+<a href="../api/java/lang/ProcessBuilder.html">ProcessBuilder</a> 
+</h3>
+The new <code>ProcessBuilder</code> class provides a more convenient way to
+invoke subprocesses than does 
+<a href="../api/java/lang/Runtime.html#exec(java.lang.String, java.lang.String[], java.io.File)">Runtime.exec</a>.  
+In particular, ProcessBuilder makes it easy to start a subprocess 
+with a modified process environment (that is, one based on the parent's 
+process environment, but with a few changes).
+
+<a name="formatter"></a>
+<h3><a href="../api/java/util/Formatter.html">Formatter</a></h3>
+An interpreter for printf-style format strings, the <code>Formatter</code> 
+class provides support for layout justification and alignment, common
+formats for numeric, string, and date/time data, and locale-specific
+output.  Common Java types such as <code>byte</code>,
+<a href="../api/java/math/BigDecimal.html"><code>java.math.BigDecimal</code></a>
+, and 
+<a href="../api/java/util/Calendar.html"><code>java.util.Calendar</code></a> 
+are supported.  Limited formatting customization for arbitrary user types 
+is provided through the 
+<a href="../api/java/util/Formattable.html"><code>java.util.Formattable</code></a> interface.
+
+<a name="scanner"></a>
+<h3><a href="../api/java/util/Scanner.html">Scanner</a></h3>
+The <code>java.util.Scanner</code> class 
+can be used to convert text into primitives or <code>String</code>s.  
+Since it is based on the 
+<a href="../api/java/util/regex/package-summary.html"><code>java.util.regex</code></a> 
+package, it also offers a way to conduct regular expression based searches 
+on streams, file data, strings, or implementors of the 
+<a href="../api/java/lang/Readable.html"><code>Readable</code></a> interface.
+
+
+<a name="reflection"></a> 
+<h3><a href="../guide/reflection/enhancements.html">Reflection</a></h3>
+Have added support for generics, annotations, enums and have added convenience methods.
+Also have generified the class java.lang.Class.
+
+<a name="beans"></a>
+<h3><a href="../guide/beans/index.html">JavaBeans Component Architecture</a>
+</h3>
+A subclass of <code>PropertyChangeEvent</code> called
+<code>IndexedPropertyChangeEvent</code> has been added to support
+bound properties that use an index to identify the
+part of the bean that changed.  Also, methods have
+been added to the <code>PropertyChangeSupport</code> class to
+support firing indexed property change events. 
+
+<a name="collect"></a>
+<h3>
+<a href="../guide/collections/index.html">Collections Framework</a>
+</h3>
+The Collections Framework has been enhanced in the
+<a href="../guide/collections/changes5.html">following ways</a>:
+<ul>
+<li>
+Three new language features are targeted at collections:  Generics,
+Enhanced <code>for</code> Loop, and Autoboxing.  
+<li>Three new interfaces have been added to the framework 
+(two of which are part of <code>java.util.concurrent</code>): 
+<code>Queue</code>, <code>BlockingQueue</code>, and <code>ConcurrentMap</code>. 
+<li>
+Two concrete implementations of <code>Queue</code> have been added, 
+as well as one skeletal implementation.  
+<li>Five blocking queue implementations have been
+added, and one <code>ConcurrentMap</code> implementation.  
+<li>Special-purpose <code>Map</code> and <code>Set</code> 
+implementations are provided for use with typesafe enums.  
+<li>Special-purpose copy-on-write <code>List</code> and <code>Set</code> 
+implementations have been added.
+<li>Wrapper implementations are provided to add dynamic type-safety for most
+collection interfaces.  
+<li>Several new algorithms are provided for manipulating collections.  
+<li>Methods are provided to compute hash codes and string representations 
+for arrays.
+</ul>
+
+<a name=jaxp></a>
+<h3><a href="../guide/xml/jaxp/index.html">Java API for XML Processing (JAXP)</a></h3>
+Click the above link for details or refer to 
+<a href="http://jcp.org/en/jsr/detail?id=206">JSR 206</a>.
+
+<a name=bitman></a>
+<h3>Bit Manipulation Operations</h3>
+The wrapper classes (<code>Integer</code>, <code>Long</code>, 
+<code>Short</code>, <code>Byte</code>, and <code>Char</code>) 
+now support common bit manipulation operations which include 
+<code>highestOneBit</code>, <code>lowestOneBit</code>,
+<code>numberOfLeadingZeros</code>, <code>numberOfTrailingZeros</code>,
+<code>bitCount</code>, <code>rotateLeft</code>, <code>rotateRight</code>,
+<code>reverse</code>, <code>signum</code>, and <code>reverseBytes</code>.
+
+<a name=math></a>
+<h3><a href="../guide/math/index.html">Math</a></h3>
+
+The numerical functionality provided by the libraries has been augmented 
+in several ways:
+<ul>
+<li>
+The <code>BigDecimal</code> class has
+added support for fixed-precision floating-point computation.
+Refer to 
+<a href="http://jcp.org/en/jsr/detail?id=13">JSR 13</a>. 
+<li>
+The <code>Math</code> and <code>StrictMath</code> libraries  include
+hyperbolic transcendental functions (sinh, cosh, tanh), cube root, base
+10 logarithm, etc.
+<li>
+Hexadecimal floating-point support - To allow precise and predictable
+specification of particular floating-point values,  hexadecimal
+notation can be used for floating-point literals and for string 
+to floating-point conversion methods in <code>Float</code> and 
+<code>Double</code>.
+</ul>
+
+<h3><a name=instrument>Instrumentation</a></h3>
+The new <a href="../api/java/lang/instrument/package-summary.html">
+<code>java.lang.instrument</code></a> 
+package provides services that allow Java
+programming agents to instrument programs running on the Java virtual
+machine. The intrumentation mechanism is modification of the
+bytecodes of methods.
+
+<a name="serialization"></a>
+<h3><a href="../guide/serialization/index.html">Serialization</a></h3>
+Support has been added to handle enumerated types which are new in version 
+5.0.
+The rules for serializing an enum
+instance differ from those for serializing an "ordinary" serializable
+object: the serialized form of an enum instance consists only of its
+enum constant name, along with information identifying its base enum
+type. Deserialization behavior differs as well--the class information
+is used to find the appropriate enum class, and the Enum.valueOf
+method is called with that class and the received constant name in
+order to obtain the enum constant to return.
+
+<a name="concurrency"></a>
+<h3><a href="../guide/concurrency/index.html">Concurrency Utilities</a></h3>
+The <a href="../api/java/util/concurrent/package-summary.html"><code>java.util.concurrent</code></a>,
+<a href="../api/java/util/concurrent/atomic/package-summary.html"><code>java.util.concurrent.atomic</code></a>,
+<a href="../api/java/util/concurrent/locks/package-summary.html">and
+<code>java.util.concurrent.locks</code></a> packages provide a powerful,
+extensible framework of high-performance, scalable, thread-safe building
+blocks for developing concurrent classes and applications, including thread
+pools, thread-safe collections, semaphores, a task scheduling framework,
+task synchronization utilities, atomic variables, and locks. The addition of
+these packages to the core class library frees the programmer from the need
+to craft these utilities by hand, in much the same manner that the
+Collections Framework did for data structures. Additionally, these packages
+provide low-level primitives for advanced concurrent programming which take
+advantage of concurrency support provided by the processor, enabling
+programmers to implement high-performance, highly scalable concurrent
+algorithms in the Java language to a degree not previously possible without
+resorting to native code. Refer to <a href="http://jcp.org/en/jsr/detail?id=166">JSR
+166 </a>. 
+
+<a name=threads></a>
+<h3>Threads</h3>
+The <code>java.lang.Thread</code> class has the following enhancements:
+<ul>
+<li><a href="../guide/vm/thread-priorities.html">Thread priority</a>
+handling has changed; see the above link for details.
+</li>
+  <li><a href="../api/java/lang/Thread.State.html"><code>Thread.State</code></a>
+      enum class and the new
+      <a href="../api/java/lang/Thread.html#getState()"><code>getState()</code></a>
+      API are provided for querying the execution state of a thread.</li>
+  <li>The new thread dump API - the
+      <a href="../api/java/lang/Thread.html#getStackTrace()">
+      <code>getStackTrace</code></a> and
+      <a href="../api/java/lang/Thread.html#getAllStackTraces()">
+      <code>getAllStackTraces</code></a> methods
+      in the <code>Thread</code> class - provides
+      a programmatic way to obtain the stack trace of a thread or all threads.</li>
+  <li>The <a href="../api/java/lang/Thread.html#setUncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)"><code>uncaughtExceptionHandler</code></a> 
+      mechanism, previously available only through the ThreadGroup 
+      class, is now available directly through the Thread class.</li>
+  <li>A new form of the <code>sleep()</code> method is provided which allows
+      for sleep times smaller than one millisecond. </li>
+</ul>
+
+<a name=mm></a>
+<h3>
+<a href="../guide/management/index.html">Monitoring and Management</a>
+</h3>
+This release of J2SE offers significant
+enhancements for monitoring and management for the Java platform.
+See the above link for details.
+
+<ul>
+   <li>Monitoring and management API for the Java virtual machine<br>
+       The new <a href="../api/java/lang/management/package-summary.html">
+       <code>java.lang.management</code></a> package provides the
+       interface for monitoring and managing the Java virtual machine.
+   </li>
+   <li>Monitoring and management API for the logging facility<br>
+       The new <a href="../api/java/util/logging/LoggingMXBean.html">
+       <code>java.util.logging.LoggingMXBean</code></a> interface
+       is the management interface for the logging facility.
+   </li>
+   <li>JMX instrumentation of the Java virtual machine<br>
+       The Java virtual machine (JVM) has built-in instrumentation
+       that enables you to monitor and manage it using JMX.
+       You can easily start a JMX agent for monitoring and managing
+       remote or local Java VMs instrumentation or of any application
+       with JMX instrumentation.
+       See <a href="../guide/management/agent.html">Monitoring and Management Using JMX</a>
+       for details.
+   </li>
+   <li>The SNMP agent publishes the standard MIB for the Java virtual machine instrumentation
+       as defined by <a href="http://jcp.org/en/jsr/detail?id=163">JSR 163</a>.
+       For more information, see <a href="../guide/management/SNMP.html">SNMP Monitoring and Management</a>.
+   </li>
+   <li>Java<sup><font size="-1">TM</font></sup> Management Extensions<br>
+       JMX<sup><font size="-1">TM</font></sup> API version 1.2 and the
+       RMI connector of the JMX Remote API version 1.0 are included in
+       J2SE 5 release.
+       The JMX API allows you to instrument libraries and
+       applications for monitoring and management.
+       The RMI connector allows this instrumentation to be remotely accessible.
+       See the <a href="../guide/jmx/index.html">JMX documentation</a>
+       for more details.
+    </li>
+</ul>
+</blockquote>
+
+<!-- -------------------------------------------------------- -->
+<hr>
+<a name=integration_libs></a>
+<h2>Integration Libraries</h2>
+<blockquote>
+
+<a name="rmi"></a>
+<h3> <a href="../guide/rmi/index.html">Remote Method Invocation (RMI)</a>
+</h3>
+RMI has been enhanced in the following areas:
+<ul>
+<li>
+Dynamic Generation of Stub Classes - 
+This release adds support for the dynamic generation of stub
+classes at runtime, obviating the need to use the Java Remote
+Method Invocation (Java RMI) stub compiler, rmic, to pregenerate stub
+classes for remote objects. Note that rmic must still be used to
+pregenerate stub classes for remote objects that need to support
+clients running on earlier versions.
+<li>
+Standard SSL/TLS Socket Factory Classes -
+This release adds standard Java RMI socket factory classes, 
+<code><a href="../api/javax/rmi/ssl/SslRMIClientSocketFactory.html">javax.rmi.ssl.SslRMIClientSocketFactory</a></code> 
+and <code><a href="../api/javax/rmi/ssl/SslRMIServerSocketFactory.html">javax.rmi.ssl.SslRMIServerSocketFactory</a></code>, 
+which communicate over the Secure Sockets Layer (SSL) or Transport
+Layer Security (TLS) protocols using the Java Secure Socket Extension
+(JSSE).
+<li>
+Launching rmid or a Java RMI Server from inetd/xinetd - 
+A new feature, provided by the <code>System.inheritedChannel</code> method,
+allows an application to obtain a channel
+(<code>java.nio.channels.SocketChannel</code> or
+<code>java.nio.channels.ServerSocketChannel</code>, for example) 
+inherited from the
+process that launched the virtual machine (VM). Such an inherited
+channel can be used to either service a single incoming connection 
+(as with <code>SocketChannel</code>) or accept multiple incoming connections
+(as with <code>ServerSocketChannel</code>). Therefore, Java networking
+applications launched by inetd (Solaris(tm) Operating System) or
+xinetd (Linux) can now obtain the <code>SocketChannel</code> or 
+<code>ServerSocketChannel</code> inherited from inetd/xinetd.
+</ul>
+<p>
+
+<a name=jdbc></a>
+<h3><a href="../guide/jdbc/index.html">Java Database Connectivity (JDBC)</a></h3>
+<a href="../api/javax/sql/RowSet.html"><code>RowSet</code></a>
+interface, part of the 
+<a href="../api/javax/sql/package-summary.html"><code>javax.sql</code></a>
+package, introduced in J2SE version 1.4, provides a lightweight
+means of passing data between components.
+<p>
+At this release, as an aid to developers, the <code>RowSet</code> interface 
+has been implemented (as JSR 114) in five of the more common ways a 
+<code>RowSet</code> object can be used.  These implementations provide a 
+standard that developers are free to use as is or to extend.
+<p>
+Following are the five standard implementations:
+<ul>
+<li>
+<code>JdbcRowSet</code> - used to encapsulate a result set or a driver
+that is implemented to use JDBC technology
+<li>
+<code>CachedRowSet</code> - disconnects from its data source and operates
+independently except when it is getting data from the data source or writing
+modified data back to the data source. This makes it a lightweight container
+for as much data as it can store in memory.
+<li>
+<code>FilteredRowSet</code> - extends <code>CachedRowSet</code> and is used
+to get a subset of data
+<li>
+<code>JoinRowSet</code> - extends <code>CachedRowSet</code> and is used
+to get an SQL <code>JOIN</code> of data from multiple <code>RowSet</code>
+objects
+<li>
+<code>WebRowSet</code> - extends <code>CachedRowSet</code> and is used
+for XML data. It describes tabular components in XML using a standardized XML
+schema.
+</ul>
+
+<a name="corba"></a>
+<h3>CORBA, <a href="../guide/idl/index.html">Java IDL</a>, and 
+<a href="../guide/rmi-iiop/index.html">Java RMI-IIOP</a></h3>
+
+<P>Enhancements to CORBA, Java IDL, and Java RMI-IIOP are discussed in
+<a href="../guide/idl/jidlChanges.html">Changes in 
+CORBA Features Between J2SE 1.4.x and 5.0</a>.
+
+<a name="jndi"></a>
+<h3><a href="../guide/jndi/index.html">Java Naming and Directory Interface<sup><font size="-2">TM</font></sup> (JNDI)</a></h3>
+JNDI provides the following new features.
+<ul>
+<li>
+Enhancements to javax.naming.NameClassPair to access the fullname
+from the directory/naming service
+<li>
+Support for standard LDAP controls: Manage Referral Control, Paged
+Results Control and Sort Control
+<li>
+Support for manipulation of LDAP names.
+</ul>
+</blockquote>
+
+<!-- -------------------------------------------------------- -->
+<hr>
+<a name="ui"></a>
+<h2>User Interface</h2>
+<blockquote>
+
+<a name="ui_i18n"></a>
+<h3><a href="../guide/intl/index.html">Internationalization</a></h3>
+<ul>
+<li>
+To render multilingual text, using logical fonts, 2D now takes advantage of
+installed host OS fonts for all supported writing systems.
+For example, if you run in a Thai locale environment, 
+but have Korean fonts installed, both Thai and Korean are rendered.
+The J2RE now also automatically detects physical fonts that are
+installed into its lib/fonts/fallback directory and adds these
+physical fonts to all logical fonts for 2D rendering.
+<li>
+AWT now uses the Unicode APIs on Windows 2000/XP. As a result,
+some of its components can handle text without being restricted
+by Windows locale settings. For example, AWT text components can
+accept and display text in the Devanagari writing system regardless
+of the Windows locale settings.
+</ul>
+
+<a name ="js"></a>
+<h3><a href="../guide/sound/index.html">Java Sound Technology</a></h3>
+<ul>
+<li>
+Ports are now available on all platforms (RFE 4782900).
+<li>
+MIDI device i/o is now available on all platforms (RFE's 4812168,
+4782924).
+<li>
+Optimized direct audio access is implemented on all platforms (RFEs
+4908240 and 4908879). It is enabled by default on systems which
+offer native mixing (i.e. Linux ALSA with hardware mixing, Solaris
+Mixer enabled, Windows DirectSound).
+<li>
+The new real-time Sequencer works with all MIDI devices and allows
+unlimited Transmitters (RFE 4773012).
+<li>
+The <code>sound.properties</code> configuration file allows choice 
+of default devices (RFE 4776511).  For details, see 
+<code>MidiSystem</code> and
+<code>AudioSystem</code> for details.
+<li>
+MidiDevices can query connected Receivers and Transmitters
+(RFE 4931387, methods MidiDevice.getReceiver and
+MidiDevice.getTransmitter).
+<li>
+<code>AudioFormat</code>, <code>AudioFileFormat</code>, and 
+<code>MidiFileFormat</code> now have properties
+that allow further description and qualification of the format (RFEs
+4925767 and 4666845).
+<li>
+A set of ease-of-use methods allow easier retrieval of lines from
+AudioSystem (RFE 4896221).
+<li>
+The Sequencer interface is extended with loop methods, for seamless
+looping of specific portions of a MIDI sequence (RFE 4204105).
+<li>
+Java Sound no longer prevents the VM from exiting (bug 4735740).
+</ul>
+
+<a name="2d"></a>
+<h3><a href="../guide/2d/index.html">Java 2D<sup><font size="-2">TM</font></sup> Technology</a></h3>
+Added 2D features include expanded Linux and Solaris printer support, new methods 
+    for creating fonts from files and streams, and new methods related to VolatileImages 
+    and hardware acceleration of images. A number of internal changes to text 
+    rendering code greatly improve its robustness, performance, and scalability. 
+    Other performance work includes hardware-accelerated rendering using OpenGL 
+    (disabled by default). <a name="imageio"></a> 
+    <h3><a href="../guide/imageio/index.html">Image I/O</a></h3>
+The Image I/O system now has readers and writers for BMP and WBMP formats.
+
+<a name="awt"></a>
+<h3><a href="../guide/awt/index.html">AWT</a></h3>
+Version 5.0 features many AWT enhancements and bug fixes,
+including some that have often been requested by our customers.
+Most notably, the new <code>MouseInfo</code> class makes
+it possible to determine the mouse location on the desktop.  
+New <code>Window</code> methods make it possible to specify 
+the default location for a newly created window (or frame), 
+appropriate to the platform.
+Another <code>Window</code> enhancement makes it possible
+to ensure that a window (or frame) is always on top.
+(This feature does not work for some window managers on Solaris/Linux.)
+In the area of data transfer, the new <code>DropTargetDragEvent</code>
+API allows the drop target to access transfer data during
+the drag operation.
+
+<a name="swing"></a>
+<h3><a href="../guide/swing/index.html">Swing</a></h3>
+With the 1.4.2 release we provided two new look and feels for Swing:
+XP and GTK.  Rather than taking a break, in 5.0 we're providing two
+more look and feels: Synth, a skinnable look and feel, and Ocean, a new
+theme for Metal.  Beyond look and feels, we've added printing support
+to JTable, which makes it trivial to get a beautiful printed copy of a
+JTable.  Lastly, after seven years, we've made jFrame.add equivalent
+to jFrame.getContentPane().add().
+</blockquote>
+
+<!-- -------------------------------------------------------- -->
+<hr>
+<a name=deploy></a>
+<h2>Deployment</h2>
+<blockquote>
+
+<a name="deploy_general"></a>
+<h3><a href="../guide/deployment/enhancements-1.5.0.html"> 
+General Deployment</a></h3>
+Pack200, a new hyper-compression format for JAR files defined by 
+<a href="http://jcp.org/en/jsr/detail?id=200">JSR 200</a>, 
+can significantly reduce the download size of  
+JAR files used in Java Webstart applications and Java Plug-in applets.  
+<p>
+For a  synopsis of general deployment features and enhancements,
+click the General Deployment link above.
+
+<a name="deploy_jws"></a>
+<h3><a href="../guide/javaws/enhancements-1.5.0.html"> 
+Java Web Start Deployment</a></h3>
+For a  synopsis of Java Web Start deployment features and enhancements,
+click the above link.
+</blockquote>
+
+<!-- -------------------------------------------------------- -->
+<hr>
+<a name="tools"></a>
+<h2>Tools and Tool Architecture</h2>
+<blockquote>
+
+<a name=jvmti></a>
+<h3><a href="../guide/jvmti/index.html">
+Java Virtual Machine Tool Interface (JVMTI)</a></h3>
+JVMTI is a 
+new native programming interface for use by development and 
+monitoring tools. It provides both a way to inspect the state 
+and to control the execution of applications running in the Java 
+virtual machine (VM). JVMTI is intended to provide a VM interface 
+for the full breadth of tools that need access to VM state, 
+including but not limited to: profiling, debugging, monitoring, 
+thread analysis, and coverage analysis tools.
+<p>
+JVMTI will replace the now deprecated JVMPI and JVMDI in the next 
+major release of J2SE.
+</blockquote>
+
+<blockquote>
+<a name=jpda></a>
+<h3><a href="../guide/jpda/index.html">Java Platform Debugger Architecture (JPDA)</a></h3>
+JPDA itself has many new features, described in more detail on the 
+<a href="../guide/jpda/enhancements.html">JPDA enhancements page</a>.
+<ul>
+<li>
+A read-only subset of JDI has been defined.  This subset
+can be used on a debuggee in which no debug code can be executed
+(such as a core file or a process that is hung or was not
+started in debug mode).
+The subset allows creation of JDI connectors for use in debugging 
+such debuggees.
+<li>
+A service provider interface for connectors and transports
+allows debugger vendors, or even end users, to create
+their own JDI connectors and transports and plug them into
+the JPDA reference implementation.  For example, a connector
+could be provided to use SSL to communicate between the
+debugger and debuggee.
+<li>
+JDI supports the new language features (generics, enums, and varargs).
+<li>
+The lowest layer of JPDA, the Java Virtual Machine Debugger Interface (JVMDI),
+has been deprecated and will be removed in the next major J2SE release.
+Replacing it is the Java Virtual Machine Tool Interface
+(JVMTI).   This is a more general interface that allows profiling to be done
+as well as debugging.  The current profiling interface, Java Virtual Machine
+Profiling Interface(JVMPI) is also deprecated and will be removed 
+in the next major release.
+<li>
+The JPDA reference implementation includes new JDI connectors 
+that allow corefiles and hung processes to be debugged.
+</ul>
+
+<a name="javac"></a>
+<h3><a href="http://java.sun.com/j2se/1.5.0/docs/tooldocs/solaris/javac.html">Java Compiler (javac)</a></h3>
+<b>Compiler options include:</b>
+<ul>
+<li>
+<code>-source 1.5</code> - Enable 1.5 specific language features to be
+used in source files.  (<code>-target 1.5</code> is implied.)
+<li>
+<code>-target 1.5</code> - Allow javac to use 1.5 specific features in
+the libraries and virtual machine.
+<li>
+<code>-Xlint</code> - Enable javac to produce warning messages about 
+legal, but suspect and often problematic, program constructs. 
+An example would be declaring a class that implements  
+<code>Serializable</code> but does not define a <code>serialVersionUID</code>.
+<li>
+<code>-d32</code> - Indicate a 32-bit Solaris or Linux platform. 
+<li>
+<code>-d64</code> - Indicate a 64-bit Solaris or Linux platform. 
+</ul>
+<p>
+<b>New Programmatic Interface</b>
+<br>  
+<p>
+The <code>com.sun.tools.javac.Main</code> class provides two static methods 
+to invoke the compiler from a program.  See the 
+<a href="../tooldocs/solaris/javac.html">man page</a> for details.
+
+
+</p>
+
+<a name="javadoc"></a>
+<h3>Javadoc Tool</h3>
+
+See
+<a href="../guide/javadoc/whatsnew-1.5.0.html">What's New in Javadoc 5.0</a>
+
+<a name="apt"></a>
+<h3>
+<a href="../guide/apt/index.html">
+Annotation Processing Tool (<code>apt</code>)
+</a>
+</h3>
+
+<code>apt</code> is a new command-line utility for annotation processing.
+It includes a set of reflective APIs and supporting infrastructure to 
+process program 
+<a href="http://www.jcp.org/en/jsr/detail?id=175">annotations</a>.  
+
+</blockquote>
+
+<!-- -------------------------------------------------- -->
+
+<hr>
+<a name=platform></a>
+<h2>OS & Hardware Platforms</h2>
+
+<blockquote>
+<a name=platform_configs></a>
+<h3>
+<a href="http://java.sun.com/j2se/1.5.0/system-configurations.html">Supported System Configurations</a>
+</h3>
+For more information, click the above link.
+</blockquote>
+
+<blockquote>
+<a name=platform_proc64></a>
+<h3>
+64-Bit AMD Opteron Processors
+</h3>
+With J2SE 5, AMD Opteron processors are supported by
+the server VM on Suse Linux and on Windows 2003.
+</blockquote>
+
+
+
+<!-- Body text ends here -->
+<!-- ============================================================== -->
+<HR SIZE=3 NOSHADE>
+
+<TABLE summary="layout" BORDER="0" WIDTH=100%>
+<TR VALIGN=TOP>
+
+<TD>
+<P><FONT SIZE="-2"><A HREF="SMICopyright.html">Copyright &copy; 2004</A> 
+Sun Microsystems, Inc.  All Rights Reserved.</FONT></P>
+   <br>
+   <br>
+
+   <FONT SIZE="-1">
+   </FONT>
+</TD>
+
+<TD ALIGN=RIGHT>
+   <IMG SRC="../images/sunlogo64x30.gif" ALT="Sun Microsystems, Inc" BORDER=0 WIDTH=64 HEIGHT=30>
+   <BR>
+</TD>
+
+</TR>
+</TABLE>
+
+<pre>
+<!-- THESE pre TAGS ALLOW LINKS TO JUMP TO BOTTOM OF PAGE -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+
+</BODY>
+</HTML>

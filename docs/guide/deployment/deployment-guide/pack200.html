@@ -1,0 +1,548 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Pack200 and Compression for Network Deployment</TITLE>
+<META content="text/html; charset=iso-8859-1" http-equiv=Content-Type>
+<META content="Microsoft FrontPage 5.0" name=GENERATOR>
+<link href="../css/styles1.css" rel="stylesheet" type="text/css">
+</HEAD>
+<BODY bgColor=#ffffff>
+
+<table summary="layout" width="100%" border="0">
+<tr>
+<td width="1%">
+<img src="../../../images/javalogo52x88.gif" width="52" height="88">
+</td>
+
+<td>
+<h1 align="center">Pack200 and Compression</h1>
+</h1>
+</td>
+
+<td width="52">
+</td>
+</tr>
+</table>
+
+<hr>
+<p>This chapter includes the following topics:</p>
+<table width="25%" cellpadding="5" cellspacing="0" bgcolor="#FFFFCC">
+  <tr> 
+    <td><ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#theory">Theory</a></li>
+        <li><a href="#gzip_compression">GZIP Compression</a></li>
+        <li><a href="#pack200_compression">Pack200 Compression</a> </li>
+        <li><a href="#testing">Testing</a></li>
+        <li><a href="#more">More Information</a> </li>
+    </ul></td>
+  </tr>
+</table>
+<H2><a name="introduction"></a>Introduction</H2>
+<P>To increase server and network availability and band-width, two new 
+compression formats are available to Java deployment of applications and 
+applets: gzip and Pack200.</P>
+<P>With both techniques the compressed JAR files are transmitted over the 
+network and the receiving application decompresses and restores them.</P>
+<H2><a name="theory"></a>Theory</H2>
+<P>HTTP 1.1 (RFC 2616) protocol discusses HTTP compression. HTTP Compression 
+allows applications JAR files&nbsp; to be deployed as compressed JAR files. The 
+supported compression techniques are 
+<B>gzip</B>,<B>compress</B>,<B>deflate</B>.</P>
+<P>As of SDK/JRE version 5.0, HTTP compression is implemented in Java Web Start 
+and Java Plug-in in compliance with RFC 2616. The supported techniques are 
+<B>gzip</B> and <B>pack200-gzip</B>.<BR><BR>The requesting application sends an 
+HTTP request to the server. An HTTP request has multiple fields. The 
+Accept-Encoding (AE) field is set to <CODE>pack200-gzip</CODE> or 
+<CODE>gzip</CODE>, indicating to the server that the application can handle 
+<CODE>pack200-gzip</CODE> or <CODE>gzip</CODE> format.</P>
+<P>The server implementation will search for the requested JAR file with 
+<CODE>.pack.gz</CODE> or <CODE>.gz</CODE> file extension and respond back with 
+the located file. The server will set the response header Content-Encoding (CE) 
+field to <CODE>pack200-gzip</CODE> , <CODE>gzip</CODE>, or NULL depending on the 
+type of file that is being sent, and optionally may set the Content-Type (CT) to 
+application/Java-archive. Therefore,&nbsp; by inspecting the CE field, the 
+requesting application can apply the corresponding transformation to restore the 
+original JAR file.</P>
+<BLOCKQUOTE><IMG 
+  src="images/applet.gif" alt="" 
+  style="HEIGHT: 2017px; WIDTH: 745px" title=""><BR>
+  <BR>
+  <P>The above can be achieved using a simple servlet or server module with any
+  HTTP 1.1 compliant web-servers.<BR></P>
+  <P>Compressing files on the fly will degrade server performance, especially 
+  with Pack200, and therefore not recommended.<BR></P>
+
+  <A NAME="sampleservlet"></A>
+  <P>Sample Tomcat Servlet:</P>
+  <TABLE border=1 cellPadding=6 cellSpacing=0 
+  style="HEIGHT: 1510px; TEXT-ALIGN: left; WIDTH: 554px">
+    <TBODY>
+    <TR>
+      <TD style="VERTICAL-ALIGN: top"><PRE>/**
+ *  A simple HTTP Compression Servlet
+ */
+
+import java.util.*;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.util.zip.*;
+import java.net.*;
+
+/**
+ * The servlet class.
+ */
+public class ContentType extends HttpServlet {
+
+    private static final String JNLP_MIME_TYPE          = "application/x-java-jnlp-file";
+    private static final String JAR_MIME_TYPE           = "application/x-java-archive";
+    private static final String PACK200_MIME_TYPE       = "application/x-java-pack200";
+
+    // HTTP Compression RFC 2616 : Standard headers
+    public static final String ACCEPT_ENCODING          = "accept-encoding";
+    public static final String CONTENT_TYPE             = "content-type";
+    public static final String CONTENT_ENCODING         = "content-encoding";
+
+    // HTTP Compression RFC 2616 : Standard header for HTTP/Pack200 Compression
+    public static final String GZIP_ENCODING            = "gzip";
+    public static final String PACK200_GZIP_ENCODING    = "pack200-gzip";
+       
+    private void sendHtml(HttpServletResponse response, String s) 
+                 throws IOException {
+         PrintWriter out = response.getWriter();
+         
+         out.println("&lt;html&gt;");
+         out.println("&lt;head&gt;");
+         out.println("&lt;title&gt;ContentType&lt;/title&gt;");
+         out.println("&lt;/head&gt;");
+         out.println("&lt;body&gt;");
+         out.println(s);
+         out.println("&lt;/body&gt;");
+         out.println("&lt;/html&gt;");
+    }
+
+    /* 
+     * Copy the inputStream to output ,
+     */    
+    private void sendOut(InputStream in, OutputStream ostream) 
+                 throws IOException {
+        byte buf[] = new byte[8192];
+
+        int n = in.read(buf);
+        while (n &gt; 0 ) {
+            ostream.write(buf,0,n);
+            n = in.read(buf);
+        }
+        ostream.close();
+        in.close();
+    }
+    
+    boolean doFile(String name, HttpServletResponse response) {
+        File f = new File(name);
+        if (f.exists()) {
+            getServletContext().log("Found file " + name);
+
+            response.setContentLength(Integer.parseInt(
+                        Long.toString(f.length())));
+
+            response.setDateHeader("Last-Modified",f.lastModified());
+            return true;  
+        }
+        getServletContext().log("File not found " + name);
+        return false;
+    }
+    
+    
+    /** Called when someone accesses the servlet. */
+    public void doGet(HttpServletRequest request, 
+                HttpServletResponse response) 
+                throws IOException, ServletException {
+        
+        String encoding = request.getHeader(ACCEPT_ENCODING);
+        String pathInfo = request.getPathInfo();
+        String pathInfoEx = request.getPathTranslated();
+        String contentType = request.getContentType();
+        StringBuffer requestURL  = request.getRequestURL();
+        String requestName = pathInfo; 
+        
+        ServletContext sc = getServletContext();
+        sc.log("----------------------------");
+        sc.log("pathInfo="+pathInfo);
+        sc.log("pathInfoEx="+pathInfoEx);
+        sc.log("Accept-Encoding="+encoding);
+        sc.log("Content-Type="+contentType);
+        sc.log("requestURL="+requestURL);
+        
+        if (pathInfoEx == null) {
+            response.sendError(response.SC_NOT_FOUND);
+            return;
+        }
+        String outFile = pathInfo;
+        boolean found = false;
+        String contentEncoding = null;
+        
+
+        // Pack200 Compression
+        if (encoding != null && contentType != null &&
+                contentType.compareTo(JAR_MIME_TYPE) == 0 &&
+                encoding.toLowerCase().indexOf(PACK200_GZIP_ENCODING) &gt; -1){
+
+            contentEncoding = PACK200_GZIP_ENCODING;
+            
+            
+            if (doFile(pathInfoEx.concat(".pack.gz"),response)) {
+                outFile = pathInfo.concat(".pack.gz") ;
+                found = true;
+            } else {
+                // Pack/Compress and transmit, not very efficient.
+                found = false;
+            }
+        }
+
+        // HTTP Compression
+        if (found == false && encoding != null &&
+                contentType != null &&
+                contentType.compareTo(JAR_MIME_TYPE) == 0 && 
+                encoding.toLowerCase().indexOf("gzip") &gt; -1) {
+                
+            contentEncoding = GZIP_ENCODING;
+
+            if (doFile(pathInfoEx.concat(".gz"),response)) {
+                outFile = pathInfo.concat(".gz");
+                found = true;
+            }             
+        }
+
+        // No Compression
+        if (found == false) { // just send the file
+            contentEncoding = null;
+            sc.log(CONTENT_ENCODING + "=" + "null");
+            doFile(pathInfoEx,response);
+            outFile = pathInfo;
+        }
+
+        response.setHeader(CONTENT_ENCODING, contentEncoding);
+        sc.log(CONTENT_ENCODING + "=" + contentEncoding + 
+                " : outFile="+outFile);
+
+
+        if (sc.getMimeType(pathInfo) != null) {
+            response.setContentType(sc.getMimeType(pathInfo));
+        }
+        
+        InputStream in = sc.getResourceAsStream(outFile);
+        OutputStream out = response.getOutputStream();
+
+        if (in != null) {
+            try {
+                sendOut(in,out);
+            } catch (IOException ioe) {
+                if (ioe.getMessage().compareTo("Broken pipe") == 0) {
+                    sc.log("Broken Pipe while writing");
+                    return;
+                } else  throw ioe;
+            }
+        } else response.sendError(response.SC_NOT_FOUND);
+        
+    }
+
+}</PRE></TD></TR></TBODY></TABLE>
+  <P><BR></P></BLOCKQUOTE>
+<H2><a name="gzip_compression"></a>GZIP Compression</H2>
+<DIV style="MARGIN-LEFT: 40px">GZIP is a freely available compressor available 
+within the JRE and&nbsp; the SDK as Java.util.zip.GZIPInputStream and 
+Java.util.zip.GZIPOutputStream.<BR>The Command line versions are available with 
+most Unix Operating Systems, Windows Unix Toolkits (Cygwin and MKS), or they are 
+dowloadable for a plethora of operating systems at 
+http://www.gzip.org/.<BR><BR>One can get the highest degree of compression using 
+gzip to compress an uncompressed jar file vs. compressing a compressed jar file, 
+the downside is that the file may be stored uncompressed on the target 
+systems.<BR><BR>Here is an example:<BR>Compressing using gzip on a jar file 
+containing individual deflated entries.<BR>Notepad.jar&nbsp; &nbsp; &nbsp;&nbsp; 
+46.25 kb <BR>Notepad.jar.gz&nbsp;&nbsp; 43.00 kb <BR><BR>Compressing using gzip 
+on a jar file containing "stored" entries<BR>Notepad.jar&nbsp;&nbsp; 
+&nbsp;&nbsp; 987.47 kb<BR>Notepad.jar.gz&nbsp;&nbsp; 32.47 kb<BR><BR>As you can 
+see the download size can be reduced by 14% using uncompressed jar, versus 3% 
+using compressed jar file.<BR></DIV><BR>
+<H2><a name="pack200_compression"></a>Pack200 Compression<BR>
+</H2>
+<P style="MARGIN-LEFT: 40px">Pack200 compresses large files very efficiently, 
+depending on the density and size of the class files in the JAR file. One can 
+expect compression to 1/9 the size of the JAR file, if it contains only class 
+files and is in the order of several MB.&nbsp; <BR></P>
+<P style="MARGIN-LEFT: 40px">Using the same jar in the previous 
+example:<BR>Notepad.jar&nbsp; &nbsp;&nbsp;&nbsp; 46.25 
+kb<BR>Notepad.jar.pack.gz&nbsp; 22.58 kb<BR></P>
+<P style="MARGIN-LEFT: 40px">In this case the same jar can be reduced by 
+50%.<BR></P>
+<DIV style="MARGIN-LEFT: 40px"></DIV>
+<P style="MARGIN-LEFT: 40px">Please note: when signing large jars,
+step 5 may fail with a Security Error &#151; a likely cause is bug
+<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5078608">5078608</a>.
+Please use one of the workarounds detailed in the
+<a href="../../../../relnotes.html#pack200">release notes</a>.
+<DIV style="MARGIN-LEFT: 40px"></DIV>
+<P style="MARGIN-LEFT: 40px">Pack200 works most efficiently on Java class files. 
+It uses several techniques to efficiently reduce the size of JAR files:</P>
+<DIV style="MARGIN-LEFT: 40px"></DIV>
+<OL style="MARGIN-LEFT: 40px">
+  <LI>It merges and sorts the constant-pool data in the class files and 
+  co-locates them in the archive. 
+  <LI>It removes redundant class attributes. 
+  <LI>It stores internal data structures. 
+  <LI>It use delta and variable length encoding. 
+  <LI>It chooses optimum coding types for secondary compression. </LI></OL>
+<DIV style="MARGIN-LEFT: 40px">Pack200 can be used by using the Command Line 
+Interfaces pack200(1), unpack200(1) in the bin directory of your SDK or the JRE 
+directory.<BR>Pack200 interfaces can also invoked programmatically from Java, 
+please refer to the API and JavaDoc references to 
+Java.util.jar.Pack200.<BR></DIV>
+<P></P>
+<BLOCKQUOTE>
+  <H3>Steps to Pack a file</H3>
+  <P>1. Consider the size of the JAR file, the contents of the JAR file, and the 
+  bandwidth of your target audience.</P>
+  <P style="MARGIN-LEFT: 40px">All these factors play into choosing a 
+  compression technique. The unpack200 is designed to be as efficient as 
+  possible and it takes little time to restore the original file. If you have 
+  large JAR files (2 MB or more) comprised mostly of class files, Pack200 is the 
+  preferred compression technique. If you have large JAR files which are 
+  comprised of&nbsp; resource files (JPEG, GIF, data, etc.), then gzip is the 
+  preferred compression technique.</P>
+  <P>2.&nbsp; Pack200 segmenting. </P>
+  <P style="MARGIN-LEFT: 40px">Pack200 loads the entire packed file into memory. 
+  However, when target systems are memory and resource constrained, setting the 
+  <CODE>Pack200.Packer.SEGMENT_LIMIT</CODE> to a lower value, will reduce the 
+  memory requirements&nbsp; during packing and unpacking. The<SPAN 
+  style="FONT-FAMILY: monospace"> 
+  </SPAN><CODE>Pack200.Packer.SEGMENT_LIMIT=-1</CODE>&nbsp; will force one 
+  segment to be generated, which will be effect in size reduction, but will 
+  require a much larger Java heap on the packing and and unpacking system. Note 
+  that several of these packed segments may be concatenated to produce a single 
+  packed file.<BR></P>
+  <P>3. Signing the JAR files. </P>
+  <P style="MARGIN-LEFT: 40px">Pack200 rearranges the contents of the resultant 
+  JAR file. The jarsigner hashes the contents of the class file and stores the 
+  hash in an encrypted digest in the manifest. When the unpacker runs on a 
+  packed packed, the contents of the classes will be rearranged and thus&nbsp; 
+  invalidate the signature. Therefore, the JAR file must be normalized 
+  first&nbsp; using pack200 and unpack200, and thereafter signed.</P>
+  <DIV style="MARGIN-LEFT: 40px"></DIV>
+  <P style="MARGIN-LEFT: 40px">(Here's why this works: Any reordering the packer 
+  does of any classfile structures is idempotent, so the second packing does not 
+  change the orderings produced by the first packing. Also, the unpacker is 
+  guaranteed by the JSR 200 specification to produce a specific bytewise image 
+  for any given transmission ordering of archive elements.)</P>
+  <BLOCKQUOTE>
+    <H4>An Example</H4>
+    <P>Suppose you wish to use HelloWorld.jar.<BR></P>
+    <TABLE border=1 cellPadding=6 cellSpacing=0 
+    style="TEXT-ALIGN: left; WIDTH: 100%">
+      <TBODY>
+      <TR>
+        <TD style="VERTICAL-ALIGN: top"><BR>
+Step 1: &nbsp;Repack the file to 
+          normalize the jar, repacking calls the packer and unpacks the file in 
+          one step.<BR><BR><CODE>
+% pack200 --repack HelloWorld.jar 
+          </CODE><BR><BR>
+
+Step 2: Sign the jar after we normalize using 
+          repack.<BR><BR><CODE>
+% jarsigner -keystore myKeystore HelloWorld.jar ksrini </CODE><BR><BR>
+   Verify the just signed jar to ensure the signing worked.<BR><BR><CODE>
+% jarsigner -verify HelloWorld.jar 
+          <BR>jar verified. </CODE><BR><BR>
+          Ensure the jar still works. 
+          <BR><BR><CODE>
+% Java -jar HelloWorld.jar <BR>HelloWorld 
+          </CODE><BR><BR>
+
+Step 3: Now we pack the file <BR><BR><CODE>
+% pack200 
+          HelloWorld.jar.pack.gz HelloWorld.jar </CODE><BR><BR>
+
+Step 4: Unpack 
+          the file <BR><BR><CODE>
+% unpack200 HelloWorld.jar.pack.gz HelloT1.jar 
+          </CODE><BR><BR>
+
+Step 5: &nbsp;Verify the jar<BR><BR><CODE>
+% jarsigner -verify HelloT1.jar <BR>jar verified. </CODE><BR><BR>
+// Test the jar ... <BR><CODE>
+% Java -jar HelloT1.jar 
+<BR>HelloWorld
+</CODE><BR><BR>
+After verification, the compressed pack 
+          file HelloWorld.jar.pack.gz can be 
+      deployed.
+   <BR></TD></TR></TBODY>
+</TABLE>
+</BLOCKQUOTE>
+  <P>4. Reduction techniques:&nbsp;<BR></P>
+  <DIV style="MARGIN-LEFT: 40px">&nbsp;Pack200 by default behaves in a High 
+  Fidelity (Hi-Fi) mode, meaning all the original attributes present in the 
+  classes as well as the attributes of each individual entry in a JAR file is 
+  retained. These typically tend to add to the packed file size, here are some 
+  of the<BR>techniques one can use to further reduce the size of the 
+  download:<BR></DIV>
+
+<ol style="margin-left: 2em;">
+<li> Modification times:&nbsp; If modification time of the individual 
+    entries in a JAR file is not a concern, you can specify the option 
+    <CODE>&nbsp; Pack200.Packer.MODIFICATION_TIME="LATEST"</CODE>. This will 
+    allow one modification time to be transmitted in the pack file for 
+    each segment. The latest time will be the latest time of any entry within 
+    that segment.&nbsp;</P>
+<li> Deflation hint: Similar to the above, if the compression state of the 
+    individual entries in the archive is not required, set 
+    Pack200.Packer.DEFLATION_HINT="false". This will fractionally reduce the 
+    download size, as individual compression hints will not be transmitted. 
+    However, the jar when recomposed will contain "stored" entries and hence may 
+    consume more disk space on the target system.<BR></P>
+    <P>For example: <BR></P>
+    <P><CODE>
+    pack200 --modification-time=latest --deflate-hint="true" tools-md.jar.pack.gz tools.jar
+    </CODE><BR></P>
+    <P>Note: the above optimizations will yield better results with a JAR file 
+    containing thousands of entries.<BR></P>
+<li> Attributes: Several class attributes are not required when deploying 
+    JAR files. These attributes can be stripped out of class files, 
+    significantly reducing download size. However, care must be taken to ensure 
+    that required runtime attributes are maintained. </P>
+ <ol type="i" style="margin-left: -1em;">
+   <li>Debugging attributes: If debugging information, such as Line Numbers 
+      and Source File, is not required (typically in applications stack traces), 
+      then these attributes can be discarded by specifying 
+      <CODE>Pack200.Packer.STRIP_DEBUG=true.</CODE>This typically reduces the 
+      packed file by about 10%.</P>
+      <P>Example: 
+      <BR><CODE>
+      pack200 --strip-debug tools-stripped.jar.pack.gz tools.jar
+      </CODE><BR>
+   <li>Other attributes: 
+      Advanced users may use some of the other strip-related properties to strip 
+      out additional attributes. However, extreme caution should be used when 
+      doing so,&nbsp; the resultant JAR file must be tested on all possible Java 
+      runtime systems to ensure that the runtime does not depend on the stripped 
+      attributes.</P>
+ </ol>
+</ol>
+  <P>5. Handling unknown attributes:</P>
+  <BLOCKQUOTE>
+    <P>Pack200 deals with standard attributes defined by the Java Virtual 
+    Machine Specification, however compilers are free to&nbsp; introduce custom 
+    attributes. When such attributes are present, by default, Pack200 passes 
+    through the class, emitting a&nbsp; warning message. These "passed-through" 
+    class files, may contribute to bloating of packed files. If the unknown 
+    attributes are prevalent in the classes of a JAR file, this may lead to a 
+    very large bloat of the packed output.&nbsp; In such a cases, consider the 
+    following strategies:<BR></P>
+    <P>Strip the attribute if the attribute is&nbsp; deemed to be redundant 
+    at&nbsp; runtime, this can be achieved by setting the property 
+    Pack200.Packer.<CODE>UNKNOWN_ATTRIBUTE=STRIP or </CODE></P>
+    <CODE>
+    pack200 --unknown-attribute=strip foo.pack.gz foo.jar
+    </CODE><BR>
+    <P>If the attributes are required at runtime, and they do contribute to an 
+    inflation, then identify the attribute from the warning message and apply a 
+    suitable layout for these, as described in the Pack200 JSR 200 
+    specification., and the Java API reference section for 
+    Pack200.Packer.<BR></P>
+    <P>Its possible that a compiler could define an attribute not implemented in 
+    the layout specification of Pack200, and may cause the Packer to 
+    malfunction, in such cases an entire class file(s) can be "passed through", 
+    as if it were a resource by virtue of its name and can be specified as 
+    follows:</P>
+    <CODE>
+    pack200 --pass-file="com/acme/foo/bar/baz.class" foo.pack.gz foo.jar
+    </CODE><BR><BR> 
+    or an entire directory and its contents,</P>
+    <CODE>
+    pack200 --pass-file="com/acme/foo/bar/" foo.pack.gz foo.jar
+    </CODE><BR>
+    </BLOCKQUOTE>
+6. Installers:<BR>
+  <DIV style="MARGIN-LEFT: 40px">You may wish to take advantage of the Pack200 
+  technology in your installation program, whereby a product's jars may need to 
+  compressed using Pack200 and decompressed during the installation. If&nbsp; 
+  the&nbsp; JRE or SDK is bundled in the installation, you are free to&nbsp; 
+  use the unpack200 (Unix) or unpack200.exe(Windows) in the distribution 'bin' 
+  directory, this&nbsp; implementation is a pure C++ application requiring no 
+  Java runtime to be present for it to run.<BR><BR></DIV>
+  <DIV style="MARGIN-LEFT: 40px">Windows:&nbsp; Installers may use a better 
+  algorithm than the one in GZIP to compress entries in such cases, one will get 
+  better compression using the&nbsp; Installer's intrinsic compression, by using 
+  the pack200 as follows:<BR>
+  <BR><CODE>
+   pack200 --no-gzip foo.jar.pack foo.jar
+  </CODE><BR><BR>
+  This will prevent the output file from being gzip compressed. 
+  <BR><BR>
+  unpack200 is a Windows Console application, ie. it will display a MS-DOS
+   window during the install, to suppress this, you can use a launcher with a
+   WinMain which will suppress this window, as shown below.<BR></DIV>
+<BR><BR>
+Sample Code: 
+
+<TABLE border=1 cellPadding=6 cellSpacing=0">
+    <TBODY>
+    <TR>
+      <TD style="VERTICAL-ALIGN: top">
+<PRE>#include "windows.h"
+#include &lt;stdio.h&gt;
+
+int APIENTRY WinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPSTR     lpCmdLine,
+                     int       nCmdShow) {
+  STARTUPINFO si;
+  memset(&amp;si, 0, sizeof(si));
+  si.cb = sizeof(si);
+
+  PROCESS_INFORMATION pi;
+  memset(&amp;pi, 0, sizeof(pi));
+
+  //Test
+  //lpCmdLine = "c:/build/windows-i586/bin/unpack200 -l c:/Temp/log c:/Temp/rt.pack c:/Temp/rt.jar";
+  int ret = CreateProcess(NULL,			/* Exec. name */
+			  lpCmdLine,		/* cmd line */
+			  NULL,			/* proc. sec. attr. */
+			  NULL,			/* thread sec. attr */
+			  TRUE,			/* inherit file handle */
+			  CREATE_NO_WINDOW | DETACHED_PROCESS, /* detach the process/suppress console */
+			  NULL,			/* env block */
+			  NULL,			/* inherit cwd */
+			  &amp;si,			/* startup info */
+			  &amp;pi);			/* process info */
+  if ( ret == 0) ExitProcess(255);
+
+  // Wait until child process exits.
+  WaitForSingleObject( pi.hProcess, INFINITE );
+
+  DWORD exit_val;
+
+  // Be conservative and return
+  if (GetExitCodeProcess(pi.hProcess, &amp;exit_val) == 0) ExitProcess(255);
+
+  ExitProcess(exit_val); // Return the error code of the child process
+
+  return -1;
+}</PRE>
+</TD></TR></TBODY></TABLE>
+</BLOCKQUOTE>
+
+<h2><a name="testing"></a>Testing</h2>
+<p style="MARGIN-LEFT: 40px">It is required that all JAR files, packed and 
+  unpacked, be tested for correctness with your applications test qualifiers. 
+  When using the command line interface <CODE>pack200</CODE>, the output file 
+  will be compressed using <CODE>gzip</CODE> with&nbsp; default values. A user 
+  may create a simple pack file and&nbsp; compress using&nbsp; <CODE>gzip</CODE> 
+  with user-specified options or using some other compressor.</p>
+
+<h2><a name="more"></a>More Information</h2>
+<blockquote>
+  <p>For more information see <code>pack200</code> and <code>unpack200</code> in <a href="../../../tooldocs/index.html#deployment">Java Deployment Tools</a>. </p>
+</blockquote>
+<hr>
+</BODY>
+</HTML>

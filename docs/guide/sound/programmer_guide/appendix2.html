@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>sound.properties File</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+ <hr>
+ <h1>Appendix 2: <code>sound.properties</code> File 
+ </h1>
+ <hr>
+ <form name="form1">
+   <select name="menu1" onChange="Eminem_jumpMenu('parent',this,1)">
+     <SCRIPT SRC="menu_script.js" language="JavaScript"></SCRIPT>
+   </select>
+ </form>
+<p>The Java Sound Configuration file, <code>sound.properties</code>, can be used to specify default service providers for <code>javax.sound.sampled.AudioSystem</code> and <code>javax.sound.midi.MidiSystem</code>.</p>
+<h2>Properties Keys </h2>
+<p>The following keys are recognized by <code>AudioSystem</code> methods:</p>
+<blockquote>
+  <p><code>javax.sound.sampled.Clip<br>
+    javax.sound.sampled.Port<br>
+    javax.sound.sampled.SourceDataLine<br>
+  javax.sound.sampled.TargetDataLine</code></p>
+</blockquote>
+<p>The following keys are recognized by <code>MidiSystem</code> methods:</p>
+<blockquote>
+  <p> <code>javax.sound.midi.Sequencer<br>
+    javax.sound.midi.Synthesizer<br>
+    javax.sound.midi.Transmitter<br>
+  javax.sound.midi.Receiver  </code></p>
+</blockquote>
+<p>The values should specify the full class name of the service provider and/or the device name.</p>
+<p><code>sound.properties</code> is located at <code>$JAVAHOME/jre/lib</code> in the Sun implementation. </p>
+<p>For more details, see the class descriptions for <code><a href="../../../api/javax/sound/sampled/AudioSystem.html">AudioSystem</a> and <a href="../../../api/javax/sound/midi/MidiSystem.html">MidiSystem</a></code>.</p>
+<h2>Examples</h2>
+<p>To use <code>MyDeviceProvider</code> as the default for <code>SourceDataLine</code> lines, set the following key:</p>
+<blockquote>
+  <p><code>javax.sound.sampled.SourceDataLine=com.xyz.MyDeviceProvider</code></p>
+</blockquote>
+<p>To specify the default <code>Synthesizer</code> by its name <code>InternalSynth</code>, set the following key:</p>
+<blockquote>
+  <p><code>javax.sound.midi.Synthesizer=#InternalSynth</code></p>
+</blockquote>
+<p>To specify the default <code>Receiver</code> by provider and name, set the following key:</p>
+<blockquote>
+  <p><code>javax.sound.midi.Receiver=com.sun.media.sound.MidiProvider#SunMIDI1</code></p>
+</blockquote>
+<p>&nbsp;</p>
+</body>
+</html>

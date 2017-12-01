@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Applet is no longer signed after repackaging signed .cab files ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2><span class="bg2">Applet is no longer signed after repackaging signed <code>.cab</code> 
+    files as <code>.jar</code> files</span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote> 
+    <p> After repackaging signed <code>.cab</code> files as <code>.jar</code> 
+      files, an applet running in the Sun JRE is treated as unsigned. The same 
+      applet packaged as <code>.cab</code> files runs as signed in the Microsoft 
+      VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p> Microsoft supports applet signing through its own proprietary Authenticode 
+      and <code>.cab</code> file technologies. The signing information is lost 
+      in the process of repackaging. As a result, the Sun JVM treats the <code>.jar</code> 
+      files as unsigned.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote> 
+    <p> The workaround is to sign the <code>.jar</code> files using the <font face="Courier New" size="2">jarsigner</font> 
+      tool from the JDK:</p>
+    <ol>
+      <li>Obtain the <a href="http://www.verisign.com/products/signing/index.html">Sun 
+        Java Signing</a> certificate from VeriSign or the <a href="http://www.thawte.com/codesign">Java 
+        Code Signing</a> certificate from Thawte or similar certificates from 
+        other Certificate Authorities (CAs).</li>
+      <li>Import the certificate into your keystore using <font face="Courier New" size="2"> 
+        keytool</font> and an alias name. For example:</li>
+      <blockquote> 
+        <pre>C:\&gt;C:\j2sdk1.5\bin\keytool -import -alias MyCert -file VSSStanleyNew.cer </pre>
+      </blockquote>
+      <li>Use <code>jarsigner</code> to sign the <code>.jar</code> file, using 
+        the RSA credentials in your keystore that were generated in the previous 
+        step. Make sure the same alias name is specified, for example:</li>
+      <blockquote> 
+        <pre>C:\&gt;C:\j2sdk1.5\bin\jarsigner C:\TestApplet.jar MyCert
+Enter Passphrase for keystore: ********</pre>
+      </blockquote>
+      <li>Use &quot;<code>jarsigner -verify -verbose -certs</code>&quot; to verify 
+        the <code>.jar</code> files. 
+        <blockquote>
+          <pre>C:&gt;C:\jdk1.4.2\bin\jarsigner -verify -verbose 
+                -certs d:\TestApplet.jar
+
+
+         245 Wed Mar 10 11:48:52 PST 2000 META-INF/manifest.mf
+         187 Wed Mar 10 11:48:52 PST 2000 META-INF/MYCERT.SF
+         968 Wed Mar 10 11:48:52 PST 2000 META-INF/MYCERT.RSA
+smk      943 Wed Mar 10 11:48:52 PST 2000 TestApplet.class
+smk      163 Wed Mar 10 11:48:52 PST 2000 TestHelper.class
+
+      X.509, CN=XXXXXXX YYY, OU=Java Software, 
+                O=Sun Microsystems, L=Cupertino, 
+                ST=CA, C=US (mycert)
+      X.509, CN=Sun Microsystems, OU=Java Plug-in QA, 
+                O=Sun Microsystems, L=Cupertino, ST=CA, C=US
+      X.509, <a href="mailto:EmailAddress=server-certs@thawte.com">EmailAddress=server-certs@thawte.com</a>, 
+                CN=Thawte Server CA, OU=Certification 
+                Services Division, O=Thawte Consulting cc, 
+                L=Cape Town, ST=Western Cape, C=ZA
+
+
+  s = signature was verified
+  m = entry is listed in manifest
+  k = at least one certificate was found in keystore
+  i = at least one certificate was found in identity scope
+
+jar verified.</pre>
+        </blockquote>
+      </li>
+    </ol>
+  </blockquote>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; See <a href="http://www.verisign.com/products/signing/index.html">Code 
+    Signing</a> by VerSign and <a href="http://www.thawte.com/codesign">code-signing 
+    certificate support</a> by Thawte.</p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

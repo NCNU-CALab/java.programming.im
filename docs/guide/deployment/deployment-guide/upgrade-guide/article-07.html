@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Deadlock in AWT if methods of the applet are over-synchronized</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2><span class="bg2">Deadlock in AWT if methods of the applet are over-synchronized</span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote> 
+    <p> When running an applet in a browser using the Sun JRE, deadlock may occur 
+      if&nbsp; methods of the applet are over-synchronized, especially those inherited 
+      from <code>java.awt.Component</code>. The same applet runs under the Microsoft 
+      VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p> The AWT class libraries are sometimes used by developers as thread-safe 
+      class libraries. Applets performed actions through the AWT using multiple 
+      threads, with the assumption that the class libraries would take care of 
+      synchronization issues. <br>
+      <br>
+      However , the AWT class libraries guarantee thread safety only when calls 
+      are made from the AWT event dispatch thread.&nbsp;Because the implementation 
+      of the Microsoft VM and Sun differs, thread-unsafe code that runs without 
+      incident under one VM might fail under another.</p>
+    <p> One bad practice used by some applets is to synchronize every method of 
+      an applet to avoid possible race conditions or deadlocks in the Microsoft 
+      VM. However, this practice may result in deadlocks. </p>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote>
+    <p> To work around this problem, use synchronization in the applet only where 
+      it is really needed, and remove unnecessary synchronization. For example:</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>public synchronized void 
+      paint(Graphics g) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+      &nbsp;&nbsp;&nbsp; }<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; public synchronized void dispose() {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; super.dispose();<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....<br>
+      &nbsp;&nbsp;&nbsp; }</code></p>
+    <p><code>&nbsp;&nbsp;&nbsp; public synchronized void stop() {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+      &nbsp;&nbsp;&nbsp; }<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; public synchronized void destroy() {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+      &nbsp;&nbsp;&nbsp; }</code></p>
+    <p> In this case, the <code>synchronized</code> keyword in the <code>paint</code>, 
+      <code>dispose</code>, <code>stop</code>, and <code>destroy</code> methods 
+      should be removed because they are always called from a dedicated thread: 
+      <code>paint</code> and <code>dispose</code> by the AWT event dispatching 
+      thread; <code>stop</code> and <code>destroy</code> by the applet thread. 
+      The code should be changed as follows: </p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>public void paint(Graphics 
+      g) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+      &nbsp;&nbsp;&nbsp; }<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; public void dispose() {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; super.dispose();<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....<br>
+      &nbsp;&nbsp;&nbsp; }</code></p>
+    <p><code>&nbsp;&nbsp;&nbsp; public void stop() {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+      &nbsp;&nbsp;&nbsp; }<br>
+      <br>
+      &nbsp;&nbsp;&nbsp; public void destroy() {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+      &nbsp;&nbsp;&nbsp; }</code></p>
+  </blockquote>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>The Java Tutorial</em> discusses 
+    thread issues and techniques that apply both to AWT and Swing programs: <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How 
+    to Use Threads</a>. </p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

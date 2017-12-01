@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>javaws Command Line</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="../../deployment/css/styles1.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<hr>
+<h1><code>javaws</code> Command Line</h1>
+<hr>
+<form name="form1">
+  <select name="menu1" onChange="Eminem_jumpMenu('parent',this,1)">
+    <SCRIPT SRC="menu_script.js" language="JavaScript"></SCRIPT>
+  </select>
+</form>
+<p>&nbsp;</p>
+<h3>NAME</h3>
+<blockquote>
+  <p><code>javaws</code> - Java Web Start launcher command</p>
+</blockquote>
+<h3>SYNOPSIS</h3>
+<blockquote>
+  <P><code>javaws [ options ] [ URL ]</code></p>
+</blockquote>
+<h3>PARAMETERS</h3>
+<blockquote> 
+  <p><code>options</code></p>
+  <blockquote> 
+    <p>Command-line options. Options may be in any order. For a discussion of 
+      the various options, see <a href="#options">OPTIONS</a> below.</p>
+  </blockquote>
+  <p><code>URL</code> </p>
+  <blockquote>
+    <p>Uniform Resource Locator (<code>URL</code>) of the JNLP (Java Net-work 
+      Launching Protocol) file.</p>
+  </blockquote>
+</blockquote>
+<h3>DESCRIPTION</h3>
+<blockquote>
+  <p>The <code>javaws</code> command launches Java Web Start, which is the reference 
+    implementation of the Java Network Launching Protocol (JNLP). Java Web Start 
+    launches Java applications/applets hosted on a network.</p>
+  <p>Without any options <code>javaws</code> will launch the Java JNLP Application 
+    Manager, from which users can launch applications/applet or configure Java 
+    Web Start.</p>
+  <p>If a <code>URL</code> for a JNLP file is specified, <code>javaws</code> will 
+    launch the Java application/applet specified in the JNLP file.</p>
+</blockquote>
+<h3><a name="options"></a>OPTIONS</h3>
+<blockquote> 
+  <p>The <code>javaws</code> launcher has a set of options that are supported 
+    in the current release. However, the options may be removed in a future release. 
+    All <code>-X</code> options are non-standard and subject to change.</p>
+  <p> <code>-offline</code></p>
+  <blockquote> 
+    <p>Runs Java Web Start in offline mode.</p>
+  </blockquote>
+  <p><code>-uninstall &lt;URL&gt;</code></p>
+  <blockquote> 
+    <p>Removes a specific application/applet from the user's cache, as indicated 
+      by the URL for the JNLP file. If <code>&lt;URL&gt;</code> is not specified, 
+      the entire cache is removed. Java Web Start will exit after the command 
+      is completed.</p>
+  </blockquote>
+  <p><code>-updateVersions</code></p>
+  <blockquote> 
+    <p>Updates the Java Web Start configuration file based on the current machine's 
+      settings. Java Web Start will exit after the command is completed.</p>
+  </blockquote>
+  <p><code>-Xclearcache</code></p>
+  <blockquote> 
+    <p>Clears the user's cache. Java Web Start will exit after the command is 
+      completed.</p>
+  </blockquote>
+  <p><code>-Xnosplash</code></p>
+  <blockquote> 
+    <p>Disables the display of the initial splash screen.</p>
+  </blockquote>
+  <p><code>-import</code></p>
+  <blockquote> 
+    <p>Imports the application specified by URL into the user's cache but does 
+      not run it.</p>
+  </blockquote>
+  <p><code>-silent</code></p>
+  <blockquote> 
+    <p>When used with the <code>-import</code> option, imports in silent mode; 
+      i.e., there will be no UI pop up. The process exit code will be either 0 
+      if successful or 1 if not.</p>
+  </blockquote>
+  <p><code>-codebase &lt;url&gt;</code></p>
+  <blockquote> 
+    <p>Replaces the codebase with <code>&lt;url&gt;</code> in the jnlp file specified 
+      when importing the resources. <code>&lt;url&gt;</code> must be a valid <code>URL</code>.</p>
+  </blockquote>
+  <p><code>-system</code></p>
+  <blockquote> 
+    <p>Uses the system cache instead of the user cache.</p>
+  </blockquote>
+  <p><code>-shortcut</code></p>
+  <blockquote> 
+    <p>Allows the creation of shortcuts during silent import. </p>
+  </blockquote>
+  <p><code>-association</code></p>
+  <blockquote> 
+    <p>Allows the creation of associations during silent import.</p>
+  </blockquote>
+  <p><code>-open &lt;arguments&gt;</code></p>
+  <blockquote> 
+    <p>If specified, replaces the arguments in the jnlp file with <code>-open 
+      &lt;arguments&gt;</code>.</p>
+  </blockquote>
+  <p><code>-print &lt;arguments&gt;</code></p>
+  <blockquote> 
+    <p>If specified, replaces the arguments in the jnlp file with <code>-print 
+      &lt;arguments&gt;</code>.</p>
+  </blockquote>
+  <p><code>-online</code></p>
+  <blockquote> 
+    <p>Runs in online mode (default behavior).</p>
+  </blockquote>
+  <p><code>-viewer</code></p>
+  <blockquote> 
+    <p>Runs the Java Application Cache Viewer (default if no URL is specified).</p>
+  </blockquote>
+  <p><code>-userConfig &lt;property name&gt;</code></p>
+  <blockquote> 
+    <p>Clears the specified deployment property.</p>
+  </blockquote>
+  <p><code>-userConfig &lt;property name&gt; &lt;property value&gt;</code></p>
+  <blockquote> 
+    <p>Sets the specified deployment property to the specified value.</p>
+  </blockquote>
+  <p><code>-wait</code></p>
+  <blockquote> 
+    <p>If specified, the <code>javaws</code> process will not exit until the application 
+      exits.</p>
+  </blockquote>
+  <p>&nbsp;</p>
+</blockquote>
+<h3>FILES</h3>
+<blockquote> 
+  <p>For information about the user and system cache and deployment.properties 
+    files, see <a href="../../deployment/deployment-guide/properties.html">System- 
+    and User-Level Properties</a>.</p>
+</blockquote>
+<h3>MORE INFORMATION</h3>
+<blockquote> 
+  <p>For more information about Java Web Start, see <a href="../index.html">Java 
+    Web Start version 1.5.0</a>.</p>
+  <blockquote>
+<p>&nbsp;</p>
+  </blockquote>
+  
+</blockquote>
+</body>
+</html>

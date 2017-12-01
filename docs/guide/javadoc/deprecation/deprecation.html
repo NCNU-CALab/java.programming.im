@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><html><head>
+  <title>How and When to Deprecate APIs</title>
+
+  <link rel="stylesheet" href="doc.css" type="text/css">
+</head><body bgcolor="#ffffff" text="#000000" link="#0000ff" vlink="#000077" alink="#ff0000">
+
+<table summary="layout" border="0" width="100%">
+
+<tbody><tr>
+<td width="60">
+   <img src="javalogo52x88.gif" alt="Sun Microsystems, Inc" border="0" width="52" height="88">
+</td>
+
+<td>
+
+<h1>How and When To Deprecate APIs</h1>
+
+</td>
+
+<td align="right" valign="top">
+   <font size="-1">
+   <a href="index.html">Deprecation<br> Home Page</a></font>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Body text begins here -->
+
+
+<ul>
+<li><a href="#what">What "Deprecated" Means</a>
+</li><li><a href="#when">When to Deprecate</a>
+</li><li><a href="#how">How to Deprecate</a></li>
+  <ul>
+    <li><a href="#annotation">Using the @Deprecated Annotation</a>
+    <li><a href="#javadoc_tag">Using the @deprecated Javadoc Tag</a></li>
+    </li>
+  </ul>
+</ul>
+
+<a name="what"><h2>What "Deprecated" Means</h2></a>
+
+<p>You may have heard the term, "self-deprecating humor," or humor that
+minimizes the speaker's importance. A deprecated class or method is
+like that. It is no longer important. It is <em>so</em> unimportant, in fact,
+that you should no longer use it, since it has been superseded and may cease to exist in the future.
+</p>
+
+<p>Java provides a way to express deprecation because, as a class evolves,
+its API (application programming interface) inevitably changes: methods
+are renamed for consistency, new and better methods are added, and fields
+change. But such changes introduce a problem. You need to keep the old
+API around until developers make the transition to the new one, but you
+don't want them to continue programming to the old API. </p>
+
+<p>The ability to <i>deprecate</i> a class, method, or member field solves the
+problem. Java supports two mechanisms for deprecation: and an annotation,
+(supported starting with J2SE 5.0) and a Javadoc tag (supported since 1.1).
+
+Existing calls to the old API continue to work, but the annotation causes the
+compiler to issue a warning when it finds references to deprecated
+program elements. The Javadoc tag and associated comments warn users against using
+the deprecated item and tell them what to use instead.</p>
+
+<a name="when"><h2>When to Deprecate</h2> </a>
+
+<p>When you design an API, carefully consider whether it supersedes an old API.
+If it does, and you wish to encourage
+developers (users of the API) to migrate to the new API, then deprecate the old API.  
+Valid reasons to deprecate an API include:
+</p>
+
+
+<ul>
+  <li>It is insecure, buggy, or highly inefficient</li>
+  <li>It is going away in a future release</li>
+  <li>It encourages bad coding practices</li>
+</ul>
+
+
+<p>Deprecation is a
+reasonable choice in all these cases because it preserves "backward
+compatibility" while encouraging developers to change to the new API.
+Also, the deprecation comments help developers decide when to
+move to the new API, and so should briefly mention the technical
+reasons for deprecation.</p>
+
+
+<p>
+It is not necessary to deprecate individual member fields (properties) of a deprecated
+class, unless of course you want to explain a specific
+point about a property.</p>
+
+
+<a name="how"><h2>How to Deprecate</h2></a>
+
+<p>Starting with J2SE 5.0, you deprecate a class,
+method, or field by using the <code>@Deprecated</code> annotation. Additionally, you can use the <code>@deprecated</code> Javadoc tag to mark the program element as deprecated in the Javadoc, and the tell developers how to avoid the deprecated API.
+</p>
+
+
+<p>Using the annotation causes the Java compiler to generate warnings when the deprecated class,
+method, or field is used. The compiler suppresses deprecation warnings
+if a deprecated compilation unit uses a deprecated class, method, or field. This enables
+you to build legacy APIs without generating warnings.
+</p>
+
+<p>You are strongly recommended to use the Javadoc @deprecated tag with appropriate
+comments explaining how to use the new API. This ensures developers will
+have a workable migration path from the old API to the new API. For more information, see <a href="#javadoc_tag">Using the @deprecated Javadoc Tag</a>.
+</p>
+
+<p><b>NOTE</b>: The Java Language Specification requires compilers to issue warnings when classes, methods, or fields marked with the <code>@Deprecated</code>
+annotation are used. Compilers are not required by the Java Language
+Specification to issue warnings when classes, methods, or fields marked
+with the <code>@deprecated</code> Javadoc tag are accessed, although the Sun
+compilers currently do so. However, there
+is no guarantee that the Sun compiler will always issue such warnings. </p>
+
+<h3><a name="annotation"></a>Using the @Deprecated Annotation</h3>
+
+<p>J2SE 5.0 introduces a new language feature called <a href="../../language/annotations.html">annotations</a> (also called metadata).
+One of the Java language's built-in annotations is the <code>@Deprecated</code> annotation.
+To use it, you simply precede the class, method, or member declaration with "@Deprecated."
+</p>
+
+<p>Using the <code>@Deprecated </code>annotation to deprecate a class,
+method, or field ensures that all compilers will issue warnings
+when code uses that program element. In contrast, there is no guarantee that all
+compilers will always issue warnings based on the <code>@deprecated</code> Javadoc tag,
+though the Sun compilers currently do so.
+Other compilers may not issue such warnings.
+Thus, using the <code>@Deprecated</code> annotation to generate warnings is more portable that
+relying on the <code>@deprecated</code> Javadoc tag.
+</p>
+
+<p><b>NOTE: </b>Deprecation applies to classes and to individual methods or properties, not
+  to their names.  It is possible for a single method to have deprecated
+  and non-deprecated overloadings.  It is possible for a non-deprecated
+  property to hide or override a deprecated one, which removes deprecation.
+  As developer of an API, it is your responsibility to deprecate overrides of
+  a deprecated method, if in fact they should be deprecated.</p>
+
+<h4>Example</h4>
+
+<p>The following is a simple example of using the @Deprecated annotation from
+<code>java.lang.Thread</code>:
+</p>
+
+<pre>public<br>class Thread implements Runnable {<br>...<br>@Deprecated<br>    public final void stop() {<br>  synchronized (this) {<br>...</pre>
+
+<h3><a name="javadoc_tag"></a>Using the @deprecated Javadoc Tag</h3>
+
+<p>You can use the <code>@deprecated</code> tag to make Javadoc show a program element as deprecated. The <code>@deprecated</code> tag must be followed
+by a space or newline. In the paragraph following the <code>@deprecated</code> tag, explain
+why the item has been deprecated and suggest how to avoid it.</p>
+
+<p>JavaDoc generates special HTML based on <code>@deprecated</code> tags: it moves the paragraph
+following the <code>@deprecated</code> tag to the front of the description, placing it in italics
+and preceding it with a warning, "Note: foo is deprecated", in bold.  It also adds
+"Deprecated" in bold to any index entries mentioning the deprecated entity.</p>
+
+<p>The tagged paragraph can be empty, but empty
+deprecation paragraphs are bad form, because they do not help the
+user fix the warnings that arise from the deprecation. 
+
+Include paragraphs marked with <code>@link</code> or <code>@see</code> tags that refer to the new versions
+of the same functionality. It is usually not a good idea to mention a timetable for
+phase-out of the deprecated API; this is a business decision that is best communicated other ways.
+</p>
+
+<p>For more information on using the <code>@deprecated</code> Javadoc tag, see
+<a href="../../../tooldocs/windows/javadoc.html#@deprecated">Javadoc - The Java API Documentation Generator</a>
+and <a href="../../../../../javadoc/writingdoccomments/index.html#@deprecated">How to Write Doc Comments for the Javadoc Tool</a>.</p>
+
+<h4>Example</h4>
+<P>The following examples show how to use the <code>@deprecated</code> Javadoc tag.
+They also illustrate the <code>@Deprecated</code> annotation, to emphasize that the two should be used together.
+<P>Here is an example of the most common form of a deprecated method (for Javadoc 1.2 and later):
+</p>
+
+<pre>/**<br> * @deprecated  As of release 3.1, replaced by {@link #getPreferredSize()}<br> */<br>@Deprecated public Dimension preferredSize() {<br>return getPreferredSize();<br>}<br></pre>
+
+<p><b>NOTE</b>: For Javadoc 1.1, the standard format is different;
+see <a href="../../../../../javadoc/writingdoccomments/index.html#@deprecated">How to Write Doc Comments for
+the Javadoc Tool.</a>
+</p>
+
+<p>
+If the deprecation is a simple renaming, there is no need to say
+something like "this method is replaced by getPreferredSize";
+the <code>@link</code> tag points the user to the replacement.
+</p>
+
+<p>If the API reorganization was more than renaming, the deprecation may be more complex.  Here is an example of a method that is
+being retracted:
+</p>
+
+<pre>/**<br> * Delete multiple items from the list.<br> *<br> * @deprecated  Not for public use in the future.<br> * This method is expected to be retained only as a package<br> * private method.<br> * {@link #remove(int)}<br> * {@link #removeAll()}<br> */<br>@Deprecated public synchronized void delItems(int start, int end) {<br>...<br>}<br></pre>
+
+
+</body></html>

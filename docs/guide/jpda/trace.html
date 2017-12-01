@@ -1,0 +1,233 @@
+
+
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Java Platform Debugger Architecture</title>
+<meta name="description" content="Trace runs the Java language program passed as an argument and generates a trace of its execution. Trace is a simple command line tool that uses the Java Debug Interface (JDI). Programs need not be compiled for debugging since this information is not used." />
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+<meta name="archiveFlag" content="false"/>
+<meta name="date" content="2003-04-12" />
+<link rel="stylesheet" href="/css/default_developer.css" />
+<script type='text/JavaScript' src='/js/popUp.js'></script>
+</head>
+<!--stopindex-->
+<body leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" rightmargin="0" bgcolor="#ffffff">
+<a name="top"></a>
+<!-- BEGIN MASTHEAD -->
+<!-- BEGIN VNV1 MASTHEAD COMPONENT, thinner variation for content pages -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" height="25" class="topnav">
+<form name="formsearch" action="/dispatcher.jsp" method="post">
+<tr>
+<td><a href="#mast"><img src="/im/a.gif" width="10" height="1" border="0" alt="Skip Masthead Links" /></a></td>
+<td><a href="http://developers.sun.com">developers.sun.com</a></td>
+<td width="100%">&nbsp;</td> 
+<td nowrap="nowrap"><span class="rightarrowblue">&raquo;</span>&nbsp;<a href="/dispatcher.jsp?uid=6910020">search tips</a>&nbsp;&nbsp;|&nbsp;&nbsp;<b>Search:</b>&nbsp;</td>
+<td><input name="qt" class="medium" size="7" value="" /></td>
+<td>&nbsp;</td>
+<td class="selectcell"><select class="globalsearch" name="uid">
+<option value="6910018" selected>in Developers' Site</option>
+<option value="6910019">in Sun.com</option>
+</select></td>
+<td>&nbsp;</td>
+<td valign="middle" align="left"><input type="submit" border="0" class="buttonred" value="&nbsp;&raquo;&nbsp;" onmouseover="this.style.color='#fbe249';" onmouseout="this.style.color='#FFF';" /></td>
+<td><img src="/im/a.gif" width="10" height="1" alt=" " /></td>
+</tr></form>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td><img src="/im/a.gif" width="10" height="1" border="0" alt=" " /></td>
+<td valign="top" class="grey3"><a href="http://java.sun.com"><img src="/im/logo_java_grey.gif" width="180" height="53" border="0" alt=" " /></a></td>
+<td><img src="/im/a.gif" width="10" height="1" border="0" alt=" " /></td>
+<td class="sunblue" valign="top" nowrap="nowrap"><div class="pad6"><a href="http://developers.sun.com"><img src="/im/masthead_the_source.gif" width="262" height="25" border="0" alt="The Source for Developers" /></a><br />
+<a href="/dispatcher.jsp?uid=6910022"><img src="/im/masthead_sdn_site.gif" width="169" height="15" border="0" alt="A Sun Developer Network Site" /></a></div></td>
+<td class="sunblue"><img src="/im/a.gif" width="10" height="1" border="0" alt=" " /></td>
+<td class="sunblue"><div class="pad6"><a href="/dispatcher.jsp?uid=6910023"><img src="/im/masthead_prod_and_tech.gif" width="158" height="15" border="0" alt="Products and Technologies" /></a><br /><a href="/dispatcher.jsp?uid=6910024"><img src="/im/masthead_tech_topics.gif" width="105" height="15" border="0" alt="Technical Topics" /></a></div><img src="/im/a.gif" width="196" height="1" border="0" alt=" " /></td>
+<td class="sunblue" width="100%" valign="top" align="right"><div class="pad10"><a href="http://www.sun.com"><img src="/im/logo_sun.gif" width="72" height="33" border="0" alt="Sun Microsystems" /></a></div></td>
+<td><a name="mast"></a><a href="#skip2content"><img src="/im/a.gif" width="10" height="1" border="0" alt=" " /></a></td></tr>
+</table>
+</td></tr>
+</table>
+<span class="sp5">&nbsp;</span><br />
+<!-- END VNV1 MASTHEAD COMPONENT, thinner variation for content pages -->   
+<!-- END MASTHEAD -->
+<!-- BEGIN BREADCRUMB -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="vatop">
+<tr>
+<td>      
+<div class="breadcrumb">
+<a href="http://developers.sun.com/index.html">Developers Home</a> &gt; <a href="http://developers.sun.com/prodtech/index.html">Products & Technologies</a> &gt; <a href="http://java.sun.com/index.jsp">Java Technology</a> &gt; <a href="http://java.sun.com/j2se/index.jsp">J2SE</a> &gt; <a href="http://java.sun.com/j2se/corejava/index.jsp">Core Java</a> &gt; <a href="http://java.sun.com/products/jpda/index.jsp">JPDA</a> &gt; <a href="http://java.sun.com/products/jpda/reference/index.html">Reference</a> &gt; <a href="http://java.sun.com/products/jpda/examples.html">Tested Configurations</a> &gt;
+</div>
+</td>
+<td align="right" nowrap="nowrap"><div class="breadcrumb">
+<b><a href="http://developers.sun.com/dispatcher.jsp?uid=6910021">Join a Sun Developer Network Community</a></b><br />
+<a href="http://developers.sun.com/user_registration/index.html">Profile and Registration</a> | 
+<a href="http://developers.sun.com/user_registration/whyregister.html">Why Register?</a>
+</div></td></tr>
+<tr><td colspan="2"><img src="/im/a.gif" width="770" height="1" border="0" alt=" " /></td></tr>
+</table>
+<span class="sp5">&nbsp;</span><br />     
+<!-- END BREADCRUMB -->
+<!-- BEGIN PAGETITLE -->
+<div class="pagetitle2">Tested Configurations</div>
+<div class="pagetitle">Java Platform Debugger Architecture</div>
+<!-- END PAGETITLE -->
+<!-- BEGIN WRAPPER TABLE, 1 COLUMN, MAIN -->
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tr><td width="100%" valign="top">
+<!-- BEGIN CENTRAL COLUMN COMPONENTS -->
+<!--startindex-->
+<!-- ============ -->
+<!-- MAIN CONTENT -->
+<!-- ============ -->
+<a name="skip2content"></a>
+<!--  BEGIN VCD4 BYLINE AND TOOLS  -->
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td class="smaller" valign="top"><em></em></td>
+<td width="10">&nbsp;</td>
+<td align="right" valign="bottom"><div class="sitelinks" style="padding:0px;">
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td valign="bottom" align="right">&nbsp;</td>
+<td valign="bottom" class="smaller" nowrap="nowrap"><a href="/jsp_utils/PrintPage.jsp" target="printFriendlyView" onclick="openPopup('','printFriendlyView',710,650,'no',1,1,0,0,0,0); return true;"><img src="/im/ic_print.gif" width="14" height="12" alt="Print-friendly Version" border="0" hspace="4" />Print-friendly Version</a><br></td>
+</tr></table></div>
+</td></tr>
+</table>
+<!--  END VCD4 BYLINE AND TOOLS  -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<!--  BEGIN VCD4 BYLINE AND TOOLS  -->
+</head>
+<body>
+<div class="contentdivider">
+<table border="0" cellpadding="0" cellspacing="0" width="100%"
+class="grey4">
+<tbody>
+<tr>
+<td><img src="/im/a.gif" width="1" height="4" border="0" alt=" "></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!--  END VCD4 BYLINE AND TOOLS  --><!-- page headline --><!-- end page headline --><!-- main page content -->
+<p><b>Trace</b> runs the Java language program passed as an argument
+and
+generates a trace of its execution. <b>Trace</b> is a simple command
+line tool that uses the Java Debug Interface (JDI). Programs need
+not be compiled for debugging since this information is not
+used.
+</p>
+<p>
+<b>Trace</b> can be invoked as follows:
+</p>
+<pre>        java Trace <i>options class args</i><br></pre>
+Your classpath must include the Java 2 SDK's <tt>lib/tools.jar</tt>
+file which contains the JDI Library
+(see <a href="examples.html#SETUP">set-up</a>),
+the path to the compiled <b>trace</b> class files,
+and the path for the application being traced.
+<p>
+Available <i>options</i> are:
+<!-- BEGIN VCD7 CODE SAMPLE COMPONENT  -->
+<table border="0" cellpadding="10" cellspacing="0" width="100%"
+class="grey4">
+<tbody>
+<tr>
+<td>
+<pre>  -output <i>filename</i><br>        Set destination for output trace. By default output<br>        goes to the terminal.<br><br>  -all<br>        Include system classes in output.  By default<br>        java.*, javax.*, sun.* and com.sun.* events are<br>        not diplayed.<br><br>  -fields<br>        Also show assignments into fields.<br><br>  -help<br>        Print a help message<br><br>      </pre>
+</td>
+</tr>
+</tbody>
+</table>
+<span class="sp20"> </span><br>
+<!-- END VCD7 CODE SAMPLE COMPONENT  -->
+<i>class</i> is the program to trace. <i>args</i> are the arguments to
+<i>class</i>.
+</p>
+<p>
+</p>
+<h3>Source for trace</h3>
+<p>
+Full source code for <b>trace</b> is included in the
+<code>trace</code> directory of <code>examples.jar</code>.
+Source code of these example application is included to provide
+concrete
+examples for debugger developers. Example code may be used, modified
+and redistributed by debugger developers providing they adhere to the
+terms in the copyright notice.
+</p>
+<h3>Building trace</h3>
+<p>
+To completely rebuild the <b>trace</b> classes from the
+provided source files in the <code>trace</code> directory,
+you need only to compile them. No special
+options are required, aside from those which set your classpath to
+include the <a href="examples.html#SETUP">JDI Library</a> in <tt>lib/tools.jar</tt>.
+</p>
+<!-- end main page content -->
+</body>
+</html>
+<!-- =================== -->
+<!-- END OF MAIN CONTENT -->
+<!-- =================== -->
+<!--stopindex-->
+<!-- END CENTRAL COLUMN COMPONENTS -->
+</td></tr>
+<!-- BEGIN SPACER ROW -->
+<tr><td><img src="/im/a.gif" width="750" height="1" border="0" alt=" " /></td></tr>
+<!-- END SPACER ROW -->
+</table>
+<!-- END WRAPPER TABLE, 1 COLUMN, MAIN -->
+<!-- BEGIN VNV5 FOOTER  -->
+<table border="0" cellpadding="0" cellspacing="10" width="100%">
+<tr>
+<td>
+<table border="0" cellpadding="0" cellspacing="0" width="100%" class="vatop">
+<tr>
+<td colspan="4" valign="top" class="grey3"><img src="/im/a.gif" width="1" height="2" border="0" alt=" " /></td></tr>
+<tr>
+<td><img src="/im/a.gif" width="190" height="1" border="0" alt=" " /><br />
+<a href="http://www.sun.com"><img src="/im/logo_sun_small_sdn.gif" width="61" height="29" border="0" alt=" " vspace="5"/></a></td>
+<td width="100%" valign="top"><img src="/im/a.gif" width="350" height="1" border="0" alt=" " /><br />
+<div class="footer">
+<a href="/dispatcher.jsp?uid=6910015">Company Info</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910010">About This Site</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910011">Press</a> &nbsp;|&nbsp;
+<a href="http://developers.sun.com/contact/index.jsp">Contact Us</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910014">Employment</a><br />
+<a href="/dispatcher.jsp?uid=6910012">How to Buy</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910009">Licensing</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910013">Terms of Use</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910016">Privacy</a> &nbsp;|&nbsp;
+<a href="/dispatcher.jsp?uid=6910017">Trademarks</a>
+<br /><span class="sp10">&nbsp;</span><br />
+<br /><span class="sp10">&nbsp;</span><br />
+Copyright 1994-2004 Sun Microsystems, Inc.
+</div></td>
+<td><img src="/im/a.gif" width="40" height="1" border="0" alt=" " /></td>
+<td valign="top"><div class="footer"><b><a href="/dispatcher.jsp?uid=6910010">A Sun Developer Network Site</a></b></div>
+<div class="footer">
+<img src="/im/a.gif" width="170" height="1" border="0" alt=" " /><br />
+Unless otherwise licensed, code in all technical manuals herein (including articles, FAQs, samples) is provided under this <a href="/dispatcher.jsp?uid=6910008">License</a>.
+<br /><span class="sp5">&nbsp;</span><br />
+<a href="/dispatcher.jsp?uid=6910006"><img src="/im/button_xml.gif" width="36" height="14" align="top" border="0" alt="XML" /></a>&nbsp;<a href="/dispatcher.jsp?uid=6910007">Content Feeds</a>
+</div></td></tr>
+<tr><td colspan="4" valign="top" class="grey3"><img src="/im/a.gif" width="1" height="2" border="0" alt=" " /></td></tr>
+</table>
+</td></tr>
+</table>
+<!-- END VNV5 FOOTER -->
+</body>
+</html>
+
+
+

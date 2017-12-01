@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>java.lang.InstantiationException: Either &quot;code&quot; or &quot;object&quot; ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2> <span class="bg2"><code>java.lang.InstantiationException</code>: Either 
+    &quot;code&quot; or &quot;object&quot; should be specified, but not both.</span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote> 
+    <p> When running an applet in a browser using the Sun JRE, an <code>InstantiationException</code> 
+      is thrown. The same applet runs under the Microsoft&nbsp; VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote>
+    <p> There are two possible causes. </p>
+    <ol>
+      <li>Both <code>code</code> and <code>object</code> attributes are specified 
+        in the <code>&lt;APPLET&gt;</code> tag:<br>
+        <br>
+        <code>&lt;APPLET code=MyApplet object=MyApplet.ser width=100 height=100&gt;</code><br>
+        <code>&lt;/APPLET&gt;</code><br>
+        <br>
+        The Sun JRE can access either the <code>code</code> or the <code>object</code> 
+        attribute, but not both.<br>
+        &nbsp;</li>
+      <li>A <code>code</code> attribute is specified in the <code>&lt;APPLET&gt;</code> 
+        tag, and an <code>object</code> attribute is specified in a <code>&lt;PARAM&gt;</code> 
+        tag :<br>
+        <br>
+        <code>&lt;APPLET code=MyApplet width=100 height=100&gt;</code><br>
+        <code>&lt;PARAM name=&quot;object&quot; value=&quot;someValue&quot;&gt;</code><br>
+        <code>&lt;/APPLET&gt;</code><br>
+        <br>
+        <code>public class MyApplet extends java.applet.Applet</code><br>
+        <code>{</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>public void init()</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>{</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        <code>String value = getParameter(&quot;object&quot;);</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>}</code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>....</code><br>
+        <code>}</code><br>
+        <br>
+        The Sun JRE does not support <code>object</code> as a parameter name.</li>
+    </ol>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The workaround in the first case 
+    is to eliminate the <code>code</code> attribute in the <code>&lt;APPLET&gt;</code> 
+    tag:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;APPLET 
+    object=MyApplet.ser width=100 height=100&gt;</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/APPLET&gt;</code><br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The workaround in the second case 
+    is to change the parameter name to a different name:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;APPLET 
+    code=MyApplet width=100 height=100&gt;</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;PARAM 
+    name=&quot;property1&quot; value=&quot;someValue&quot;&gt;</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/APPLET&gt;</code><br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public 
+    class MyApplet extends java.applet.Applet</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public 
+    void init()</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String value = getParameter(&quot;property1&quot;);</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</code></p>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N/A</p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

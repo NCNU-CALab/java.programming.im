@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Java Plug-in does not use the certificates in the browser certificate store</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2><span class="bg2">Java Plug-in does not use the certificates in the browser 
+    certificate store for HTTPS client authentication.</span></h2>
+  <h3><font color="#CC0033"><br>
+    Symptoms</font></h3>
+  <blockquote> 
+    <p>Unable to use certificates from the browser for client authentication.</p>
+  </blockquote>
+  <h3> <font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p>The Java Plug-in uses certificates for client authentication from a certificate 
+      store specific to the JRE. It does not use the certificates from the browser 
+      certificate store.</p>
+  </blockquote>
+  <h3> <font color="#CC0033">Resolution</font></h3>
+  <blockquote> 
+    <p>Client authentication in Java Plug-in requires the client certificate store 
+      on the user disk, keystore type, and the password to access it. These three 
+      parameters should be provided with system properties as follows:</p>
+    <blockquote> 
+      <p><code>-Djavax.net.ssl.keyStore=&lt;client_keystore_file_path&gt;</code><br>
+        <code>-Djavax.net.ssl.keyStorePassword=&lt;password to access the client 
+        keystore file&gt;<br>
+        -Djavax.net.ssl.keyStoreType=&lt;keystore_type&gt;</code></p>
+    </blockquote>
+    <p>These properties should be specified in the Advanced tab of the Java Control 
+      Panel.</p>
+    <p>Here are the steps to export a digital certificate from the browser certificate 
+      store into a file:</p>
+    <ol>
+      <li>Open a browser window, click on Tools, then click the Internet Options 
+        submenu item.</li>
+      <li>Click the Content tab.</li>
+      <li>In the certificates section in the middle, click the Certificates button. 
+        The available certificates are shown in the dialog box.</li>
+      <li>Select Client Authentication in the Intended Purpose drop down menu.</li>
+      <li>Select the certificate you want to export.</li>
+      <li>Click the Export button. The Certificate Manager Export Wizard starts.</li>
+      <li>On the Welcome window, click Next.</li>
+      <li>Keep the default to &quot;Yes, export the private key&quot; and click 
+        Next.</li>
+      <li>Keep the default to &quot;Personal Information Exchange - PKCS #12(.PFX)&quot; 
+        and click Next.</li>
+      <li>Complete the Password window.</li>
+      <li>Type the path and filename of the file to export. The system automatically 
+        gives it a <code>.pfx</code> extension. Click Next.</li>
+      <li>Review the information and click Finish.</li>
+    </ol>
+    <h4>Example:</h4>
+    <p>If the user exports the certificate to a file called (path included) <code>c:\certs\client.pfx</code> 
+      and uses the password &quot;test&quot; to protect the <code>.pfx</code> 
+      file, the required system properties will take the following values:</p>
+    <blockquote> 
+      <p><code>-Djavax.net.ssl.keyStore=c:\certs\client.pfx<br>
+        -Djavax.net.ssl.keyStorePassword=test<br>
+        -Djavax.net.ssl.keyStoreType=pkcs12</code></p>
+    </blockquote>
+  </blockquote>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <blockquote> 
+    <p>N/A<br>
+    </p>
+  </blockquote>
+</blockquote>
+</body>
+</html>

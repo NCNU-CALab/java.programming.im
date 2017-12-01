@@ -1,0 +1,3 @@
+Diagram of the Java virtual machine process which includes the Java virtual machine and the profiler agent. Communication from the JVM to the profiler agent is a JVMPI event and from the profiler agent to the JVM is a JVMPI control.
+
+The profiler agent communicates via wire protocol with the profiler front-end which is external to the Java virutal machine process.

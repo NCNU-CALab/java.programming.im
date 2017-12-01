@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+   <TITLE>When should I use RMI-IIOP?</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="50%">
+
+<TR>
+<TD ALIGN=LEFT VALIGN=TOP>
+   <a href="../../index.html"><FONT SIZE=-1 COLOR="BLUE">Documentation Contents</FONT></a> 
+<BR>
+
+
+   <a href="http://java.sun.com/products/rmi-iiop/"><FONT SIZE=-1 COLOR="BLUE">Java RMI over IIOP Home page</FONT></a>
+   <BR><BR>
+
+ 
+</TD>
+</TR>
+
+</TABLE>
+
+<A NAME="when"></A>
+<H1 ALIGN=CENTER>When should I use RMI-IIOP?</H1>
+
+
+
+<P>RMI-IIOP is for developers who program in the  
+Java programming language and want to program to the RMI interfaces, but use IIOP as the 
+underlying transport.  RMI-IIOP provides interoperability with other CORBA 
+objects implemented in various languages - but only if all the remote interfaces 
+are originally defined as Java RMI interfaces.  It is of particular interest to 
+programmers using Enterprise JavaBeans<SUP><FONT SIZE="-2">TM</FONT></SUP> (EJB<SUP><FONT SIZE="-2">TM</FONT></SUP>), since the remote object model for 
+EJB components is based on the RMI API.
+
+<P>RMI-IIOP combines the best features of Java Remote 
+Method Invocation (RMI) with the best features of CORBA.   RMI-IIOP speeds distributed 
+application development by 
+allowing developers to work completely in the Java programming 
+language, writing remote 
+interfaces in the Java programming language and implementing them simply 
+using Java technology and the Java RMI APIs.  
+
+<P>When using RMI-IIOP to
+produce technology-based distributed applications written in the Java programming language, there is no
+separate Interface Definition Language (IDL) or mapping to learn: the remote interfaces can 
+be implemented in any other language that is supported by an OMG mapping and a vendor 
+supplied ORB 
+for that language. Similarly, clients can be written in other languages 
+using IDL derived from the remote Java technology-based interfaces.   
+
+<P>RMI-IIOP provides flexibility by allowing developers to 
+pass any Java object between application 
+components either by reference  or by value.
+
+<P>Like CORBA,  RMI-IIOP is based on open 
+standards defined with the participation of hundreds of vendors and 
+users in the Object Management Group.  Like CORBA, RMI-IIOP uses Internet Inter-ORB Protocol 
+(IIOP) as its communication protocol.  IIOP eases legacy application and platform 
+integration by allowing application components written in C++, Smalltalk, and other CORBA 
+supported languages to communicate with components  running on the Java platform.
+
+  <a name="other"></a>
+<H1 ALIGN=CENTER>What other options do I have for distributed application development?</H1>
+
+<P>Developers who program using the Java<SUP><FONT SIZE="-2">TM</FONT></SUP>  programming language can choose several 
+solutions for creating distributed applications programs.  
+
+<P>
+<UL>
+<LI>Java<SUP><FONT SIZE="-2">TM</FONT></SUP> <STRONG>RMI</STRONG>  technology -  If all of your 
+applications are written in the Java programming language, you will probably want
+        to use <a href="../rmi/index.html">Java RMI technology</a>  to enable communication between Java 
+objects on different virtual machines and different
+        physical machines. Using Java RMI technology without its IIOP option leverages its strengths of 
+code portability,
+        security, and garbage collection. 
+<P>
+<LI><STRONG>Java<SUP><FONT SIZE="-2">TM</FONT></SUP> IDL </STRONG>  technology - <a 
+target="AuxWindow" href="../idl/index.html">Java IDL technology</a> are for CORBA programmers who want to program in the 
+Java programming 
+language based on interfaces defined in CORBA Interface Definition Language 
+(IDL).  This is "business as usual" CORBA programming, supporting the 
+Java platform in exactly 
+the same way as other languages like C++ or COBOL.
+<P>
+<LI><STRONG>Enterprise JavaBeans<SUP><FONT SIZE="-2">TM</FONT></SUP>  technology</STRONG> - <a 
+target="AuxWindow" href="http://java.sun.com/products/ejb/index.jsp">Enterprise JavaBeans<SUP><FONT SIZE="-2">TM</FONT></SUP></a> (EJB<SUP><FONT SIZE="-2">TM</FONT></SUP>) technology is part of the 
+Java 2 Platform, Enterprise Edition.   EJB components use the Java RMI/Java IDL technology for their 
+distributed object model, and use the Java Transaction Service (JTS) for their distributed 
+transaction model.  When Enterprise JavaBeans components are implemented using the RMI-IIOP protocol 
+for EJB component interoperability in heterogeneous server environments, the standard mapping of the 
+EJB architecture to CORBA enables interoperability with multivendor ORBs, other EJB servers, 
+and  CORBA clients written in programming languages other than the Java programming language.  For an
+example application that uses an EJB server with a CORBA client, look at <a target="AuxWindow" href="interop.html">
+<em>Enterprise JavaBeans Components and CORBA Clients</em></a>.
+</UL>
+</BLOCKQUOTE>
+
+
+
+
+
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR VALIGN=TOP>
+
+
+<TD>
+   <FONT SIZE="-2">
+   <A HREF="../../relnotes/SMICopyright.html">Copyright</a> &#169; 2001-2004
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+    All Rights Reserved.
+    </FONT>
+
+   <P>
+  </TD>
+<TD ALIGN=RIGHT>
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

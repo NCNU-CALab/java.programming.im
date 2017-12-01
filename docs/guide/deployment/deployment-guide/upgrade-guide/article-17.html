@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Redirection between HTTP URL and HTTPS URL is not followed.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2><span class="bg2">Redirection between HTTP and HTTPS URLs is not followed.</span></h2>
+  <h3><font color="#CC0033">Symptoms</font> </h3>
+  <blockquote> 
+    <p>When running an applet in a browser using the Sun JRE, if the applet makes 
+      HTTP requests to a server which redirects to an HTTPS URL, the redirection 
+      fails. It fails also in the case of making HTTPS requests to a server which 
+      redirects to an HTTP URL. The same applet runs without error in the Microsoft 
+      VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p>The issue is caused by the HTTP/HTTPS redirection policy implemented in 
+      Sun JRE; because of serious security consequences, redirection between HTTP 
+      and HTTPS is not automatically followed.</p>
+    <p>With the Microsoft VM, a security warning dialog prompts the user for consent 
+      for any redirection. Redirection occurs only if the user consents to it.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote> 
+    <p>To work around the problem, it is the application's responsibility to check 
+      the response code and recognize it as a redirect. The Location header field 
+      value can be checked for the redirect information, and then the application 
+      must decide whether or not to follow the redirect using the new protocol. 
+      For example, the following code</p>
+    <blockquote> 
+      <p><code>public void makeConnection(URL url)<br>
+        {<br>
+        URLConnection conn = url.openConnection();<br>
+        InputStream is = conn.getInputStream();<br>
+        .... <br>
+        is.close();<br>
+        }</code></p>
+    </blockquote>
+    <p>should be changed to</p>
+    <blockquote> 
+      <p><code> private InputStream openConnectionCheckRedirects(URLConnection 
+        c) throws IOException <br>
+        {</code><br>
+        <code>&nbsp;&nbsp;&nbsp;boolean redir;<br>
+        &nbsp;&nbsp;&nbsp;int redirects = 0;<br>
+        &nbsp;&nbsp;&nbsp;InputStream in = null;<br>
+        </code><code>&nbsp;&nbsp;&nbsp;do <br>
+        &nbsp;&nbsp;&nbsp;{<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (c instanceof HttpURLConnection) 
+        </code><code><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((HttpURLConnection) 
+        c).setInstanceFollowRedirects(false);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        </code><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// We want to open the 
+        input stream before getting headers<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// because getHeaderField() et al 
+        swallow IOExceptions.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in = c.getInputStream(); <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redir = false; <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (c instanceof HttpURLConnection) 
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpURLConnection 
+        http = (HttpURLConnection) c;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int stat = http.getResponseCode();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (stat &gt;= 300 
+        &amp;&amp; stat &lt;= 307 &amp;&amp; stat != 306 &amp;&amp;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stat 
+        != HttpURLConnection.HTTP_NOT_MODIFIED) <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL 
+        base = http.getURL();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String 
+        loc = http.getHeaderField(&quot;Location&quot;);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL 
+        target = null;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if 
+        (loc != null) <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target 
+        = new URL(base, loc);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http.disconnect();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </code><code>&nbsp;&nbsp;&nbsp;// 
+        Redirection should be allowed only for HTTP and HTTPS<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// 
+        and should be limited to 5 redirections at most.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if 
+        (target == null || !(target.getProtocol().equals(&quot;http&quot;)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|| 
+        target.getProtocol().equals(&quot;https&quot;))<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|| 
+        redirects &gt;= 5)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{</code><br>
+        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw 
+        new SecurityException(&quot;illegal URL redirect&quot;);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</code><br>
+        <code> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redir 
+        = true;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c 
+        = target.openConnection();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirects++;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;} <br>
+        &nbsp;&nbsp;&nbsp;while (redir);<br>
+        &nbsp;&nbsp;&nbsp;return in;<br>
+        }</code></p>
+      <p><code>public void makeConnection(URL url){<br>
+        &nbsp;&nbsp;&nbsp;URLConnection conn = url.openConnection();<br>
+        &nbsp;&nbsp;&nbsp;InputStream is = openConnectionCheckRedirects(conn);<br>
+        &nbsp;&nbsp;&nbsp;.... <br>
+        &nbsp;&nbsp;&nbsp;is.close();<br>
+        }</code></p>
+    </blockquote>
+  </blockquote>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <blockquote> 
+    <p>N/A</p>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+</body>
+</html>

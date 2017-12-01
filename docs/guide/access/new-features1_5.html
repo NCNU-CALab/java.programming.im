@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+     <TITLE>Accessibility - New Features</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+<TR>
+<TD WIDTH="60">
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java logo" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+<TD>
+<center>
+           <h1>Accessibility</h1>
+<h3>New Features in Java<sup><font size=-2>TM</font></sup> 2 Platform Standard Edition 5</h3>
+</center>
+</TD>
+<TD ALIGN=RIGHT VALIGN=TOP>
+   <font size="-1"><a href="index.html">Java Accessibility</a></font>
+</TD>
+</TR>
+</TABLE>
+
+<!-- Body text begins here -->
+
+The features described here were introduced in Java 2 Platform Standard Edition 5.  
+These features are also part of subsequent releases of the Java platform. Many of these additions were made to maintain compatibility between the Java Accessibility API and the GNOME Accessibility Framework, described at <a href="http://developer.gnome.org/projects/gap">http://developer.gnome.org/projects/gap</a>
+
+<h3>Contents</h3>
+<blockquote>
+<a href="#action">AccessibleAction New Constant</a><br>
+<a href="#context">AccessibleContext New Constants</a><br>
+<a href="#relation">AccessibleRelation New Constants</a><br>
+<a href="#role">AccessibleRole New Constants</a><br>
+<a href="#state">AccessibleState New Constants</a><br>
+<a href="#text">AccessibleText New Constants</a><br>
+<a href="#api">API Enhancements</a><br>
+<a href="#extended">AccessibleExtendedText</a><br>
+<a href="#stream">AccessibleStreamable</a><br>
+<a href="#spinner">Accessibility Support for JSpinner and ProgressMonitor</a><br>
+</blockquote>
+<hr>
+
+<a name=action>
+<b>AccessibleAction New Constant</b></a><br>
+<blockquote>
+Class <a href="../../api/javax/accessibility/AccessibleAction.html"><b><tt>AccessibleAction</tt></b></a> contains the following new constant:
+<ul>
+<li><tt>TOGGLE_EXPAND</tt>
+</ul>
+</blockquote>
+
+<a name=context>
+<b>AccessibleContext New Constants</b></a><br>
+<blockquote>
+Class <a href="../../api/javax/accessibility/AccessibleContext.html"><b><tt>AccessibleContext</tt></b></a> contains the following new constants:
+<ul>
+<li><tt>ACCESSIBLE_COMPONENT_BOUNDS_CHANGE</tt>
+<li><tt>ACCESSIBLE_INVALIDATE_CHILDREN</tt>
+<li><tt>ACCESSIBLE_TEXT_ATTRIBUTE_CHANGED</tt>
+</ul>
+</blockquote>
+
+<a name=relation>
+<b>AccessibleRelation New Constants</b></a><br>
+<blockquote>
+Class <a href="../../api/javax/accessibility/AccessibleRelation.html"><b><tt>AccessibleRelation</tt></b></a> contains the following new constants:
+<ul>
+<li><tt>CHILD_NODE_OF</tt>
+<li><tt>CHILD_NODE_OF_PROPERTY</tt>
+<li><tt>EMBEDS</tt>
+<li><tt>EMBEDS_PROPERTY</tt>
+<li><tt>EMBEDDED_BY</tt>
+<li><tt>EMBEDDED_BY_PROPERTY</tt>
+<li><tt>FLOWS_FROM</tt>
+<li><tt>FLOWS_FROM_PROPERTY</tt>
+<li><tt>FLOWS_TO</tt>
+<li><tt>FLOWS_TO_PROPERTY</tt>
+<li><tt>PARENT_WINDOW_OF</tt>
+<li><tt>PARENT_WINDOW_OF_PROPERTY</tt>
+<li><tt>SUBWINDOW_OF</tt>
+<li><tt>SUBWINDOW_OF_PROPERTY</tt>
+</ul>
+</blockquote>
+
+<a name=role>
+<b>AccessibleRole New Constants</b></a><br>
+<blockquote>
+Class <a href="../../api/javax/accessibility/AccessibleRole.html"><b><tt>AccessibleRole</tt></b></a> contains the following new constants:
+<ul>
+<li><tt>EDITBAR</tt>
+<li><tt>FOOTER</tt>
+<li><tt>HEADER</tt>
+<li><tt>PARAGRAPH</tt>
+<li><tt>PROGRESS_MONITOR</tt>
+<li><tt>RULER</tt>
+</ul>
+</blockquote>
+
+<a name=state>
+<b>AccessibleState New Constants</b></a><br>
+<blockquote>
+Class <a href="../../api/javax/accessibility/AccessibleState.html"><b><tt>AccessibleState</tt></b></a> contains the following new constants:
+<ul>
+<li><tt>INDETERMINATE</tt>
+<li><tt>MANAGES_DESCENDANTS</tt>
+<li><tt>TRANSIENT</tt>
+<li><tt>TRUNCATED</tt>
+</ul>
+</blockquote>
+
+<a name=text>
+<b>AccessibleText New Constants</b></a><br>
+<blockquote>
+Class <a href="../../api/javax/accessibility/AccessibleText.html"><b><tt>AccessibleText</tt></b></a> contains the following new constants:
+<ul>
+<li><tt>LINE</tt>
+<li><tt>ACCESSIBLE_CHANGED_TEXT</tt>
+<li><tt>ATTRIBUTE_RUN</tt>
+</ul>
+</blockquote>
+
+<a name=api>
+<b>API Enhancements</b></a><br>
+<blockquote>
+The following new classes and interfaces have been added to the 
+Java<sup><font size=-2>TM</font></sup> Accessibility API:
+<ul><b>
+<li><a href="../../api/javax/accessibility/AccessibleExtendedText.html"><tt>javax.accessibility.AccessibleExtendedText</tt></a>
+<li><a href="../../api/javax/accessibility/AccessibleStreamable.html"><tt>javax.accessibility.AccessibleStreamable</tt></a>
+</b></ul>
+</blockquote>
+
+<a name=extended>
+<b>AccessibleExtendedText</b></a><br>
+<blockquote>
+Interface <a href="../../api/javax/accessibility/AccessibleExtendedText.html"><b><tt>AccessibleExtendedText</tt></b></a> provides support for braille and screen reader review mode.
+</blockquote>
+
+<a name=stream>
+<b>AccessibleStreamable</b></a><br>
+<blockquote>
+Interface <a href="../../api/javax/accessibility/AccessibleStreamable.html"><b><tt>AccessibleStreamable</tt></b></a> provides a stream interface to raw data based on mime type.
+</blockquote>
+
+<a name=spinner>
+<b>Accessibility Support for JSpinner and ProgressMonitor</b></a><br>
+<blockquote>
+This release provides accessibility support for spinners and progress monitors in Swing.
+</blockquote>
+
+
+<!-- ============================================================== -->
+
+
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+<P><FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2004
+
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+
+    All Rights Reserved.</FONT></P>
+
+   <FONT SIZE="-1">
+
+   Please send comments to: <a href="mailto:access@sun.com">access@sun.com</a> 
+
+   </FONT>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+</BODY>
+</HTML>
+
+
+

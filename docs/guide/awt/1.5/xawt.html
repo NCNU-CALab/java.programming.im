@@ -1,0 +1,84 @@
+<html>
+<head>
+  <title>XToolkit on Solaris/Linux</title>
+</head>
+<body bgcolor=white>
+<h1>XToolkit on Solaris/Linux</h1>
+<blockquote>
+ 
+Starting with release J2SE<sup><font size="-2">TM</font></sup> 5.0,
+AWT has been re-implemented on the
+Solaris and Linux platforms. The new Toolkit implementation
+provides the following advantages:
+ 
+<ul>
+<li>Removes the dependency on Motif and Xt libraries.
+<li>Interoperates better with other GUI Toolkits.
+<li>Provides better performance and quality.
+</ul>
+ 
+<p>
+The new Toolkit (XToolkit) is the default on Linux in J2SE 5.0.
+Solaris will continue to use the MToolkit (Motif-based Toolkit)
+as the default in J2SE 5.0, but eventually will be replaced with XToolkit.
+ 
+<h2>Explicitly Setting the Toolkit</h2>
+<p>You can explicitly set the toolkit for an applet or application
+using an environment variable or a system property.  Keep in mind
+that the environment variable overrides the system property.
+
+<ul>
+<li>Setting the toolkit for an application:
+<p> 
+<ul>
+<li>Using an environment variable.  This needs to be set
+    before starting the VM.
+<pre>
+ csh: 
+ setenv AWT_TOOLKIT XToolkit #selects the XToolkit
+ setenv AWT_TOOLKIT MToolkit #selects the MToolkit
+ 
+ ksh/bash:
+ export AWT_TOOLKIT=XToolkit
+ export AWT_TOOLKIT=MToolkit
+</pre>
+ 
+<p>
+<li>Using a system property on the command line:
+ 
+<pre>
+ java -Dawt.toolkit=sun.awt.X11.XToolkit <i>MyApp</i>
+ java -Dawt.toolkit=sun.awt.motif.MToolkit <i>MyApp</i>
+</pre>
+</ul>
+
+<li>Setting the toolkit for an applet:
+<p>
+<ul>
+<li>Using an environment variable. 
+    <p>If the browser is started from a terminal window, the
+    environment variable must be set in the terminal window before
+    launching the browser.  If the browser is launched from a desktop
+    icon or menu, the toolkit for an applet can't be set using an
+    environment variable.  The Java Plug-in Control Panel should
+    be used instead.
+<p>
+<li>Using the Plug-in Control Panel:
+<p>
+<ul>
+<li>Launch the Java Plug-in Control Panel:
+<pre>
+$java_home/bin/ControlPanel
+</pre>
+<p>
+<li>Add the system property to the <em>Java Runtime Parameters</em>
+    field under the <b>Advanced</b> tab.
+<pre>
+-Dawt.toolkit=sun.awt.X11.XToolkit
+-Dawt.toolkit=sun.awt.motif.MToolkit
+</pre>
+</ul>
+</ul>
+</ul>
+</blockquote>
+</html>

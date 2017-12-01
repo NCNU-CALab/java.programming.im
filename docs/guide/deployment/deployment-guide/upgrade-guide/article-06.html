@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>java.lang.ClassNotFoundException thrown ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2> <span class="bg2"><code>java.lang.ClassNotFoundException</code> thrown 
+    on <code>com.ms.*</code> package when applet runs</span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote> 
+    <p> When running an applet in a browser using the Sun JRE, a <code>ClassNotFoundException</code> 
+      is thrown by the <code>ClassLoader</code> on the <code>com.ms.*</code> package. 
+      The same applet runs under the Microsoft VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p> The Microsoft VM provides many proprietary class libraries, including 
+      J/Direct, AFC, and WFC. These package are not available in the Sun JRE, 
+      so a <code>ClassNotFoundException</code> is thrown when the applet runs.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote> 
+    <p> The workaround is to migrate the applet source code from using the Microsoft 
+      proprietary class libraries to similar classes in the Java 2 platform. </p>
+  </blockquote>
+  <table width="80%" border="1" align="center" cellpadding="3" cellspacing="0" bordercolor="#000000" id="AutoNumber2">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="50%" align="center"><b>Microsoft VM</b></td>
+      <td width="50%" align="center"><b>Java 2 Platform</b></td>
+    </tr>
+    <tr> 
+      <td width="50%" align="center">J/Direct</td>
+      <td width="50%" align="center">Java Native Interface</td>
+    </tr>
+    <tr> 
+      <td width="50%" align="center">Application Foundation Classes</td>
+      <td width="50%" align="center">Swing, Java 2D APIs</td>
+    </tr>
+    <tr> 
+      <td width="50%" align="center">Windows Foundation Classes</td>
+      <td width="50%" align="center">Swing, Java 2D APIs</td>
+    </tr>
+  </table>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <blockquote> 
+    <p><a href="http://www.javaworld.com/javaworld/jw-10-1997/jw-10-sdk.html">How 
+      to avoid potential pitfalls of Microsoft's non-standard SDK for Java<br>
+      </a><a href="http://java.sun.com/docs/books/tutorial/uiswing/mini/index.html">Lesson: 
+      User Interfaces that Swing: A Quick Start Guide<br>
+      </a><a href="http://java.sun.com/docs/books/tutorial/uiswing/index.html">Trail: 
+      Creating a GUI with JFC/Swing <br>
+      </a><a href="http://java.sun.com/docs/books/tutorial/native1.1/index.html">Trail: 
+      Java Native Interface</a> </p>
+  </blockquote>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

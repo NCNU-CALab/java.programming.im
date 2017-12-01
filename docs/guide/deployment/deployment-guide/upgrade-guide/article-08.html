@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>java.lang.ClassCastException thrown ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote>
+  <h2> <span class="bg2"><code>java.lang.ClassCastException</code> thrown from 
+    the AWT event dispatching thread when the mouse moves over an applet frame</span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote>
+    <p> When running an applet in a browser using the Sun JRE, a <code>ClassCastException</code> 
+      is thrown from the AWT event dispatching thread when the mouse moves over 
+      the applet's frame. The same applet runs under the Microsoft VM.</p>
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>java.lang.ClassCastException: 
+      sun.plugin....<br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at MyApplet.mouseExit(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.Component.handleEvent(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.Component.postEvent(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.Component.dispatchEventImpl(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.Container.dispatchEventImpl(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.Component.dispatchEvent(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.EventQueue.dispatchEvent(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.EventDispatchThread.pumpOneEventForHierarchy(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.EventDispatchThread.pumpEvents(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.awt.EventDispatchThread.run(Unknown 
+      Source)</code></p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote>
+    <p> This exception has two possible causes:</p>
+    <ol>
+      <li>To track mouse events on its frame, the applet tries to register <code>MouseListener</code> 
+        on the frame. In the Microsoft VM implementation, the applet's direct 
+        parent in the AWT hierarchical component tree is the frame. While this 
+        is implementation specific and subject to change, some applets rely on 
+        this in their code:<br>
+        <br>
+        <code>public void foo()<br>
+        {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Frame f = (Frame) getParent();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+        } </code><br>
+        &nbsp;<br>
+        Because the Sun JRE has other containers between the applet and the frame, 
+        <code>getParent()</code> does not return a <code>Frame</code> object, 
+        and the above code results in a <code>ClassCastException</code>.<br>
+        &nbsp;</li>
+      <li>In the Microsoft VM implementation, <code>java.applet.AppletContext</code> 
+        is implemented by the applet frame. While this is implementation specific 
+        and subject to change, some applets rely on this in their code:<br>
+        <br>
+        <code>public void foo()<br>
+        {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Frame f = (Frame) getParent();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AppletContext ac = (AppletContext) 
+        f;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ....<br>
+        }</code>
+        <p>Because the Sun JRE implements <code>AppletContext</code> using a different 
+          object, the above code results in a <code>ClassCastException</code>.</p>
+      </li>
+    </ol>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote>
+    <p> The workaround in the first case is to navigate the entire AWT hierarchical 
+      component tree from the applet to locate the frame, instead of relying on 
+      a frame being at a particular level of containment:</p>
+    <blockquote>
+      <p> <code>public void foo()<br>
+        {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Navigate component tree<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Container c = getParent();<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while (c != null &amp;&amp; (c instanceof 
+        Frame) == false)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c 
+        = c.getParent();<br>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Cast Container to Frame<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (c instanceof Frame)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frame f = 
+        (Frame) c;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        }</code></p>
+    </blockquote>
+    <p> The workaround in the second case is to access <code>AppletContext</code> 
+      using the <code>Applet.getAppletContext()</code> method:<br>
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>public void foo()<br>
+      &nbsp;&nbsp;&nbsp; {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;....<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AppletContext ac = 
+      (AppletContext) getAppletContext();<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;...<br>
+      &nbsp;&nbsp;&nbsp; }</code><br>
+      &nbsp;</p>
+  </blockquote>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N/A</p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

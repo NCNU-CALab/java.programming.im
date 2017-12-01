@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Signed applet upgraded from .cab to .jar files ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote>
+  <h2><span class="bg2">Signed applet upgraded from <code>.cab</code> to <code>.jar</code> 
+    files throws a security exception when run in Microsoft VM</span></h2>
+  <h3><font color="#CC0033"><br>
+    Symptoms</font></h3>
+  <p> After upgrading a signed applet from <code>.cab</code> to <code>.jar</code> 
+    files, the applet no longer works in the Microsoft VM. The applet runs fine 
+    in the Sun JRE.</p>
+  <h3> <font color="#CC0033">Cause</font></h3>
+  <p> This error is caused by a lack of signed <code>.jar</code> file support 
+    in the Microsoft VM. While the Microsoft VM supports unsigned <code>.jar</code> 
+    files through the <code>archive</code> attribute of the <code>&lt;APPLET&gt;</code> 
+    tag, classes and resources within signed <code>.jar</code> files are treated 
+    as untrusted in the Microsoft VM.</p>
+  <p> As a result, the applet is treated as untrusted by the Microsoft VM; any 
+    action performed by the applet that requires access outside the applet sandbox 
+    will likely result in a security exception.</p>
+  <h3> <font color="#CC0033">Resolution</font></h3>
+  <p> The only applet signing scheme recognized by the Microsoft VM is Authenticode 
+    used with <code>.cab</code> files.</p>
+  <p> The workaround is specify the upgraded <code>.jar</code> files through the 
+    <code>archive</code> attribute for the Sun JVM, and continue to specify the 
+    <code>.cab</code> files through <code>cabbase</code> for the Microsoft VM. 
+    For example,</p>
+  <blockquote>
+    <p><code>&lt;APPLET code=&quot;MyApplet&quot; width=100 height=100&gt;<br>
+      &lt;PARAM name=&quot;cabbase&quot; value=&quot;package1.cab, package2.cab&quot;&gt;<br>
+      &lt;/APPLET&gt;</code></p>
+  </blockquote>
+  <p> should be changed to</p>
+  <blockquote> 
+    <p><code>&lt;APPLET code=&quot;MyApplet&quot; archive=&quot;package1.jar, 
+      package2.jar&quot;<br>
+      width=100 height=100&gt;<br>
+      &lt;PARAM name=&quot;cabbase&quot; value=&quot;package1.cab, package2.cab&quot;&gt;<br>
+      &lt;/APPLET&gt;</code></p>
+  </blockquote>
+  <h3> <font color="#CC0033">Related Information</font></h3>
+  <p>N/A<br>
+    <br>
+  </p>
+</blockquote>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Internet/Intranet Deployment of the Sun JRE</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<hr>
+<h1>Internet/Intranet Deployment of the Sun JRE </h1>
+<hr>
+<h2>Internet deployment</h2>
+<p>If you would like to have your internet customers download Sun's Java Runtime 
+  Enivronment (JRE) to run your applets inside Internet Explorer, you should consider 
+  hosting the Java(tm) Technology Logos at your web site. More information is 
+  available about the logos at:</p>
+<blockquote>
+  <p> <a href="http://logos.sun.com/logosite.jsp?Category=third#java"><code>http://logos.sun.com/logosite.jsp?Category=third#java</code></a></p>
+</blockquote>
+<p> When users click on any one of these logos, they will be prompted with a security 
+  dialog box asking if they want to install and run Java Plug-in, signed and distributed 
+  by Sun Microsystems. If they agree to install, the browser will download and 
+  launch the installer. The user will have to go through a few installer dialogs 
+  to successfully install Java Plug-in on their system. After a successfull installation, 
+  the browser will display a confirmation message,
+  and the system tray will contain a Java icon, indicating the system is running the Sun's JRE.</p>
+<h2> Intranet deployment</h2>
+<p>You can distribute Sun's JRE to intranet users by hosting the <code>.msi</code>
+  file on an internal web site and asking users to launch the installer through 
+  <code>msiexec</code>. The other option is to install the JRE through Active 
+  Directory. If you are using Active Directory, you may have to customize the 
+  <code>.msi</code> file, which is known as creating a transform.</p>
+<p>You can obtain the <code>.msi</code> file for the JRE installer by installing
+  the JRE offline Windows installer. After installation, the <code>.msi</code> file,
+  <code>jre1.5.0.msi</code>, will
+  be available in the directory <code><i>LocalAppData</i>\{<i>CLSID</i>}</code>, where
+  <code><i>LocalAppData</i></code> is the user's &quot;Application Data&quot;
+  folder (typically something like <code>C:\Documents and Settings\<i>username</i>\Application Data</code>),
+  and <i>CLSID</i> is a long string like <code>7148F0A6-6813-11D6-A77b-00B0D0142010</code>,
+  depending on the release.
+
+  The following steps demonstrate how to create a transform to
+  change the <code>IEXPLORER</code> property from 0 to 1. This is the equivalent
+  of running the <code>.msi</code> file with the following command:</p>
+<blockquote> 
+  <p> <code>msiexec.exe /i jre.msi IEXPLORER=1</code></p>
+</blockquote>
+<p>These are the steps:</p>
+<ol>
+  <li>Make a backup copy of the original <code>jre.msi</code> file.</li>
+  <li>Install <code>Orca.msi</code>. (Note: This file comes with the 
+    <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/">Microsoft 
+    Platform SDK</a>.)</li>
+  <li>Run <code>Orca</code> from the Start menu.</li>
+  <li>Open the backup copy from File-&gt;Open... with the <code>Orca</code> tool.</li>
+  <li>Click on the Property table.</li>
+  <li>Find the <code>IEXPLORER</code> property and change the value to 1.</li>
+  <li>Save the new <code>.msi</code> file.</li>
+  <li>Run the executable <code>MsiTran.exe</code>. (It comes with the 
+    <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/">Microsoft 
+    Platform SDK</a>.) 
+    <p><code>MsiTran.exe -g &quot;C:/originaljre.msi&quot; &quot;C:/backupjre.msi&quot; 
+      &quot;C:/transform.mst&quot;</code></p>
+  </li>
+  <li>Now you can apply the transform on the command line as follow: 
+    <p><code>msiexec /i jre.msi TRANSFORMS=&quot;transform.mst&quot;</code> </p>
+    <p>Or it can be applied through the modification tab in the Group Policy using 
+      Active Directory.</p>
+  </li>
+</ol>
+<p><br>
+</p>
+</body>
+</html>

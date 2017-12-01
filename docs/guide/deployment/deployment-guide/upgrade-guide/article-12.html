@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>java.lang.IllegalArgumentException thrown in java.awt.Color constructor ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<h2><span class="bg2"><code>java.lang.IllegalArgumentException</code> thrown in <code>java.awt.Color</code> constructor</span></span></h2>
+<h3><br>
+  <font color="#CC0033">Symptoms</font></h3>
+<blockquote>
+  <p> When running an applet in a browser using the Sun JRE, an <code>IllegalArgumentException</code> 
+    is thrown in the <code>java.awt.Color</code> constructor. The same applet 
+    runs under the Microsoft VM.</p>
+</blockquote>
+<h3><font color="#CC0033">Cause</font></h3>
+<blockquote>
+  <p> This exception is caused by passing over-bound or under-bound values to 
+    the <code>Color</code> constructor in the Sun JRE. </p>
+  <p>The Java class libraries in the Sun JRE have changed over time. Some APIs 
+    have been clarified, some have been deprecated, and some have had their implementation 
+    altered. </p>
+  <p> The result of passing over-bound/under-bound values in the <code>Color</code> 
+    constructor was not well defined, and the Microsoft VM would automatically 
+    readjust the values to maximum color values and minimum color values automatically. 
+    The Sun JRE took a different approach, using an <code>IllegalArgumentException</code> 
+    to let the programmer know that they specified an out-of-bounds value.</p>
+  </blockquote>
+<h3><font color="#CC0033">Resolution</font></h3>
+<blockquote> 
+  <p>Code defensively to ensure only valid color values are passed to the <code>Color</code> 
+    constructor. For example,</p>
+  <blockquote>
+<pre>&nbsp;&nbsp;void Color newColor(int r, int g, int b)
+        {
+            return new Color(r, g, b);
+        }</pre>
+  </blockquote>
+  <p> The code should be changed to</p>
+</blockquote>
+<pre>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int ensureColorRange(int v)
+        {
+            if (v &lt; 0)
+                return 0;
+            else if (v &gt; 255)
+                return 255;
+            else
+                return v;
+        }</pre>
+<pre>        void Color newColor(int r, int g, int b)
+        {
+            r = ensureColorRange(r);
+            g = ensureColorRange(g);
+            b = ensureColorRange(b);
+
+            return new Color(r, g, b);
+        }
+</pre>
+<h3><font color="#CC0033">Related Information</font></h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N/A</p>
+<p>&nbsp;</p>
+</body>
+</html>

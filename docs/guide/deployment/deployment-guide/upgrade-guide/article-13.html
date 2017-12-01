@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>java.security.AccessControlException thrown ...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote>
+  <h2> <span class="bg2"><code>java.security.AccessControlException</code> thrown 
+    in <code>stop</code>, <code>suspend</code>, or <code>resume</code> method 
+    of <code>java.lang.Thread</code></span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote>
+    <p> When running an applet in a browser using the Sun JRE, an <code>AccessControlException</code> 
+      is thrown in the <code>stop</code>, <code>suspend</code>, or <code>resume</code> 
+      method of <code>java.lang.Thread</code>. <br>
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>java.security.AccessControlException: 
+      access denied (java.lang.RuntimePermission modifyThread)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.security.AccessControlContext.checkPermission(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.security.AccessController.checkPermission(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.lang.SecurityManager.checkPermission(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at sun.applet.AppletSecurity.checkAccess(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.lang.Thread.checkAccess(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.lang.Thread.stop(Unknown 
+      Source)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at ....</code><br>
+      <br>
+      The same applet runs under the Microsoft VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p> This exception is caused by calling these methods on a dead <code>Thread</code> 
+      object in the Sun JRE.<br>
+      <br>
+      The Java class libraries in the Sun JRE have changed over time. Some APIs 
+      have been clarified, some have been deprecated, and some have had their 
+      implementation altered. </p>
+    <p> The result of calling <code>stop</code>, <code>suspend</code>, and <code>resume</code> 
+      on a dead <code>Thread</code> object was not well defined. In the Microsoft 
+      VM, they result in a no-op. However, in the Sun JRE, calling these methods 
+      on a dead <code>Thread</code> object invalidates the underlying invariant 
+      of the implementation, thus resulting in an <code>AccessControlException</code>.</p>
+    </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <p> The <code>Thread</code> <code>stop</code>, <code>suspend</code>, and <code>resume</code> 
+    methods are inherently unsafe and have been deprecated in the Java 2 platform.</p>
+  <p> To work around this problem, replace calls to <code>stop</code>, <code>suspend</code>, 
+    and <code>resume</code> with code that simply modifies some variable to indicate 
+    that the target thread should stop/suspend/resume. <br>
+    <br>
+    For example, suppose your applet contains the following methods: </p>
+  <pre>    private Thread blinker;
+
+    public void start() {
+        blinker = new Thread(this);
+        blinker.start();
+    }
+
+    public void stop() {
+        blinker.stop();  // UNSAFE!
+    }</pre>
+  <pre>    public void destroy() {
+        blinker.stop();  // UNSAFE and WILL throw AccessControlException in the Sun JRE!
+    }
+
+    public void run() {
+        Thread thisThread = Thread.currentThread();
+        while (true) {
+            try {
+                thisThread.sleep(interval);
+            } catch (InterruptedException e){
+            }
+            repaint();
+        }
+    }
+</pre>
+  <p> You can avoid the use of <code> Thread.stop</code> by replacing the applet's 
+    <code>stop</code>, <code>destroy,</code> and <code>run</code> methods with: 
+  </p>
+  <pre>    private volatile Thread blinker;
+
+    public void stop() {
+        blinker = null;
+    }
+
+    public void destroy() {
+        blinker = null;
+    }
+
+    public void run() {
+        Thread thisThread = Thread.currentThread();
+        while (blinker == thisThread) {
+            try {
+                thisThread.sleep(interval);
+            } catch (InterruptedException e){
+            }
+            repaint();
+        }
+    }
+
+</pre>
+  <p> Another example: Suppose your applet contains the following <code>mousePressed</code> 
+    event handler, which toggles the state of a thread called <code>blinker</code>: 
+  </p>
+  <pre>    private boolean threadSuspended;
+
+    public void mousePressed(MouseEvent e) {
+        e.consume();
+
+        if (threadSuspended)
+            blinker.resume();
+        else
+            blinker.suspend();  // DEADLOCK-PRONE!
+
+        threadSuspended = !threadSuspended;
+    }
+
+    public void run()
+    {
+	 while (true) {
+        try {
+            Thread.currentThread().sleep(interval);
+        } catch (InterruptedException e){
+        }
+        repaint();
+    }</pre>
+  <p> You can avoid the use of <code> Thread.suspend</code> and <code>Thread.resume</code> 
+    by replacing the event handler above with the following:</p>
+  <pre>    private boolean volatile threadSuspended;
+
+    public synchronized void mousePressed(MouseEvent e) {
+        e.consume();
+
+        threadSuspended = !threadSuspended;
+
+        if (!threadSuspended)
+            notify();
+    }
+
+    public void run() {
+        while (true) {
+            try {
+                Thread.currentThread().sleep(interval);
+
+                if (threadSuspended) {
+                    synchronized(this) {
+                        while (threadSuspended)
+                            wait();
+                    }
+                }
+            } catch (InterruptedException e){
+            }
+            repaint();
+        }
+    }
+</pre>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <blockquote>
+    <p><a href="http://java.sun.com/j2se/1.4.2/docs/guide/misc/threadPrimitiveDeprecation.html">Why 
+      Are <code>Thread.stop</code>, <code>Thread.suspend</code>, <code>Thread.resume</code>, 
+      and <code>Runtime.runFinalizersOnExit</code> Deprecated?</a></p>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+</body>
+</html>

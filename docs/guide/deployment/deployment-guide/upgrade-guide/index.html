@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Upgrading From the Microsoft to the Sun Java Virtual Machine</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<table summary="layout" width="100%" border="0">
+<tr>
+<td width="1%">
+<img src="../../../../images/javalogo52x88.gif" width="52" height="88">
+</td>
+
+<td>
+        <h1 align="center">Java Upgrade Guide:<br>
+          Migrating From the Microsoft VM<br>
+          for Java to the Sun JRE</h1>
+</td>
+
+<td width="52">
+</td>
+</tr>
+</table>
+
+<hr>
+<a href="DevaSearch/search.html"><font size="-1"><b><span id="span21" class="bg3" onmouseover="document.getElementById('span21').className='bg5';"  onmouseout="document.getElementById('span21').className='bg3';">Search 
+Guide</span></b></font></a> 
+<p><br>
+  This guide explains why and how to upgrade applets from the Microsoft Virtual 
+  Machine (VM) for Java to the Sun JRE. In 98% of cases, applets run unchanged 
+  under the Sun JRE. For the remaining 2%, this document points to migration tips. 
+  The results of upgrading should be richly rewarding, as the Microsoft VM is 
+  based upon version 1.1, an early, 1997 version of Java technology. The latest, 
+  standards-compliant version from Sun Microsystems is 1.4.2. Released in 2003, 
+  it includes many enhancements over the early version.</p>
+<h2>Why Upgrade?</h2>
+<p>The Microsoft VM, based upon Java 1.1 technology that is over five years old, 
+  is clearly outmoded. On the other hand Sun Microsystem's VM, which is part of 
+  Sun's 1.4.2 Java Runtime Environment (JRE), is thoroughly standards compliant 
+  and up to date. That makes one good reason for upgrading Java applets and applications 
+  to run on the Sun JRE. But there are other compelling reasons: millions of copies 
+  of the Sun JRE have already been downloaded and deployed, and millions of new 
+  computers will soon be shipping with the Sun JRE. The time is ripe for upgrading.</p>
+<p>Another reason to upgrade is that after September, 2004, Microsoft will no 
+  longer support or provide a Java implementation with any of its products. Microsoft 
+  has already discontinued shipping Java technology in its Internet Explorer web 
+  browser with the latest versions of its operating systems. This has two important 
+  implications:</p>
+<ul>
+  <li>Those running applets in the Internet Explorer web browser will need to 
+    download and install an alternate VM.</li>
+  <li>In a very few cases, developers will need to modify applets that use proprietary 
+    features of the Microsoft VM so they will continue to work.</li>
+</ul>
+<p><span class="bg0">Note that while Microsoft makes a case for migrating Java 
+  applets and applications to J# or C#, neither of these solutions offers cross-platform 
+  capability. <em>J# and C# run only on the Microsoft Windows platform</em>. </span></p>
+<h2>How to Upgrade</h2>
+<p>Here are the steps for upgrading to the Sun JRE:</p>
+<ol>
+  <li><a href="#install"><span id="span22" class="bg3" onmouseover="document.getElementById('span22').className='bg5';"  onmouseout="document.getElementById('span22').className='bg3';">Install</span></a> 
+    the Sun JRE if it is not already installed. </li>
+  <li><a href="#check"><span id="span23" class="bg3" onmouseover="document.getElementById('span23').className='bg5';"  onmouseout="document.getElementById('span23').className='bg3';">Check</span></a> 
+    that your browser uses the Sun JRE and not the old Microsoft VM. </li>
+  <li><a href="#test"><span id="span24" class="bg3" onmouseover="document.getElementById('span24').className='bg5';"  onmouseout="document.getElementById('span24').className='bg3';">Test</span></a> 
+    your applet with the Sun JRE to determine if the applet runs correctly. If 
+    the applet doesn't run correctly, find the problem in the list of <a href="#possible"><span id="span25" class="bg3" onmouseover="document.getElementById('span25').className='bg5';"  onmouseout="document.getElementById('span25').className='bg3';">Potential 
+    Upgrade Issues</span></a>. Click on any issue to see an article that discusses 
+    the <em>synopsis</em>, <em>symptom</em>, <em>cause</em>, <em>resolution</em>, 
+    and <em>related information</em>, for that issue.</li>
+</ol>
+<p>Although most applets run correctly in the Sun JRE, testing is always a good 
+  idea. If you should detect an issue, the solution is at hand. Once you have 
+  upgraded your applets, they will be able to run on a robust, secure, cross-platform, 
+  standards-compliant version of the Java platform.</p>
+<p>Once you have confirmed that your applet works properly with the Sun JRE, you 
+  may want to consider the best way of deploying the Sun JRE for users. See <a href="deployment.html"><span id="span27" class="bg3" onmouseover="document.getElementById('span27').className='bg5';"  onmouseout="document.getElementById('span27').className='bg3';">Internet/Intranet 
+  Deployment of the Sun JRE</span></a>.</p>
+<h2><a name="install"></a>Installing the Sun JRE</h2>
+<p>If you don't already have the Sun JRE installed on your test computer, click 
+  below to get it.</p>
+<p align="center"><a href="http://java.com/en/index.jsp"><img src="images/get_java_red_button.gif" width="88" height="31" border="0"></a></p>
+<h2><a name="check"></a>Checking the VM/JRE</h2>
+<p>Before you test your applet, you need to make sure that your browser is running 
+  the Sun JRE. </p>
+<p>To do so, first open the Windows Control Panel (Start &gt; Settings &gt; Control 
+  Panel), then double-click the coffee-cup icon labeled Java Plug-in to launch 
+  the Java Plug-in Control Panel. When it appears, select the Browser tab. It 
+  looks like this:</p>
+<p align="center"><img src="images/browser-2.gif" width="650" height="326"></p>
+<p align="left">Make sure that the check box for the browser you are using is 
+  checked.</p>
+<p>Next, verify that your browser is running the Sun JRE. If it is, when you run 
+  the applet you should:</p>
+<ul>
+  <li>see the Java icon in the system tray</li>
+  <li>initially see the Java icon in the browser window's gray applet-loading 
+    box;</li>
+</ul>
+<p align="center"><strong>Java Icon in System Tray:</strong></p>
+<p align="center"><img src="images/systray-2.gif" width="164" height="54"></p>
+<p align="center"><strong>Java Logo in Gray Box:</strong></p>
+<p align="center"><img src="images/java-icon-graybox.gif" width="298" height="160" border="0"></p>
+<p align="left"><span class="bg1"><strong>Note:</strong></span> If you have Show 
+  Java Console selected in the <a href="http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/control_panel.html#basic"><span id="span28" class="bg3" onmouseover="document.getElementById('span28').className='bg5';"  onmouseout="document.getElementById('span28').className='bg3';">Java 
+  Plug-in Control Panel (Basic tab)</span></a>, then the Java Console displays 
+  and shows a Java version number, as shown in the next section. The version number 
+  indicates which Sun JRE is being used by your browser.</p>
+<h2><a name="test"></a>Testing Your Applet</h2>
+<p>Test your applet by running it. If you have a set of standard tests for it, 
+  run it through those tests.</p>
+<p>If there is a compatibility issue, you will see details about it in the Java 
+  Console. The Java Console looks like this:</p>
+<p align="center"><img src="images/java-console-2.gif" width="450" height="400"></p>
+<p align="left">For details about the Java Console, see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/console.html"><span id="span29" class="bg3" onmouseover="document.getElementById('span29').className='bg5';"  onmouseout="document.getElementById('span29').className='bg3';">http://java.sun.com/j2se/1.4.2/docs/guide/plugin/developer_guide/console.html</span></a></p>
+<h2><a name="possible"></a>Potential Upgrade Issues</h2>
+<p>Here are some potential issues, listed by symptoms, that you might encounter:</p>
+<ul>
+  <li><a href="article-01.html"><span id="span1" class="bg3" onmouseover="document.getElementById('span1').className='bg4';"  onmouseout="document.getElementById('span1').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>ClassFormatError</code> 
+    is thrown by the <code>ClassLoader</code>. The same applet runs under the 
+    Microsoft&nbsp; VM.</span></a></li>
+  <li><a href="article-02.html"><span id="span2" class="bg3" onmouseover="document.getElementById('span2').className='bg4';"  onmouseout="document.getElementById('span2').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>ClassNotFoundException</code> 
+    is thrown by the <code>ClassLoader</code>. The same applet runs under Microsoft 
+    VM.</span></a></li>
+  <li><a href="article-03.html"><span id="span3" class="bg3" onmouseover="document.getElementById('span3').className='bg4';"  onmouseout="document.getElementById('span3').className='bg3';">After 
+    repackaging the signed <code>.cab</code> files as <code>.jar</code> files, 
+    an applet running in the Sun JRE is treated as unsigned. The same applet packaged 
+    as <code>.cab</code> files runs as signed in the Microsoft VM.</span></a></li>
+  <li><a href="article-15.html"><span id="span4" class="bg3" onmouseover="document.getElementById('span4').className='bg4';"  onmouseout="document.getElementById('span4').className='bg3';">After 
+    upgrading the signed applet from <code>.cab</code> to <code>.jar</code> to 
+    run in the Sun JRE, the applet no longer works in the Microsoft VM. The applet 
+    runs fine in the Sun JRE.</span></a></li>
+  <li><a href="article-04.html"><span id="span5" class="bg3" onmouseover="document.getElementById('span5').className='bg4';"  onmouseout="document.getElementById('span5').className='bg3';">When 
+    running an applet in a browser using Sun's JRE, an <code>AccessControlException</code> 
+    is thrown in the execution of <code>Introspector.setBeanInfoSearchPath() </code> 
+    .The same applet runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-05.html"><span id="span6" class="bg3" onmouseover="document.getElementById('span6').className='bg4';"  onmouseout="document.getElementById('span6').className='bg3';">When 
+    running an applet in a browser using Sun JRE, a <code>ClassNotFoundException</code> 
+    is thrown by the <code>ClassLoader</code> on the <code>com.ms.security</code> 
+    package. The same applet runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-06.html"><span id="span7" class="bg3" onmouseover="document.getElementById('span7').className='bg4';"  onmouseout="document.getElementById('span7').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>ClassNotFoundException</code> 
+    is thrown by the <code>ClassLoader</code> on the <code>com.ms.*</code> package. 
+    The same applet runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-07.html"><span id="span8" class="bg3" onmouseover="document.getElementById('span8').className='bg4';"  onmouseout="document.getElementById('span8').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, deadlock may occur if&nbsp;methods 
+    of the applet are over-synchronized, especially those inherited from <code>java.awt.Component</code>. 
+    The same applet runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-08.html"><span id="span9" class="bg3" onmouseover="document.getElementById('span9').className='bg4';"  onmouseout="document.getElementById('span9').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>ClassCastException</code> 
+    is thrown from the AWT Dispatch Event Thread when mouse moves over the applet 
+    frame. The same applet runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-09.html"><span id="span10" class="bg3" onmouseover="document.getElementById('span10').className='bg4';"  onmouseout="document.getElementById('span10').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>NullPointerException</code> 
+    is thrown from a thread when <code>Applet.start()</code> or <code>Applet.stop()</code> 
+    is called. The same applet runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-10.html"><span id="span11" class="bg3" onmouseover="document.getElementById('span11').className='bg4';"  onmouseout="document.getElementById('span11').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>NullPointerException</code> 
+    is thrown in <code>java.awt.Graphics.drawString()</code>. The same applet 
+    runs under the Microsoft VM.</span></a></li>
+  <li><a href="article-11.html"><span id="span12" class="bg3" onmouseover="document.getElementById('span12').className='bg4';"  onmouseout="document.getElementById('span12').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, a <code>NullPointerException</code> 
+    is thrown in <code>java.awt.Graphics.drawImage()</code>. The same applet runs 
+    under the Microsoft VM.</span></a></li>
+  <li><a href="article-12.html"><span id="span13" class="bg3" onmouseover="document.getElementById('span13').className='bg4';"  onmouseout="document.getElementById('span13').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, an <code>IllegalArgumentException</code> 
+    is thrown in <code>java.awt.Color</code> constructor. The same applet runs 
+    under the Microsoft VM.</span></a></li>
+  <li><a href="article-13.html"><span id="span14" class="bg3" onmouseover="document.getElementById('span14').className='bg4';"  onmouseout="document.getElementById('span14').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, an <code>AccessControlException</code> 
+    is thrown in <code>stop()</code>, <code>suspend()</code>, or <code>resume()</code> 
+    of <code>java.lang.Thread. </code>The same applet runs under the Microsoft 
+    VM.</span></a></li>
+  <li><a href="article-14.html"><span id="span15" class="bg3" onmouseover="document.getElementById('span15').className='bg4';"  onmouseout="document.getElementById('span15').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, an <code>InstantiationException</code> 
+    is thrown. The same applet runs under the Microsoft&nbsp; VM.</span></a></li>
+  <li><a href="article-16.html"><span id="span16" class="bg3" onmouseover="document.getElementById('span16').className='bg4';"  onmouseout="document.getElementById('span16').className='bg3';">Unable 
+    to use certificates from the browser for client authentication.</span></a></li>
+  <li><a href="article-17.html"><span id="span17" class="bg3" onmouseover="document.getElementById('span17').className='bg4';"  onmouseout="document.getElementById('span17').className='bg3';">When 
+    running an applet in a browser using the Sun JRE, if the applet makes HTTP 
+    requests to a server which redirects to an HTTPS URL, the redirection fails. 
+    It fails also in the case of making HTTPS requests to a server which redirects 
+    to an HTTP URL. The same applet runs without error in the Microsoft VM.</span></a></li>
+  <li><a href="article-18.html"><span id="span18" class="bg3" onmouseover="document.getElementById('span18').className='bg4';"  onmouseout="document.getElementById('span18').className='bg3';">CJK 
+    (Chinese-Japanese-Korean) fonts, when displayed in BOLD, are hard to read.</span></a></li>
+</ul>
+<p>If you run into an issue not covered in the preceeding list, please see the 
+  Java Upgrade Forum:</p>
+<blockquote> 
+  <p><a href="http://forum.java.sun.com/forum.jsp?forum=481"><span id="span26" class="bg3" onmouseover="document.getElementById('span26').className='bg5';"  onmouseout="document.getElementById('span26').className='bg3';">http://forum.java.sun.com/forum.jsp?forum=481</span></a> 
+  </p>
+</blockquote>
+<h3>&nbsp;</h3>
+  </body>
+</html>

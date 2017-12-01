@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>System-Wide Repository</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="../css/styles1.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<table summary="layout" width="100%" border="0">
+<tr>
+<td width="1%">
+<img src="../../../images/javalogo52x88.gif" width="52" height="88">
+</td>
+
+<td>
+<h1 align="center"> System-Wide Repository (Windows only)</h1>
+</h1>
+</td>
+
+<td width="52">
+</td>
+</tr>
+</table>
+
+<hr>
+<p>Previous to this release, when a new JRE was installed, JAR and native libraries for the old release were not visible to the new one. Thus applications and applets that relied on those libraries would not work, and developers were forced to redeploy their libraries to the new JRE. The new <strong>System-Wide Repository</strong> is the solution to that problem.  It provides a global or system-wide location where the VM can search for libraries, JAR or native, indepenent of the JRE location. It provides functionality similar to the 
+repository in the Microsoft VM (see <a href="http://support.microsoft.com/default.aspx?scid=kb;EN-US;177168">How Does the Virtual Machine Search for Java Classes?</a>). </p>
+<p align="left"><span class="bg_yellow"><strong>Note:</strong> In this release the system-wide repository is supported only by Java Plug-in and only on Windows.</span></p>
+<p>The table below shows the location of the new System-Wide Repository:</p>
+<blockquote>
+  <table border="1" cellpadding="3" cellspacing="0" bordercolor="#000000">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="173"> 
+        <div align="center"><strong><font size="+1">Type of Library</font></strong></div></td>
+      <td width="579"> 
+        <div align="center"><strong><font size="+1">System-Wide Location</font></strong></div></td>
+    </tr>
+    <tr align="left" valign="top"> 
+      <td>DLL</td>
+      <td>Any directory in the System Path environment variable. </td>
+    </tr>
+    <tr align="left" valign="top"> 
+      <td>Untrusted JAR</td>
+      <td><code>&lt;Windows Directory&gt;\Sun\Java\Deployment\Lib\Untrusted</code></td>
+    </tr>
+    <tr align="left" valign="top"> 
+      <td>Trusted JAR</td>
+      <td><code>&lt;Windows Directory&gt;\Sun\Java\Deployment\Lib\Trusted</code></td>
+    </tr>
+  </table>
+  
+</blockquote>
+<p><code>&lt;Windows Directory&gt;</code> is the Windows OS directory on the drive where Windows was installed (also called <code>%SystemRoot%</code>).</p>
+<p>For example, on Windows XP, where Windows has been installed on the C drive (typical), the locations of these libraries would be as follows:</p>
+<blockquote>
+  <table border="1" cellpadding="3" cellspacing="0" bordercolor="#000000">
+    <tr bgcolor="#CCCCCC"> 
+      <td width="173"> <div align="center"><strong><font size="+1">Type of Library</font></strong></div></td>
+      <td width="496"> <div align="center"><strong><font size="+1">System-Wide Location</font></strong></div></td>
+    </tr>
+    <tr align="left" valign="top"> 
+      <td>DLL</td>
+      <td>Any directory in the System Path variable; e.g., <code>C:\WINDOWS\repository</code> if <code>C:\WINDOWS\repository</code> has been set in the System Path variable. </td>
+    </tr>
+    <tr align="left" valign="top"> 
+      <td>Untrusted JAR</td>
+      <td><code>C:\WINDOWS\Sun\Java\Deployment\Lib\Untrusted</code></td>
+    </tr>
+    <tr align="left" valign="top"> 
+      <td>Trusted JAR</td>
+      <td><code>C:\WINDOWS\Sun\Java\Deployment\Lib\Trusted</code></td>
+    </tr>
+  </table>
+  
+</blockquote>
+<p><u><span class="bg_yellow">Note the following:</span></u></p>
+<ol>
+  <li>The classes in the JARS from the system-wide trusted repository are loaded by the extension class loader, whereas the classes in the JARs from system-wide untrusted repository are loaded by the applet class loader. Thus the former classes are given the <code>AllPermission</code> permissions, while the latter are given only default applet permissions.</li>
+  <li> The repository does not provide version or namespaces control. It is up 
+    to the deployer to avoid version and namespaces conflicts at deployment time. 
+  </li>
+  <li>The system-wide trusted repository implementation is based on the system property <code>java.ext.dirs</code>. 
+    If the user selects his/her own <code>java.ext.dirs</code> system property 
+    via the Java Control Panel, the JARs in the system-wide trusted repository will not be 
+    loaded by Java Plug-in.<br>
+  </li>
+</ol>
+<hr>
+</body>
+</html>

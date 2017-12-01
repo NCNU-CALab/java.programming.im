@@ -1,0 +1,60 @@
+<HTML><HEAD>
+<META content="text/html; charset=iso-8859-1" http-equiv=Content-Type>
+<link href="../css/styles1.css" rel="stylesheet" type="text/css">
+<title>Extracting an .msi File for Active Directory Distribution</title></HEAD>
+<BODY>
+
+<table summary="layout" width="100%" border="0">
+<tr>
+<td width="1%">
+<img src="../../../images/javalogo52x88.gif" width="52" height="88">
+</td>
+
+<td>
+<h1 align="center">JRE Deployment with Active Directory</h1>
+</h1>
+</td>
+
+<td width="52">
+</td>
+</tr>
+</table>
+
+<hr>
+<p>This procedure describes how to obtain the <code>.msi</code> file 
+  necessary to deploy the Java Runtime Environment (JRE) across a Windows 2000/Windows 
+  XP Active Directory-based network. It works for version 1.4.2 and later of the 
+  JRE installers. Sun includes an <code>.msi</code> (Microsoft Installer) file 
+  bundled up in the JRE Windows Offline installers. The <code>.msi</code> file 
+  extracted below can be assigned to an Active Directory software distribution 
+  policy. </p>
+<OL>
+  <LI>Download and launch the Sun <A 
+  href="http://java.sun.com/j2se/1.5.0/download.jsp">JRE Windows Offline Installion</A> 
+    executable (<CODE>.exe</CODE>) file. 
+    <P></P>
+  <LI>Retrieve the "<CODE>.msi</CODE>" 
+    file from the <CODE>LocalAppData</CODE> folder (the user's <CODE>Application 
+    Data</CODE> folder). The <CODE>LocalAppData</CODE> folder will differ for 
+    each Windows platform. 
+    <P></P>
+  <LI>Inside this folder you will find a folder named: 
+        <PRE>       {3248F0A6-6813-11D6-A77b-00B0D0150000}</PRE>
+      The first 2 digits are "71" for version 1.4.2_xx, and "32" for 1.5.0_xx.
+   The last 6 digits of this <code>CLSID</code> and the name of the <code>.msi</code> 
+    file correspond to the release number. 
+    A <code>CLSID</code> ending with "150000" means version 1.5.0_00, and "142010" means verision 1.4.2_01 
+    <P></P>
+  <LI>From there, you can use Active Directory to distribute this <code>.msi</code> 
+    file to as many client Windows platforms as you want. 
+    <P></P>
+  <LI>If you want to register the JRE as the default VM of Internet Explorer and 
+    Mozilla, you will have to create a transform that will set the 
+    variables <code>IEXPLORER</code> and <code>MOZILLA</code> 
+    to <code>1</code> in the <CODE>Property.idt</CODE> table. You can find instructions 
+    on <A 
+  href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/msi/setup/transforms.asp">how 
+    to generate and use transforms</A> at the Microsoft MSDN site.</LI>
+</OL>
+<hr>
+</BODY></HTML>

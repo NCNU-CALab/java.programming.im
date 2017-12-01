@@ -1,0 +1,639 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<TITLE>Getting Started with the Annotation Processing Tool (apt)</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+
+<TABLE BORDER="0" WIDTH="100%" summary="layout">
+<TR>
+<TD>
+<IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+<TD>
+<center>
+<h1>Getting Started with <br>
+the Annotation Processing Tool (<code>apt</code>)</h1>
+</center>
+</TD>
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+<font size="-1"><a href="./index.html">apt&nbsp;Contents</a></font>
+</TD>
+</TR>
+</TABLE>
+
+<body>
+
+<h2>What is <tt>apt</tt>?</h2>
+
+The command-line utility <code>apt</code>, annotation processing tool,
+finds and executes <i><a href="#AnnotationProcessor">annotation
+processors</a></i> based on the annotations present in the set of
+specified source files being examined.  The annotation processors use a
+set of reflective APIs and supporting infrastructure to perform their
+processing of program 
+<a href="../language/annotations.html">annotations</a> 
+(<a href="http://www.jcp.org/en/jsr/detail?id=175">JSR 175</a>).
+The <tt>apt</tt> reflective APIs provide a build-time, source-based,
+read-only view of program structure.  These reflective APIs are
+designed to cleanly model the Java<sup><small>TM</small></sup>
+programming language's type system after the addition of 
+<a href="../language/generics.html">generics</a> 
+(<a href="http://www.jcp.org/en/jsr/detail?id=14">JSR 14</a>).  
+First, <code>apt</code> runs annotation processors that can produce new
+source code and other files.  Next, <code>apt</code> can cause
+compilation of both original and generated source files, thus
+easing the development cycle.
+
+<hr>
+
+<h2>Why Should I Use <tt>apt</tt>?</h2>
+
+Many of the intended use cases for annotations involve having
+annotations in a base file hold information that is used to generate
+new derived files (source files, class files, deployment descriptors,
+etc.)  that are logically consistent with the base file and its
+annotations.  In other words, instead of manually maintaining
+consistency among the entire set of files, only the base file would
+need to be maintained since the derived files are generated.  The
+<tt>apt</tt> tool is designed for creating the derived files.
+
+<p>Compared to using a doclet to generate the derived files based on
+annotations, <tt>apt</tt> 
+
+<ul>
+
+<li> has a cleaner model of the declarations and current type structure of
+programs
+
+<li> uses a more contemporary API design, such as returning generic
+collections instead of arrays and providing visitors to operate on
+declarations and types
+
+<li> supports recursive processing of newly generated files and can
+automatically cause compilation of original and generated source files
+
+</ul>
+
+While intended for annotation processing, <tt>apt</tt> can be used for
+other reflective programming tasks too.
+
+<hr>
+
+<h2>How to use <tt>apt</tt></h2>
+
+<h3>Overview</h3>
+
+First, <tt>apt</tt> determines what annotations are present on the
+source code being operated on.  Next, <tt>apt</tt> looks for
+<i>annotation processor factories</i> you've written.  The tool asks
+the factories what annotations they process.  Then <tt>apt</tt> asks a
+factory to provide an <i>annotation processor</i> if the factory
+processes an annotation present in source files being operated on.
+Next, the annotation processors are run.  If the processors have
+generated new source files, <tt>apt</tt> will repeat this process
+until no new source files are generated.
+
+<h3><a name="AnnotationProcessor">Developing an Annotation Processor</a></h3>
+
+Writing an annotation processor relies on four packages:
+
+<ul>
+
+<li><a href="./mirror/com/sun/mirror/apt/package-summary.html"><tt>com.sun.mirror.apt</tt></a>: interfaces to interact with the tool
+
+<li><a href="./mirror/com/sun/mirror/declaration/package-summary.html"><tt>com.sun.mirror.declaration</tt></a>: interfaces to
+model the source code declarations of fields, methods, classes, etc.
+
+<li><a href="./mirror/com/sun/mirror/type/package-summary.html"><tt>com.sun.mirror.type</tt></a>: interfaces to
+model types found in the source code
+
+<li><a href="./mirror/com/sun/mirror/util/package-summary.html"><tt>com.sun.mirror.util</tt></a>: various utilities for
+processing types and declarations, including visitors
+
+</ul>
+
+Each processor implements the <tt>AnnotationProcessor</tt> interface
+in the package <tt>com.sun.mirror.apt</tt>.  This interface has one method
+-- <tt>process</tt> -- used by the <tt>apt</tt> tool to invoke the
+processor.  A processor will "process" one or more annotation types.
+
+<p>A processor instance is returned by its corresponding factory -- an
+<tt>AnnotationProcessorFactory</tt>.  The <tt>apt</tt> tool calls the
+factory's <tt>getProcessorFor</tt> method to get hold of the
+processor.  During this call, the tool provides an
+<tt>AnnotationProcessorEnvironment</tt>.  In the environment the
+processor will find everything it needs to get started, including
+references to the program structure on which it is operating, and the
+means to communicate and cooperate with the <tt>apt</tt> tool by
+creating new files and passing on warning and error messages.
+
+<p>There are two ways a factory can be found; the factory to use can
+be specified via the &quot;<tt>-factory</tt>&quot; command line option
+or the factory can be located during the <tt>apt</tt> <i>discovery</i>
+procedure.  Using the &quot;<tt>-factory</tt>&quot; option is the
+simplest way to run a single known factory; this option may also be
+used when a factory needs more control over how it is run.  To locate
+the factories on a particular path, the discovery procedure retrieves
+from jar files <tt>META-INF/services</tt> information in the format
+described below.
+
+<p>To create and use an annotation processor using the &quot;<tt>-factory</tt>&quot; option:
+
+<ol>
+
+<li>Write an <tt>AnnotationProcessorFactory</tt> that in turn can
+create an <tt>AnnotationProcessor</tt> for the annotation type(s) of
+interest.
+
+<li>Compile the processors and factories using <tt>javac</tt> with
+<tt>tools.jar</tt> on the classpath; <tt>tools.jar</tt> contains the
+<tt>com.sun.mirror.*</tt> interfaces.
+
+<li>Put the compiled class files, or jar files containing the class
+files, on the appropriate path when invoking <tt>apt</tt>
+
+</ol>
+
+To create and use an annotation processor with the default discovery
+procedure use the same first two steps then,
+
+<ol start=3>
+
+<li>Create a UTF-8 encoded text file in <tt>META-INF/services</tt>
+named <tt>com.sun.mirror.apt.AnnotationProcessorFactory</tt> whose
+contents are a list of fully qualified names of the concrete factory
+classes, one per line. (This is the same format used by
+<tt>sun.misc.Service</tt>.)
+
+<li> Package the factory, processor, and <tt>META-INF/services</tt> information
+into a jar file
+
+<li>Place the jar file on the appropriate path when invoking <tt>apt</tt>.  The appropriate path is discussed in the <a href="#Discovery">Discovery</a> section.
+
+</ol>
+
+<h3>A Simple Sample Annotation Processor</h3>
+
+<pre>
+import com.sun.mirror.apt.*;
+import com.sun.mirror.declaration.*;
+import com.sun.mirror.type.*;
+import com.sun.mirror.util.*;
+
+import java.util.Collection;
+import java.util.Set;
+import java.util.Arrays;
+
+import static java.util.Collections.*;
+import static com.sun.mirror.util.DeclarationVisitors.*;
+
+/*
+ * This class is used to run an annotation processor that lists class
+ * names.  The functionality of the processor is analogous to the
+ * ListClass doclet in the Doclet Overview.
+ */
+public class ListClassApf implements AnnotationProcessorFactory {
+    // Process any set of annotations
+    private static final Collection&lt;String&gt; supportedAnnotations
+        = unmodifiableCollection(Arrays.asList(&quot;*&quot;));
+
+    // No supported options
+    private static final Collection&lt;String&gt; supportedOptions = emptySet();
+
+    public Collection&lt;String&gt; supportedAnnotationTypes() {
+        return supportedAnnotations;
+    }
+
+    public Collection&lt;String&gt; supportedOptions() {
+        return supportedOptions;
+    }
+
+    public AnnotationProcessor getProcessorFor(
+            Set&lt;AnnotationTypeDeclaration&gt; atds,
+            AnnotationProcessorEnvironment env) {
+        return new ListClassAp(env);
+    }
+
+    private static class ListClassAp implements AnnotationProcessor {
+        private final AnnotationProcessorEnvironment env;
+        ListClassAp(AnnotationProcessorEnvironment env) {
+            this.env = env;
+        }
+
+        public void process() {
+	    for (TypeDeclaration typeDecl : env.getSpecifiedTypeDeclarations())
+		typeDecl.accept(getDeclarationScanner(new ListClassVisitor(),
+						      NO_OP));
+        }
+
+	private static class ListClassVisitor extends SimpleDeclarationVisitor {
+	    public void visitClassDeclaration(ClassDeclaration d) {
+		System.out.println(d.getQualifiedName());
+	    }
+	}
+    }
+}
+</pre>
+
+<p>A number of new language and library features are used in the
+sample processor.  First, <tt>static</tt> imports are used so that the
+simple name of various utility methods can be used; for example<br>
+&quot;<tt>unmodifiableCollection</tt>&quot;<br>
+ instead of <br>
+&quot;<tt>Collections.unmodifiableCollection</tt>&quot;.<br>
+
+Second, generic collections are used throughout.  The
+<tt>Arrays.asList</tt> method is now a var-args method so it can accept
+a comma separated list of strings and create a list with the desired
+elements. The <tt>Collections.emptySet</tt> method is a generic method
+and can be used to create a type-safe empty set.  The <tt>for</tt>
+loop in the process method is an enhanced <tt>for</tt> loop that can
+iterate over collections.
+
+<h4>Specifying the Annotations to Process</h4>
+
+To tell the tool what annotations it processes, a factory returns a
+collection of <tt>import</tt>-style strings, as shown in the example.
+A particular string entry may have one of the following three forms:
+
+<blockquote>
+<dl>
+
+<dt><b><tt>*</tt></b>
+
+<dd>Process <i>all</i> annotations.  This also processes an empty list
+of annotations; in other words, a factory that processes <tt>*</tt>
+could be asked to provide a non-trivial processor even if no
+annotations are present.  This capability allows the
+<tt>com.sun.mirror</tt> APIs to be used to write general source code
+processing tools.
+
+<dt><b><tt>foo.bar.Baz</tt></b>
+
+<dd>Process an annotation whose canonical name is
+&quot;<tt>foo.bar.Baz</tt>&quot;.
+
+<dt><b><tt>foo.bar.*</tt></b>
+
+<dd>Process annotations whose canonical names start with
+&quot;<tt>foo.bar.</tt>&quot;.
+
+</dl>
+</blockquote>
+
+<p>
+
+The <tt>apt</tt> tool presents the factory with a set of annotations
+for the factory to process.  Based on the set of annotations and the
+annotation processor environment, the factory returns a single
+annotation processor.  What if the factory wants to return multiple
+annotation processors?  The factory can use
+<tt>com.sun.mirror.apt.AnnotationProcessors.getCompositeAnnotationProcessor</tt>
+to combine and sequence the operation of multiple annotation
+processors.
+
+
+<h4>Specifying the Command Line Options to Recognize</h4>
+
+The <tt>supportedOptions</tt> method allows a factory to communicate
+to <tt>apt</tt> which command line options it recognizes.  Command
+line options starting with &quot;<tt>-A</tt>&quot; are reserved for
+communicating with annotation processors.  For example, if this
+factory recognizes options such as <tt>-Adebug</tt> and
+<tt>-Aloglevel=3</tt>, it will return the strings
+<tt>&quot;-Adebug&quot;</tt> and <tt>&quot;-Aloglevel&quot;</tt>. In
+the future, <tt>apt</tt> may give an indication if <tt>-A</tt> options
+are given that no factory recognizes.
+
+<h3>The <tt>apt</tt> Command Line</h3>
+
+In addition to its own options, the <tt>apt</tt> tool accepts all of
+the command-line options accepted by <tt>javac</tt>.  The
+<tt>javac</tt> options are passed to the final <tt>javac</tt> call, if
+any.
+
+<p>
+The <tt>apt</tt> specific options are:
+
+<dl>
+
+<dt>	<tt>-s</tt> <i>dir</i>
+
+<dd>	 Specify the directory root under which processor-generated source
+files will be placed; files are placed in subdirectories based
+			on package namespace
+
+<dt>	<tt>-nocompile</tt>
+
+<dd>	Do not compile source files to class files.
+
+
+<dt>	<tt>-print</tt>
+
+<dd> Print out textual representation of specified types; perform no
+annotation processing or compilation.
+
+
+<dt>	<tt>-A</tt>[<i>key</i>[<tt>=</tt><i>val</i>]]
+
+<dd> Options to pass to annotation processors -- these are not
+    interpreted by <tt>apt</tt> directly, but are
+    made available for use by
+   individual processors
+
+<dt>   <tt>-factorypath</tt> <i>path</i>
+<dd> Specify where to find annotation processor factories; if this
+option is used, the classpath is <i>not</i> searched for factories.
+
+<dt>   <tt>-factory</tt> <i>classname</i>
+
+<dd>   Name of <tt>AnnotationProcessorFactory</tt> to use; bypasses default discovery process
+
+</dl>
+
+
+How <tt>apt</tt> shares some of <tt>javac</tt>'s options:
+
+<dl>
+
+<dt>	<tt>-d</tt> <i>dir</i>
+
+<dd> Specify where to place processor and javac generated class files
+
+<dt>	<tt>-cp</tt> <i>path</i> or <tt>-classpath</tt> <i>path</i> 
+
+<dd> Specify where to find user class files and annotation processor
+factories.  If <tt>-factorypath</tt> is given, the classpath is not
+searched for factories.
+
+</dl>
+
+There are a few <tt>apt</tt> hidden options that may be useful for debugging:
+
+<dl>
+
+<dt>	<tt>-XListAnnotationTypes</tt>
+
+<dd> List found annotation types
+
+
+<dt>	<tt>-XListDeclarations</tt>
+
+<dd>	List specified and included declarations
+
+
+<dt>	<tt>-XPrintAptRounds</tt>
+
+<dd>	Print information about initial and recursive <tt>apt</tt> rounds
+
+
+<dt>	<tt>-XPrintFactoryInfo</tt>
+
+<dd>	Print information about which annotations a factory is asked to process
+
+</dl>
+
+<hr>
+
+<h2>How the <tt>apt</tt> Tool Operates</h2>
+
+<h3><a name="Discovery">Discovery</a></h3>
+
+After scanning the source files on the command line to determine what
+annotations are present, by default the <tt>apt</tt> tool looks for
+annotation processor factories on the appropriate path.  If the
+<tt>-factorypath</tt> option is used, that path is the appropriate
+path to search for factories; otherwise, the classpath is the
+appropriate path.  The factories are queried to determine what
+annotations they process.  If a factory processes one of the
+annotations present, that annotation is considered claimed.  Once all
+annotations are claimed, the tool does not look for additional
+factories.  After the annotations are all claimed or no more factories
+can be found, <tt>apt</tt> will call the factories'
+<tt>getProcessorFor</tt> methods, passing in the set of annotations
+that factory has claimed.  Each factory returns a single processor to
+perform the appropriate processing for the set of annotations in
+question.  After all processors are returned, <tt>apt</tt> calls each
+processor in turn.  If any processor generated a new source file, a
+recursive round of <tt>apt</tt> will occur.  In recursive <tt>apt</tt>
+rounds, discovery calls <tt>getProcessorFor</tt> on any factory that
+provided a processor in a previous round, even if that factory
+processes none of the current annotations.  This allows the factory to
+register a <i><a href="#Listeners">listener</a></i> in subsequent
+<tt>apt</tt> rounds; though most factories will simply return
+<tt>AnnotationProcessors.NO_OP</tt> in this case.  After a round where
+no new source files are generated, <tt>apt</tt> will invoke
+<tt>javac</tt> on the original and generated source files.  If no
+processors are found or the processors found don't process the
+annotations present, calling <tt>apt</tt> is essentially equivalent to
+calling <tt>javac</tt> directly on the source files.
+
+<p>If a factory class is used by more than one round of annotation 
+processing, the factory class is loaded once and the factory's 
+<tt>getProcessorFor</tt> method will be called once per round. This 
+allows a factory to store static state across rounds. 
+
+<p>If the <tt>-factory</tt> option is used, the named factory is the
+only one queried.
+
+<h3>Rounds of <tt>apt</tt> Processing</h3>
+
+The first round of <tt>apt</tt> analyzes the input source files, runs
+the discovery procedure, and calls the resulting annotation
+processors.  The second round of <tt>apt</tt> analyzes the new source
+files produced by the first round (if any), runs the discovery
+procedure on those new files, and calls the resulting annotation
+processors.  Likewise, if the second round has produced new source
+files, the third round analyzes the new source, runs discovery, etc.
+The <tt>apt</tt> rounds continue until no new source files are
+generated.  Finally, after the last round, by default the <tt>apt</tt>
+tool will run <tt>javac</tt> on the original and generated source
+files.
+
+<h3><a name="Listeners">Listeners</a></h3>
+
+Annotation processors or factories can register listeners for the end
+of a round using the <tt>addListener</tt> method in the environment.
+The tool calls the registered listeners after all annotation
+processors for that round have run to completion.  The listener is
+passed information about the status of the round, such as if any new
+source files were written, if an error was raised, and if the just
+completed round was the last round.  Listeners can be used to write
+out trailing ends of files when all annotation processing has
+completed.  The same class can implement both the
+<tt>AnnotationProcessor</tt> and <tt>RoundCompleteListener</tt>
+interfaces so the same object can serve in both contexts.
+
+<h3>Return Code</h3>
+
+If <tt>javac</tt> is invoked after the last <tt>apt</tt> round, the
+return code of <tt>apt</tt> will be the return code of <tt>javac</tt>
+compiling those files.  If <tt>javac</tt> is not invoked, <tt>apt</tt>
+will have a 0 exit status if no errors were reported, either by the
+tool itself or by processors.  Operating on malformed or incomplete
+source files in and of itself is not sufficient to cause <tt>apt</tt>
+to have a nonzero exit status.
+
+<hr>
+
+<h2>Declarations and Types</h2>
+
+<p>The mirror API represents source code constructs principally
+through the <tt>Declaration</tt> interface and its hierarchy of
+subinterfaces, in the package <tt>com.sun.mirror.declaration</tt>.  A
+<tt>Declaration</tt> represents a program element such as a package,
+class, or method, and typically corresponds one-to-one with a
+particular fragment of source code.  <tt>Declarations</tt> are the
+structures that may be annotated.
+
+<p>Types are represented by the <tt>TypeMirror</tt> interface and
+its hierarchy of subinterfaces in the package
+<tt>com.sun.mirror.type</tt>.  Types include primitive types, class
+and interface types, array types, type variables, and wildcard types.
+
+<p>The API is careful to distinguish between declarations and types.
+This is most significant for generic types, where a single declaration
+can define a whole family of types.  For example, the declaration of the class
+<tt>java.util.Set</tt> corresponds to 
+
+<ul>
+<li>the parameterized type <tt>java.util.Set&lt;String&gt;</tt>
+
+<li>the parameterized type <tt>java.util.Set&lt;Number&gt;</tt>
+
+<li> the parameterized type <tt>java.util.Set&lt;<i>T</i>&gt;</tt> for
+some type <i>T</i> other than <tt>String</tt> or <tt>Number</tt>
+
+<li>the raw type <tt>java.util.Set</tt>.
+
+</ul>
+
+A declaration has doc comments, a
+source position, modifiers, and annotations.  A declaration may have
+different kinds of names (simple, qualified).  More specific
+declaration subclasses provide additional information appropriate for
+that construct.  For example, class declarations provide access to
+constructors and the superclass.  A declaration for an <tt>enum</tt>
+has a method to provide the <tt>enum</tt> constants.
+
+<p><tt>TypeMirror</tt>s are used to model the return types, parameter
+types, etc., in source code.  A <tt>TypeMirror</tt> for a reference
+type provides a mapping from a type to corresponding declaration; for
+example from the type mirror for <tt>java.util.Set&lt;String&gt;</tt>
+to the declaration for <tt>java.util.Set</tt>.
+
+<hr>
+
+<h2>FAQs</h2>
+
+<ul>
+
+<li><b>Do you know about the Debian Advanced Packaging Tool?</b><br> 
+
+Yes.
+
+<li><b>How does an annotation processor compare to a doclet?</b><br>
+
+The two entities certainly have some similarities; both use build-time
+reflective APIs to process source code.  However, the mirror APIs used
+in annotation processors better model the current type system of the
+Java programming language.  Also, by default the annotation
+processor(s) to run are determined by the annotations present in the
+source code rather than only on a mechanism analogous to the
+<tt>-doclet</tt> option.  In other words, instead of running a single
+fixed <tt>doclet</tt>, <tt>apt</tt> dynamically chooses potentially
+multiple processors to run.
+
+
+<li><b>How can I process annotations on local variables?</b><br>
+
+Annotations on local variables are invisible since the declaration
+hierarchy does not model program structure inside a method or
+constructor.
+
+
+<li><b>Why are there separate factory and processor interfaces in
+<tt>com.sun.mirror.apt</tt>?</b><br>
+
+It would be possible to combine determining <i>how</i> to process and
+controlling <i>when</i> to process; however, we choose to distinguish
+and separate the two steps with factory and processor interfaces.
+
+
+<li><b>Is there an <tt>apt</tt> ant task</b><br>
+
+Not at present.
+
+
+<li><b>What is a mirror?</b><br>
+
+Somewhere you find a reflection.  In reflective programming, a
+mirror design maintains a consistent separation between the objects
+being represented and the objects doing the representing.
+
+
+<li><b>Why were the annotations a factory supports and the options a
+factory supports returned by methods instead of being encoded as
+annotations on the factory class?</b><br>
+
+Implementing an interface is the usual mechanism to indicate a class
+has a desired capability, such as providing an indication of what
+annotations it processes.  There is no language mechanism to require a
+class be annotated with a particular annotation type.  Therefore,
+while it would have been technically possible to encode such
+information in annotations, doing so would have lacked the type safety
+of just having methods in an interface.
+
+<li><b>I'm not familiar with visitors, do I have to use them?</b><br>
+
+The visitor pattern is one of the standard patterns in the &quot;Gang
+of Four&quot; <i>Design Patterns</i> book.  The pattern provides a
+powerful mechanism to invoke a type-dependent operation without
+explicitly testing for the type.  However, using visitors is not
+mandatory.
+
+</ul>
+
+<hr>
+
+<h2>See Also</h2>
+
+<ul>
+<li>
+<a href="../../tooldocs/share/apt.html"><code>apt Tool Reference Page</code>
+</a>
+</li>
+<li>
+<a href="./mirror/overview-summary.html">Mirror API Specification
+</a>
+</li>
+</ul>
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+<TABLE BORDER="0" WIDTH="100%" summary="layout">
+<TR VALIGN=TOP>
+<TD>
+
+<FONT SIZE="-2">
+<A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 2004
+<A HREF="http://www.sun.com/index.html">Sun Microsystems, Inc.</A>
+All Rights Reserved.</FONT>
+</TD>
+
+<TD ALIGN=RIGHT>
+
+<IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+</TD>
+</TR>
+</TABLE>
+
+</body>
+</html>

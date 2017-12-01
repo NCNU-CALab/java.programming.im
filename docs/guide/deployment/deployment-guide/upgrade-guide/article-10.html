@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>NullPointerException thrown in java.awt.Graphics.drawString()</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2><span class="bg2"><code>NullPointerException</code> thrown in <code>java.awt.Graphics.drawString()</code></span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote> 
+    <p> When running an applet in a browser using the Sun JRE, a <code>NullPointerException</code> 
+      is thrown by the <code>java.awt.Graphics.drawString()</code>method. The 
+      same applet runs under the Microsoft VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p> This exception is caused by passing a null string to the <code>Graphics.drawString()</code> 
+      method in the Sun JRE. </p>
+    <p> The Java class libraries in the Sun JRE have changed over time. Some APIs 
+      have been clarified, some have been deprecated, and some have had their 
+      implementation altered. </p>
+    <p> The result of passing a null string to the <code>Graphics.drawString()</code> 
+      method was not well defined, and the Microsoft VM treats null as an empty 
+      string. However, the implementation in the Sun JRE does not accept null 
+      as a valid string, thus resulting in a <code>NullPointerException</code>.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote> 
+    <p>Code defensively to ensure only a non-null string is passed to the <code>drawString()</code> 
+      method. For example, the following code</p>
+    <blockquote> 
+      <p><code>Graphics g = getGraphics();<br>
+        g.drawString(s, 100, 100);</code></p>
+    </blockquote>
+    should be changed to: 
+    <blockquote> 
+      <p><code>Graphics g = getGraphics();<br>
+        if (s !== null) {</code><br>
+        <code>&nbsp;&nbsp;&nbsp;g.drawString(s, 100, 100); <br>
+        } </code></p>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<h3><font color="#CC0033">Related Information</font></h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N/A</p>
+<p>&nbsp;</p>
+</body>
+</html>

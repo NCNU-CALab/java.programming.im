@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>NullPointerException thrown in java.awt.Graphics.drawImage()</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<LINK REL=STYLESHEET TYPE="text/css" HREF="styles/style1.css">
+</head>
+
+<body>
+<blockquote> 
+  <h2> <span class="bg2"><code>NullPointerException</code> thrown in <code>java.awt.Graphics.drawImage()</code></span></h2>
+  <h3><br>
+    <font color="#CC0033">Symptoms</font></h3>
+  <blockquote> 
+    <p> When running an applet in a browser using the Sun JRE, a <code>NullPointerException</code> 
+      is thrown in the <code>java.awt.Graphics.drawImage</code> method. The same 
+      applet runs under the Microsoft VM.</p>
+  </blockquote>
+  <h3><font color="#CC0033">Cause</font></h3>
+  <blockquote> 
+    <p> This exception is caused by passing a null image to the <code>drawImage</code> 
+      method in the Sun JRE. </p>
+    <p>The Java class libraries in the Sun JRE have changed over time. Some APIs 
+      have been clarified, some have been deprecated, and some have had their 
+      implementation altered. </p>
+    <p> The result of passing a null image into the <code>Graphics.drawImage</code> 
+      method was not well defined, and the Microsoft VM treats null image as a 
+      no-op. However, most versions of the Sun JRE do not accept null as a valid 
+      image, thus resulting in a <code>NullPointerException</code>. As of 5.0, 
+      the specification has been clarified, and a null image argument is treated 
+      as a no-op. </p>
+    </blockquote>
+  <h3><font color="#CC0033">Resolution</font></h3>
+  <blockquote>
+    <p> In JRE versions before 5.0, code defensively to ensure that only non-null 
+      images are passed to the <code>drawImage</code> method. For example:</p>
+  </blockquote>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>Graphics g = getGraphics();<br>
+    &nbsp;&nbsp;&nbsp; g.drawImage(img, 100, 100, this);</code></p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The code should be changed to:<br>
+    <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>Graphics g = getGraphics();</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>if (img != null)</code><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <code>g.drawImage(img, 
+    100, 100, this);</code></p>
+  <h3><font color="#CC0033">Related Information</font></h3>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; N/A</p>
+  <p>&nbsp;</p>
+</blockquote>
+</body>
+</html>

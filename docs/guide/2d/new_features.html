@@ -1,0 +1,460 @@
+<html>
+
+<head>
+
+<title>New Features in Java 2D(TM) Technology</title>
+
+</head>
+
+<BODY BGCOLOR="#FFFFFF" TEXT=#000000 LINK=#0000ff VLINK=#000077 ALINK=#ff0000>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH="100%">
+
+<TR>
+
+<TD WIDTH=60>
+
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+
+</TD>
+
+
+
+<TD>
+
+<center>
+
+   <h1>New Java 2D<font size=4><sup>TM</sup></font> Features<br>
+             in J2SE 5.0 </h1>
+
+</center>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT VALIGN=TOP WIDTH=60>
+
+   <font size=-1><a href="index.html">2D&nbsp;Contents</a></font>
+
+</TD>
+
+</TR>
+
+</TABLE>
+
+
+<!-- Body text begins here -->
+<blockquote>
+<p>
+
+<ul>
+<li> 
+  <a href="#managed">Caching All BufferedImages</a>
+</li>
+
+<li> 
+  <a href="#img">Methods for Controlling Hardware Acceleration of Images</a>
+</li>
+
+    <li> <a href="#ogl"> Support for Hardware-Accelerated Rendering Using OpenGL</a> 
+    </li>
+
+<li> 
+  <a href="#cups">Solaris and Linux Support for CUPS Printers</a>
+</li>
+
+<li> 
+  <a href="#bi">Bicubic Interpolation</a>
+</li>
+
+<li> 
+  <a href="#createFont">Creating Fonts from Files and Streams</a>
+</li>
+
+<li> 
+  <a href="#text">Improved Text Rendering Performance and Reliability</a>
+</li>
+
+<li> 
+  <a href="#i18n">Multilingual Text Rendering</a>
+</li>
+
+</ul>
+
+
+<HR SIZE=3 NOSHADE>
+
+<!------------------------------- MANAGED ----------------------------------->
+<h3><a name="managed">Caching All BufferedImages</a></h3>
+
+<p>
+As of J2SE 5.0, all images created with a 
+<a
+href="../../api/java/awt/image/BufferedImage.html#constructor_summary"><code>BufferedImage</code> constructor</a>
+are now managed images and can be cached in video memory or,
+in the case of a remote X server, on the X server side.
+Previously, the Sun implementation managed only compatible images &#151;
+those created with the <code>Component</code>
+<code>createImage(int, int)</code> method
+or with the <code>GraphicsConfiguration</code>
+<code>createCompatibleImage</code> methods. 
+Managed images generally perform better than unmanaged images.
+
+<!-------------------------------- IMG ------------------------------------->
+<h3><a name="img">Methods for Controlling Hardware Acceleration of Images</a></h3>
+
+<p>
+  The bug report that corresponds to this change is: 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4881082.html">
+4881082</a>
+
+<p>
+The <code>Image</code> class
+has three new methods related to hardware acceleration.
+The 
+<a href="../../api/java/awt/Image.html#getCapabilities(java.awt.GraphicsConfiguration)"><code>getCapabilities</code></a>
+method,
+formerly defined only in 
+<a href="../../api/java/awt/image/VolatileImage.html"><code>VolatileImage</code></a>,
+allows you to determine whether the image is currently accelerated.
+Two other methods 
+let you set or get a hint about how important 
+acceleration is for the image:
+<a href="../../api/java/awt/Image.html#setAccelerationPriority(float)"><code>setAccelerationPriority</code></a>
+and
+<a href="../../api/java/awt/Image.html#getAccelerationPriority()"><code>getAccelerationPriority</code></a>. 
+</p>
+
+<p>
+The <code>GraphicsConfiguration</code> class 
+has two new methods,
+<a href="../../api/java/awt/GraphicsConfiguration.html#createCompatibleVolatileImage(int, int, int)"><code>createCompatibleVolatileImage(int, int, int)</code></a>
+and
+<a href="../../api/java/awt/GraphicsConfiguration.html#createCompatibleVolatileImage(int, int, java.awt.ImageCapabilities, int)"><code>createCompatibleVolatileImage(int, int, ImageCapabilities, int)</code></a>,
+that allow you to create 
+transparent <code>VolatileImage</code>s.
+</p>
+
+<blockquote>
+<hr>
+<strong>Note:</strong>
+In J2SE 5.0, these methods are not fully operational.
+The value set by <code>setAccelerationPriority</code> is ignored,
+and images created with the 
+<code>createCompatibleVolatileImage</code> methods
+are not always hardware accelerated.
+On Linux and Solaris systems, only <code>OPAQUE</code> <code>VolatileImages</code>
+are hardware accelerated.
+On Microsoft Windows systems,
+images created with <code>createCompatibleVolatileImage</code> in J2SE 5.0 
+are hardware accelerated
+only if the hardware supports acceleration
+and one of the following is true:
+
+<ul>
+<li> The transparency value is <code>OPAQUE</code>.
+<li> The transparency value is <code>TRANSLUCENT</code> and
+     translucency acceleration has been specifically enabled at runtime
+     (<code>sun.java2d.translaccel=true</code>).
+</ul>
+
+We expect to fully implement these methods on all platforms
+in future releases.
+<hr>
+</blockquote>
+
+<!-------------------------------- OGL ------------------------------------->
+  <h3><a name="ogl"> Support for Hardware-Accelerated Rendering Using OpenGL</a></h3>
+
+  <p> The bug reports that correspond to this change are: 
+  <a href="http://developer.java.sun.com/developer/bugParade/bugs/4607536.html"> 
+    4607536</a>  and
+	<a href="http://developer.java.sun.com/developer/bugParade/bugs/5008045.html"> 
+    5008045</a>.
+  <p> J2SE 5.0 includes a new OpenGL-based pipeline for Java 2D. This pipeline 
+    provides hardware acceleration for simple rendering operations (text, images, 
+    lines, and filled primitives) as well as those that involve complex transforms, 
+    paints, composites, and clips. This pipeline is available on all platforms 
+    (Solaris, Linux, and Microsoft Windows) and is currently disabled by default. 
+  <p> To silently enable the OpenGL-based pipeline, specify the following system 
+    property on the command line: 
+  <pre>
+    -Dsun.java2d.opengl=true
+</pre>
+  <p> To receive verbose console output about whether the OpenGL-based pipeline 
+    is initialized successfully for a particular screen, specify &quot;<code>True</code>&quot; 
+    (note the uppercase <i>T</i>): 
+  <pre>
+    -Dsun.java2d.opengl=True
+</pre>
+
+  <p> Minimum requirements for Solaris/Linux: 
+  <ul>
+    <li> Hardware accelerated OpenGL/GLX libraries installed and configured properly 
+    <li> OpenGL version 1.2 or higher 
+    <li> GLX version 1.3 or higher 
+    <li> At least one TrueColor visual with an available stencil buffer 
+    </ul>
+	
+      
+  <p>Minimum requirements for Microsoft Windows: </p>
+      
+  <ul>
+    <li> Hardware accelerated drivers supporting the WGL_ARB_pbuffer, WGL_ARB_render_texture, 
+      and WGL_ARB_pixel_format extensions 
+    <li> OpenGL version 1.2 or higher 
+    <li>At least one pixel format with an available stencil buffer 
+  </ul>
+ 
+
+<p>
+<h4>Solaris OpenGL Notes</h4>
+
+<p>
+Accelerated OpenGL libraries for the Solaris SPARC platform are available
+directly from Sun:
+
+<blockquote>
+<a href="http://wwws.sun.com/software/graphics/opengl/index.html">
+http://wwws.sun.com/software/graphics/opengl/index.html</a>
+</blockquote>
+
+The following Sun framebuffers are known to work with the OpenGL-based Java 2D
+pipeline:
+<ul>
+<li> Expert3D
+<li> Expert3D Lite
+<li> XVR-500
+<li> XVR-600
+<li> XVR-1000
+<li> XVR-1200
+</ul>
+
+<p>
+Accelerated OpenGL libraries for the Solaris x86 platform are not available
+from Sun.  However, third-parties such as <a href="http://www.xig.com">Xi Graphics</a>
+are known to support OpenGL libraries for Solaris x86.
+
+<p>
+<h4>Linux OpenGL Notes</h4>
+
+<p>
+Most Linux distributions include the 
+<a href="http://www.mesa3d.org/">Mesa 3D graphics library</a>, 
+which is a software implementation of the OpenGL
+specification.  Since Mesa does not take advantage of hardware acceleration,
+it is likely that the OpenGL-based Java 2D pipeline 
+will run much more slowly than
+the default (X11-based) pipeline.  Therefore, to achieve optimal performance
+with the OpenGL-based pipeline, it is recommended that you install
+accelerated OpenGL drivers provided by your graphics hardware manufacturer.
+
+
+<p>
+The following web sites may have accelerated OpenGL drivers
+you can download.
+
+<ul>
+<li>
+Nvidia (GeForce 2 and above):
+<a href="http://www.nvidia.com">http://www.nvidia.com</a>
+
+<li>
+ATI (Radeon 8500 and above, FireGL, etc.):
+<a href="http://www.atitech.com">http://www.atitech.com</a>
+
+<li>
+Others:
+  <ul>
+  <li> <a href="http://dri.sourceforge.net">http://dri.sourceforge.net</a>
+  <li><a href="http://www.xig.com">http://www.xig.com</a>
+  </ul>
+</ul>
+
+  <h4>Microsoft Windows OpenGL Notes</h4>
+  <p> To achieve optimal performance with the OpenGL-based pipeline, install accelerated 
+    OpenGL drivers provided by your graphics hardware manufacturer. The following 
+    websites have accelerated OpenGL drivers available for download that are known 
+    to be compatible with the OpenGL-based Java 2D pipeline: 
+	</p>
+	
+	<ul>
+	<li>Nvidia (GeForce 2 and above): <a href="http://www.nvidia.com">http://www.nvidia.com</a>
+	<li>ATI (Radeon series, FireGL, and so on): <a href="http://www.atitech.com">http://www.atitech.com</a> 
+  </ul>
+
+<p>
+<strong>Note:</strong>
+The latest drivers from both Nvidia and ATI have known issues 
+on Microsoft Windows that might cause rendering artifacts in your application.  
+We are actively investigating these driver bugs 
+and are working with the manufacturers to have them 
+resolved in future driver updates. 
+</p>
+
+    <!-------------------------------- CUPS ------------------------------------->
+  <h3><a name="cups">Solaris and Linux Support for CUPS Printers</a></h3>
+
+<p>
+  The bug reports that correspond to this change are: 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4641868.html">
+4641868</a> and
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4683270.html">
+4683270</a>
+
+<p>
+Solaris and Linux systems can now use printers configured
+as CUPS (Common UNIX Printing System) printers. This expands the
+printers the Java platform can use to all those supported 
+by CUPS &#151; including most PostScript and raster printers &#151; 
+making it much easier to use low-cost printers with Linux.  
+CUPS is based on IPP (Internet Printing Protocol).
+
+<p>
+See <a href="http://www.cups.org/">http://www.cups.org</a>
+for more information.
+</p>
+
+
+<!-------------------------------- BI ------------------------------------->
+<h3><a name="bi">Bicubic Interpolation</a></h3>
+
+<p>
+  The bug report that corresponds to this change is: 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4200154.html">
+4200154</a>
+
+<p>
+The 2D implementation now supports bicubic interpolation
+and uses it whenever requested.
+Previously, the 
+<code>VALUE_INTERPOLATION_BICUBIC</code>
+hint defined by
+the <a href="../../api/java/awt/RenderingHints.html"><code>RenderingHints</code></a> class wasn't honored,
+and bilinear interpolation was used instead.
+Now the bicubic rendering hint is honored, and
+a new constant 
+<code>TYPE_BICUBIC</code>
+has been added to 
+<a href="../../api/java/awt/image/AffineTransformOp.html"><code>AffineTransformOp</code></a>.
+
+
+<!-------------------------------- FONT ------------------------------------->
+<h3><a name="createFont">Creating Fonts from Files and Streams</a></h3>
+
+<p>
+  The bug reports that correspond to this change are: 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4390880.html">
+4390880</a> and
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4468862.html">
+4468862</a>
+
+<p>
+It is now possible to create <code>Font</code> objects from Type 1 fonts
+and to create <code>Font</code> objects
+directly from files
+containing either Type 1 or TrueType font data. 
+</p>
+
+<p>
+To support the new functionality,
+the <code>Font</code> class has a new 
+<a href="../../api/java/awt/Font.html#createFont(int, java.io.File)"><code>createFont</code></a>
+method that creates <code>Font</code> objects from files.
+The pre-existing
+<a href="../../api/java/awt/Font.html#createFont(int, java.io.InputStream)"><code>createFont</code></a>
+method creates <code>Font</code> objects from streams.
+A new constant, 
+<code>Font.TYPE1_FONT</code>,
+specifies Type 1 fonts to either <code>createFont</code> method.
+</p>
+
+<!-------------------------------- TEXT ------------------------------------->
+<h3><a name="text">Improved Text Rendering Performance and Reliability</a></h3>
+
+<p>
+  The bug report that corresponds to this change is: 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4641861.html">
+4641861</a>
+
+<p>
+A number of internal changes to text rendering code 
+greatly improve its robustness, performance, and scalability. 
+
+
+<!-------------------------------- I18N ------------------------------------>
+<h3><a name="i18n">Multilingual Text Rendering</a></h3>
+
+<p>
+  The bug report that corresponds to this change is: 
+<a href="http://developer.java.sun.com/developer/bugParade/bugs/4097028.html">4097028</a>
+
+<p>
+2D text rendering using logical fonts now takes advantage of
+installed host OS fonts for all supported writing systems to render
+multilingual text. For example, if you run in a Thai locale
+environment but have Korean fonts installed, both Thai and Korean
+are rendered.
+</p>
+
+<!-- Body text ends here -->
+
+<!-- ============================================================== -->
+
+<HR SIZE=3 NOSHADE>
+
+
+
+<TABLE summary="layout" BORDER="0" WIDTH=100%>
+
+<TR VALIGN=TOP>
+
+
+
+<TD>
+
+<P><FONT SIZE="-2">
+
+   <A HREF="../../relnotes/SMICopyright.html">Copyright &#169;</A> 1995-2004
+
+   <A HREF="http://www.sun.com/">Sun Microsystems, Inc.</A>
+
+    All Rights Reserved.</FONT></P>
+
+   <FONT SIZE="-1">
+
+   Please send comments using the <a href="http://java.sun.com/products/java-media/2D/mail/java2d-comments.html">Java 2D Feedback</a> page.
+
+   </FONT>
+
+</TD>
+
+
+
+<TD ALIGN=RIGHT>
+
+   <IMG SRC="../../images/sunlogo64x30.gif" ALT=" Sun Microsystems, Inc " BORDER=0 WIDTH=64 HEIGHT=30>
+
+   <BR>
+
+   <FONT SIZE="+1">
+
+   <i>Java Software</i>
+
+   </FONT>
+
+</TD>
+
+
+
+</TR>
+
+</TABLE>
+
+</blockquote></BODY>
+
+</HTML>
+

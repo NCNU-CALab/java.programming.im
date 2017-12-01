@@ -1,0 +1,411 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+	<TITLE>JPDA Enhancements</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#000077" ALINK="#FF0000">
+
+<P>
+<TABLE BORDER="0" WIDTH="100%" summary="layout">
+	<TR>
+		<TD WIDTH="60"><IMG SRC="../../images/javalogo52x88.gif" WIDTH="52" HEIGHT="88" ALIGN="BOTTOM" ALT="Java" BORDER="0"></TD>
+		<TD>
+			<H1 ALIGN="CENTER">JPDA Enhancements
+		</TD>
+		<TD ALIGN="RIGHT" VALIGN="TOP">
+			<P ALIGN="RIGHT"><A HREF="index.html"><FONT SIZE="2">Back to JPDA Guide</FONT></A>
+		</TD>
+	</TR>
+</TABLE>
+
+
+
+<BLOCKQUOTE>
+	<P>The version 5.0 family of the JDK includes the following JPDA enhancements:</P>
+
+	<UL>
+	<LI><A HREF="#JVMTI"><B>Addition of JVMTI</B></A>
+	<LI><A HREF="#generics"><B>JPDA now supports generics</B></A>
+	<LI><A HREF="#enums"><B>JPDA now supports enums</B></A>
+	<LI><A HREF="#varargs"><B>JPDA now supports varargs</B></A>
+	<LI><A HREF="#plug"><B>JPDA pluggable connections and transports</B></A>
+	<LI><A HREF="#machine-spec"><B>JDWP Allow machine to be specified on address param for server</B></A>
+	<LI><A HREF="#Read-only"><B>Read-only subset of JDI</B></A>
+	<LI><A HREF="#Tool"><B>Tool to generate/analyze core files from a crashed JVM</B></A>
+	<LI><A HREF="#ListeningConnector"><B>Need a way to timeout or test for connection with LinsteningConnector.accept()</B></A>
+	</UL>
+
+	<P>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="JVMTI"></A><B>Addition of JVMTI</B></H3>
+
+	<BLOCKQUOTE>
+		<P>The Java Virtual Machine Tool Interface (JVMTI) is a new native programming interface for use by development
+		and monitoring tools, which replaces JVMPI and JVMDI. It provides both a way to inspect the state and to control
+		the execution of applications running in the Java virtual machine (VM). JVMTI is intended to provide a VM interface
+		for the full breadth of tools that need access to VM state, including but not limited to: profiling, debugging,
+		monitoring, thread analysis, and coverage analysis tools.</P>
+		<P>
+Note: JVMPI and JVMDI will be removed in the next major release of J2SE.
+	</BLOCKQUOTE>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="generics"></A><B>JPDA Now Supports Generics</B></H3>
+
+	<BLOCKQUOTE>
+		<P>Generics is a new feature in the Java<FONT SIZE="1"><SUP>TM</SUP></FONT> programming langauge, and the JPDA
+		interfaces now allow debuggers to access generic information. This change adds interface elements to the JDWP and
+		JDI components of JPDA. These elements allow generic information to be accessed by JDI clients as Strings containing
+		the actual contents of the Signature attributes from .class files.</P>
+		<P><B>JDWP changes</B></P>
+		<P>The following are new commands to JDWP. These are the similar to the previously-existing commands, but return
+		generic signatures if they exist, in addition to the JNI signatures.</P>
+
+		<UL>
+	<LI>AllClassesWithGeneric: Similar to AllClasses but also returns the generic signature for each class
+	<LI>SignatureWithGeneric: Similar to the ReferenceType.Signature command but also returns the generic signature.
+	<LI>FieldsWithGeneric: Similar to the Fields command but also returns the generic signature for each field.
+	<LI>MethodsWithGeneric: Similar to the Methods command but also returns the generic signature for each method.
+	<LI>VariableTableWithGeneric: Similar to the VariableTable command but also includes a new generic signature value
+	for each variable.
+		</UL>
+
+		<P><B>JDI changes</B></P>
+		<P>New methods:</P>
+
+		<UL>
+	<LI>LocalVariable.genericSignature()
+	<LI>ReferenceType.genericSignature()
+	<LI>TypeComponent.genericSignature()
+	<LI>Method.isBridge()
+		</UL>
+
+
+	</BLOCKQUOTE>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="enums"></A><B>JPDA Now Supports Enums</B></H3>
+
+	<BLOCKQUOTE>
+		<P>Enumeration types are a new feature in the Java<FONT SIZE="1"><SUP>TM</SUP></FONT> programming langauge, and
+		the JPDA interfaces now allow debuggers to access information about enumeration types.<BR>
+		<BR>
+		New methods:</P>
+
+		<UL>
+	<LI>com.sun.jdi.ClassType.isEnum()
+	<LI>com.sun.jdi.Field.isEnumConstant()
+		</UL>
+
+
+	</BLOCKQUOTE>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="varargs"></A><B>JPDA Now Supports Varargs</B></H3>
+
+	<BLOCKQUOTE>
+		<P>The ability to declare a method as accepting a variable number of agruments is a new feature in the Java<FONT
+		SIZE="1"><SUP>TM</SUP></FONT> programming langauge. The JDI now allows a debugger to query whether or not a method
+		accepts a variable number of arguments. This change also modifies the three JDI methods that allow a method to
+		be called to accept varargs.</P>
+
+		<P>New method in com.sun.jdi.Method:</P>
+
+		<UL>
+	<LI>boolean isVarargs();
+		</UL>
+
+		<P>Specification update for the following methods:</P>
+
+		<UL>
+	<LI>com.sun.jdi.Method.argumentTypes()
+	<LI>com.sun.jdi.Method.arguments()
+	<LI>com.sun.jdi.ClassType.invokeMethod
+	<LI>com.sun.jdi.ClassType.newInstance
+	<LI>com.sun.jdi.ObjectReference.invokeMethod
+		</UL>
+
+
+	</BLOCKQUOTE>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="plug"></A><B>JPDA Pluggable Connections and Transports</B></H3>
+	<P>The Java Debug Interface (JDI) previously lacked a provider interface to allow tool vendors to develop and deploy
+	their own Connectors. A Connector is the means by which a Java debugger connects to a target virtual machine.<BR>
+	<BR>
+	The JDK ships with 6 Connectors. Two of these are LaunchingConnectors, which are used to launch and establish
+	a debugging session with a target VM. The other four Connectors encapsulate transports for remote debugging. The
+	creation of these 6 Connectors was previously hardcoded into the Sun JDI implementation of VirtualMachineManager
+	and there was no means for tool vendors to develop or deploy additional Connectors.<BR>
+	<BR>
+	Related to the above is that the Java Platform Debugger Architecture (JPDA) previously lacked a means for tool
+	vendors to plug-in their own transport implementations. There was no supported way to debug over non-Sun provided
+	transports. The JDK ships with 2 transports - a TCP transport (for Solaris, Linux, and Windows) and a shared
+	memory transport (Windows only).</P>
+
+	<P>There are two components to this enhancement:</P>
+
+	<OL>
+	<LI>Extend the Java Debug Interface (JDI) with specification and a provider interface to allow 3rd party Connectors
+	and Transport Services be developed and deployed
+	<P>
+<LI>Develop a VM/debuggee-side native interface to allow 3rd party transport 
+libraries to be located and loaded by the debugging agent running in the VM
+	</OL>
+
+	<P>Specification updates for 5 existing classes/interfaces :
+
+	<UL>
+	<LI>com.sun.jdi.Bootstrap
+	<LI>com.sun.jdi.VirtualMachineManager
+	<LI>com.sun.jdi.connect.AttachingConnector
+	<LI>com.sun.jdi.connect.ListeningConnector
+	<LI>com.sun.jdi.connect.Transport
+	</UL>
+
+	<P>Two new methods added com.sun.jdi.VirtualMachineManager:</P>
+
+	<UL>
+	<LI>VirtualMachine createVirtualMachine(Connection connection, Process process) throws IOException
+	<LI>VirtualMachine createVirtualMachine(Connection connection) throws IOException;
+	</UL>
+
+	<P>Four new classes :
+
+	<UL>
+	<LI>com.sun.jdi.connect.spi.TransportService
+	<LI>com.sun.jdi.connect.spi.TransportService.Capabilities (inner class)
+	<LI>com.sun.jdi.connect.spi.TransportService.ListenKey (inner class)
+	<LI>com.sun.jdi.connect.spi.Connection
+	</UL>
+
+	<P>Two new exceptions :
+
+	<UL>
+	<LI>com.sun.jdi.connect.TransportTimeoutException
+	<LI>com.sun.jdi.connect.spi.ClosedConnectionException
+	</UL>
+
+	<P>Native transport interface (defined by jdwpTransport.h)</P>
+	<P>New Connector arguments have been added as follows :</P>
+	<P>A &quot;timeout&quot; Connector argument has been added to the following Connectors (note that these are Connector
+	names and not class names) :</P>
+
+	<UL>
+	<LI>com.sun.jdi.SocketAttach
+	<LI>com.sun.jdi.SocketListen
+	<LI>com.sun.jdi.SharedMemoryAttach
+	<LI>com.sun.jdi.SharedMemoryListen
+	</UL>
+
+	<P>The timeout argument is optional and specifies the attach or accept timeout (in milliseconds) to use when establishing
+	a connection to the debuggee.<BR>
+	<BR>
+	A &quot;localAddress&quot; Connector argument has been added to com.sun.jdi.SocketListen. This Connector argument
+	specifies the local address to bind to when waiting to accept a connection from the debuggee.</P>
+	<P>Also, the options string to the JDWP agent has been amended to include a timeout option. The timeout argument specifies
+	the timeout (in milliseconds) when establishing the connection to the debugger :</P>
+	<P>-agentlib:jdwp=...,...,timeout=&lt;timeout&gt;<BR>
+	<BR>
+	In addition the address string for the dt_socket transport has been amended to take a local address when running
+	in server mode. For example:<BR>
+	<BR>
+	-agentlib:jdwp=transport=dt_socket,address=127.0.0.1:4000,server=y</P>
+	<P>indicates that the debugee bind to loopback address, port 4000 and wait for the debugger to connect.
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="machine-spec"></A><B>JDWP Allow machine to be specified on address param for server</B></H3>
+	<P>One of the JPDA options is the &quot;address=&quot; parameter, which has the format of:<BR>
+	<BR>
+	JPDA Server: address=port<BR>
+	<BR>
+	JPDA Client: address=machine:port<BR>
+	<BR>
+	This change allows the server to accept a machine name, for cases where the JPDA server is running on a computer
+	with more than one network card and address. The SunCommandLineLauncher, which is the default LaunchingConnector
+	returned by Bootstrap.virtualMachineManager().defaultConnector(), now has a localAddress connector argument so
+	that the local address can be specified. Also, the JDWP options string on the debugee-side can now accept a local
+	address in addition to a port.
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="Read-only"></A><B>Read-only subset of JDI</B></H3>
+	<P>When using JDI to debug a 'debuggee' that is unmodifiable (such as when the debuggee is represented by a corefile),
+	the JDI client needs to know which JDI methods it can call and which it cannot. This change adds a method to the
+	VirtualMachine interface that allows the JDI client to determine if that VM is read-only. It also defines various
+	JDI methods as throwing a new exception if called on a read-only VM.</P>
+	<P>New method in com.sun.jdi.VirtualMachine.</P>
+
+	<UL>
+	<LI>boolean canBeModified()
+	</UL>
+
+	<P>New exception class:</P>
+
+	<UL>
+	<LI>com.sun.jdi.VMCannotBeModified.
+	</UL>
+
+	<P>The clause: @throws VMCannotBeModifiedException if the VirtualMachine is read-only - see {@link VirtualMachine#canBeModified()}.
+	has been added to the specification of the following methods:</P>
+
+	<P>com.sun.jdi.ArrayReference</P>
+
+	<UL>
+	<LI>void setValue(int index, Value value)
+	<LI>void setValues(List values)
+	<LI>void setValues(int index, List values, int srcIndex, int length)
+	</UL>
+
+	<P>com.sun.jdi.ArrayType
+
+	<UL>
+	<LI>ArrayReference newInstance(int length);
+	</UL>
+
+	<P>com.sun.jdi.ClassType
+
+	<UL>
+	<LI>void setValue(Field field, Value value)
+	<LI>Value invokeMethod(ThreadReference thread, Method method, List arguments, int options)
+	<LI>ObjectReference newInstance(ThreadReference thread, Method method, List arguments, int options)
+	</UL>
+
+	<P>com.sun.jdi.ObjectReference</P>
+
+	<UL>
+	<LI>ArrayReference newInstance(int length);
+	</UL>
+
+	<P>com.sun.jdi.ClassType
+
+	<UL>
+	<LI>void setValue(Field field, Value value)
+	<LI>Value invokeMethod(ThreadReference thread, Method method, List arguments, int options)
+	<LI>ObjectReference newInstance(ThreadReference thread, Method method, List arguments, int options)
+	</UL>
+
+	<P>com.sun.jdi.ObjectReference
+
+	<UL>
+	<LI>void setValue(Field field, Value value)
+	<LI>Value invokeMethod(ThreadReference thread, Method method,
+	<LI>List arguments, int options)
+	</UL>
+
+	<P>com.sun.jdi.StackFrame
+
+	<UL>
+	<LI>void setValue(LocalVariable variable, Value value)
+	</UL>
+
+	<P>com.sun.jdi.ThreadGroupReference</P>
+
+	<UL>
+	<LI>void suspend();
+	<LI>void resume();
+	</UL>
+
+	<P>com.sun.jdi.ThreadReference
+
+	<UL>
+	<LI>void suspend();
+	<LI>void resume();
+	<LI>void stop(ObjectReference throwable);
+	<LI>void interrupt();
+	<LI>void popFrames(StackFrame frame)
+	</UL>
+
+	<P>com.sun.jdi.VirtualMachine
+
+	<UL>
+	<LI>void redefineClasses(Map classToBytes);
+	<LI>void suspend();
+	<LI>void resume();
+	<LI>EventQueue eventQueue();
+	<LI>EventRequestManager eventRequestManager();
+	<LI>void exit(int exitCode);
+	</UL>
+
+	<P>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="Tool"></A><B>Tool to generate/analyze core files from a crashed JVM</B></H3>
+	<P>When a JVM crashes, developers want to be able to look at a core file and understand what their code was doing
+	when the crash occured.<B> </B>JDI, the Java Debug Interface, defines interfaces for 'connectors'. A connector
+	is an implementation of one of these interfaces. Connectors are used to establish a connection between a debugger
+	process and a debuggee.<B> </B>J2SE ships with several connectors that allow a debugger process to launch a debuggee,
+	attach to an already running debuggee, or listen for incoming connections from a debuggee which has not yet run.<B>
+	</B>These connectors are not part of the JDI specification but are part of the implementation of JDI on a platform.
+	Other vendors are free to include whatever connectors they choose. In addition, users themselves can create their
+	own connectors.</P>
+
+	<P>This feature adds three new connectors to the Sun implementation. Each connector has a set of arguments that
+	the JDI user can/must set in order to use the connector.</P>
+
+	<P>The interface summary below lists the class names of these three new connectors.<B> </B>This solution uses a
+	Solaris private interface in libproc.h.</P>
+
+	<P>This will add three new attaching connectors to our release of J2SE:</P>
+
+	<UL>
+	<LI>sun.jvm.hotspot.jdi.SACoreAttachingConnector
+	<LI>sun.jvm.hotspot.jdi.SAPIDAttachingConnector
+	<LI>sun.jvm.hotspot.jdi.SADebugServerAttachingConnector
+	</UL>
+
+	<P>These connectors will be contained in the list of connectors returned to a JDI client by the JDI methods:
+
+	<UL>
+	<LI>VirtualMachineManager.allConnectors()
+	<LI>VirtualMachineManager.attachingConnectors()
+	</UL>
+
+	<P>These connectors are used by a JDI client in the same way that the other JDI attaching connectors are used.</P>
+	<P>The JDI VirtualMachine objects returned by these connectors' attach() methods are 'read-only'. This means that
+	VirtualMachine.canBeModified() will return false. This in turn means that the methods defined in JDI as throwing
+	VMCannotBeModifiedException if the VirtualMachine is read-only should not be called by the JDI client. These connectors
+	can only be used to debug processes and corefiles that use the Sun Hotspot Virtual Machine. These connectors are
+	not available on Windows nor on Linux Itanium.</P>
+	<P>
+	<H3>
+<HR ALIGN="CENTER">
+<A NAME="ListeningConnector"></A><B>Need a way to timeout or test for connection with ListeningConnector.accept()</B></H3>
+	<P>The method com.sun.jdi.connect.ListeningConnector.attach() previously waited indefinitely for a connection,
+	with no way to set a timeout or interrupt the wait. This made it fairly dangerous to use in an integrated debugger.
+	This change makes it possible to set a timeout, instantly test for a connection, or interrupt another thread.</P>
+
+</BLOCKQUOTE>
+
+<!-- ============================================================== -->
+<P>
+<HR ALIGN="CENTER" SIZE="3" NOSHADE>
+
+<TABLE BORDER="0" WIDTH="100%" summary="layout">
+	<TR VALIGN="TOP">
+		<TD><A HREF="../../relnotes/SMICopyright.html"><FONT SIZE="1">Copyright &copy;</FONT></A><FONT SIZE="1"> 2004 </FONT><A
+			HREF="http://www.sun.com/"><FONT SIZE="1">Sun Microsystems, Inc.</FONT></A><FONT SIZE="1"> All Rights Reserved.<BR>
+			<BR>
+			</FONT><FONT SIZE="2">Please send comments to: </FONT><A HREF="mailto:java-debugger@sun.com"><FONT SIZE="2">java-debugger@sun.com</FONT></A></TD>
+		<TD ALIGN="RIGHT">
+			<P ALIGN="RIGHT"><IMG SRC="../../images/sunlogo64x30.gif" WIDTH="64" HEIGHT="30" ALIGN="BOTTOM" ALT="Sun" BORDER="0">
+		</TD>
+	</TR>
+</TABLE>
+</P>
+<PRE>
+
+
+
+
+
+
+
+</PRE>
+
+</BODY>
+
+</HTML>

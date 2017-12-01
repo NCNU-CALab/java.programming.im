@@ -1,0 +1,711 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+    <title>What's New in Javadoc 5.0</title>
+</head>
+<body bgcolor="white">
+
+
+
+<TABLE BORDER="0" WIDTH="100%" summary="layout">
+<TR>
+<TD WIDTH="60">
+   <IMG SRC="../../images/javalogo52x88.gif" ALT="Java" BORDER=0 WIDTH=52 HEIGHT=88>
+</TD>
+
+
+<TD>
+<center>
+           <h1>What's New in Javadoc 5.0</h1>
+</center>
+</TD>
+
+
+<TD ALIGN=RIGHT VALIGN=TOP>
+   <font size="-1"><a href="index.html">Javadoc Tool</a></font>
+</TD>
+</TR>
+</TABLE>
+<p>
+
+<!-- ==================== CONTENTS ============================== -->
+
+
+   This document describes the changes made to the Javadoc tool between
+   versions 1.4.2 and 5.0 (formerly 1.5.0). 
+<p>
+   The changes listed below include the bug number and whether the
+   fix was in the Javadoc tool front end ("tool") or standard doclet
+   ("stddoclet").  The term "regression" appears for features that
+   regressed at some point -- usually for features that worked in 1.3.x,
+   broke in 1.4.x, and have been fixed in 5.0.
+
+<ul>
+  <li><a href="#newfeatures">Notable New Features</a>
+  <li><a href="#bugfixes">Notable Bug Fixes</a>
+  <li><a href="#knownbugs">Known Bugs</a>
+  <li><a href="#incompatibilitieswithcustomdoclets">Incompatibilities
+          with Custom Doclets</a>
+  <li><a href="#featuresandfixes">New Features and Bug Fixes</a>
+  <ul type="disc">
+    <li><a href="#commandlineoptions">Command Line Options</a>
+    <li><a href="#tags">Tags and Taglets</a>
+    <li><a href="#links">Links</a>
+    <li><a href="#generatedapispec">Generated API Specifications</a>
+<!--    <li><a href="#html">Javascript</a>  -->
+    <li><a href="#invalidhtml">Formatting and Invalid HTML</a>
+    <li><a href="#navbar">Navigation Bar</a>
+    <li><a href="#accessibility">Accessibility</a>
+    <li><a href="#runningjavadoc">Running Javadoc</a>
+    <li><a href="#messages">Error/Warning/Status Messages</a>
+    <li><a href="#docletapi">Doclet API</a>
+  </ul>
+</ul>
+
+<p>
+
+
+<!-- ================== NEW FEATURES ====================== -->
+
+
+<a name="newfeatures"></a>
+<h3>Notable New Features</h3>
+
+<!--
+     Decided not to include all with at least 1 vote, because
+     that would subject everyone to reading trivial bugs for the
+     sake of a single person (who might not even read this). 
+-->
+
+<ul>
+
+  <li><b>Generics, enums, and varargs:</b> Added support for these new language
+      features in the javadoc tool front-end (Doclet API) 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4421066.html">4421066</a>, tool)
+      and standard doclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4789689.html">4789689</a>, stddoclet, 1 vote)
+
+  <li><b>Annotations:</b> Added support for annotations and annotation types
+      in the javadoc tool front-end (Doclet API) 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904495.html">4904495</a>, tool)
+      and standard doclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4905985.html">4905985</a>, stddoclet)
+
+  <a name="breakiterator"></a>
+  <li><b>BreakIterator:</b> 
+      We have removed the -breakiterator warning messages from 5.0,
+      and have left the default sentence-break algorithm unchanged from 
+      earlier releases.  That is, the -breakiterator option is not the 
+      default in 5.0, nor do we expect it to become the default.
+      This is a reversal from our former intention that the default would 
+      change in the "next major release" (5.0).  This means if you have 
+      not modified your source code to eliminate the breakiterator 
+      warnings in 1.4.x, then you don't have to do anything, and the 
+      warnings will go away in 5.0.
+      The reason for this reversal is because any benefit to having
+      -breakiterator become the default would be outweighed by the 
+      incompatible source change it would require.  We regret any extra work 
+      and confusion this has caused.
+      (The -breakiterator option was added in 1.4.0; for English locale only,
+      it forces the use of BreakIterator class to determine where
+      the first sentence in a doc comment ends, as BreakIterator
+      already does for other languages.)
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4959985.html">4959985</a>, tool)<br>
+      Furthermore, in a future release (hopefully 5.1) we will add new
+      javadoc tags
+      (feature request 
+      <a href="http://developer.java.sun.com/developer/bugParade/bugs/4921374.html">4921374</a>)
+      to enable you to mark summaries explicitly and avoid using heuristics 
+      of any kind.  
+
+  <a name="{@code}"></a>
+  <li><b>New tags {@literal} and {@code}</b>
+      The <tt>{@literal}</tt> tag denotes literal text. The enclosed text is
+      interpreted as not containing HTML markup or nested javadoc tags.
+      For example, the doc comment text: <tt>{@literal a&lt;B&gt;c}</tt> displays in
+      the generated HTML page unchanged: <tt>a&lt;B&gt;c</tt> -- that is, 
+      the <tt>&lt;B&gt;</tt> is not interpreted as bold.<br>
+      The <tt>{@code}</tt> tag formats literal text in the code font;
+      <tt>{@code abc}</tt> is equivalent to <tt>&lt;code&gt;{@literal abc}&lt;/code&gt;</tt>.
+
+ <a name="{@value}"></a>
+  <li><b>Tag {@value <em>arg</em>}:</b> This inline tag now accepts the 
+      name of a program element:
+      <code>{@value package.class#field}</code>.
+      This enables it to be used in any doc comment, not just in the 
+      doc comment of the constant field.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4764045.html">4764045</a>, stddoclet, 2 votes)
+
+  <a name="stddocletimpl"></a>
+  <li><b>Standard doclet reimplementation</b> -
+       The standard doclet and MIF doclet were re-implemented to share 
+       as much code as possible.  This has made it possible to reduce 
+       the number of bugs in both doclets and raise the capabilities of
+       the MIF doclet to that of the standard doclet.  (The new MIF
+       doclet has not yet been released -- it will probably be named 
+       version 1.4 Beta 1.)  The key reason we merged these two doclets 
+       is because they both try to generate essentially the same document 
+       but in different formats (HTML and PDF).
+       (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4638723.html">4638723</a>, stddoclet, 2 votes)<br>
+       We plan to publish this shared code as a doclet toolkit, as described
+       on the
+       <a href="http://java.sun.com/j2se/javadoc/index.jsp">Javadoc home page</a>.
+<p>
+
+       All new features are listed <a href="#featuresandfixes">below</a>.
+
+</ul>
+
+<!-- ================== NOTABLE BUG FIXES ====================== -->
+
+<p>
+
+<a name="bugfixes"></a>
+<h3>Notable Bug Fixes</h3>
+
+<ul>
+
+  <li><b>Option -tag</b>: (regression) Fixed -tag so its name can once again
+      contain a dash "-", as it allowed in 1.4.1.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4920381.html">4920381</a>, stddoclet, 59 votes)
+
+  <li><b>Hang due to {@inheritDoc}</b>: No longer hangs when {@inheritDoc}
+      (1) cannot inherit or (2) inherits from super-superinterface.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4812240.html">4812240</a>, stddoclet, 18 votes)
+
+  <li><b>Tag @param</b>: (regression) Fixed @param so the parameter name
+      (the first argument) is printed even if incorrect, as it worked in 1.3.1.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4802275.html">4802275</a>, stddoclet, 1 vote)
+
+  <li><b>Tag {@value}</b>: Using {@value} in a custom tag no longer
+      generates a NullPointerException.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4821796.html">4821796</a>, stddoclet, 1 vote)
+
+  <li><b>Browser scroll bar</b>: Internet Explorer no longer displays an 
+      unnecessary horizontal scroll bar when frames are showing.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4852280.html">4852280</a>, stddoclet, 5 votes)
+
+  <li><b>Inheriting package-private docs</b>: When -private option is used, now properly
+      documents methods inherited from package-private classes only in the inherited 
+      method summary table and not in the detail section.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4780441.html">4780441</a>, stddoclet, 5 votes)
+
+  <li><b>First sentence ending with {@inheritDoc}</b>: The end of a
+      first sentence containing {@inheritDoc} is now determined correctly.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4767038.html">4767038</a>, stddoclet, 4 votes)
+
+  <li><b>First sentence broken link with {@docRoot}</b>: A first sentence
+      containing a {@docRoot} link is no longer broken in the single-page 
+      index.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4760191.html">4760191</a>, stddoclet, 3 votes)
+
+  <li><b>Inherited comment link</b>: An inherited comment now links directly 
+      to the proper member, not just to the class.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4368820.html">4368820</a>, stddoclet, 1 vote)
+
+  <li><b>Alphabetic index sorting</b>: Index sorting is again case-independent.  
+      Only in 1.4.1 and 1.4.2 it was sorted uppercase then lowercase.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4984419.html">4984419</a>, stddoclet, no votes)
+
+<p>
+      All bug fixes are listed <a href="#featuresandfixes">below</a>.
+
+</ul>
+
+
+<!-- ================== KNOWN BUGS ====================== -->
+
+<a name="knownbugs"></a>
+<h3>Known Bugs</h3>
+
+Javadoc 5.0 has no known bugs that cause it to hang or crash.
+You can view listings from our database at Bug Parade as described at:
+<a href="http://java.sun.com/j2se/javadoc/faq/index.html#bugs">Javadoc FAQ</a>.
+The notable bugs are:
+
+<ul>
+ <li><b>Six-fold performance degradation</b> since 1.4.2 for deeply inherited classes.
+     The slowdown is partly due to the extra processing required by generic
+     type parameters.<br>
+     Workaround: None.
+(<a href="http://developer.java.sun.com/developer/bugParade/bugs/5081166.html">5081166</a>)
+
+ <li><b>@param in base class is ignored</b> if {@inheritDoc} in main description.<br>
+     Workaround: None. (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4778311.html">4778311</a>)
+
+ <li><b>Produces faulty Constant Values page</b> if a constant contain angle bracket '&lt;'<br>
+     Workaround: None.
+     (<a href="http://developer.java.sun.com/developer/bugParade/bugs/5077317.html">5077317</a>)
+
+ <li><b>Malformed HTML tag throws error</b> due to message not found in resource file.<br>
+     Error message: <tt>java.util.MissingResourceException: Can't find resource for bundle com.sun.tools.doclets.formats.html.resources.standard, key doclet.malformed_html_link_tag</tt><br>
+     Workaround: Reduce the number of packages and classes passed into javadoc until the
+     error goes away and you locate the source file that contains the malformed tag.  
+     Then fix the malformed tag.  A malformed HTML tag is one that begins properly but 
+     is otherwise improper.  For example <tt>&lt;action&gt;</tt>
+     is interpreted as a malformed <tt>&lt;a&gt;</tt> tag.
+     (<a href="http://developer.java.sun.com/developer/bugParade/bugs/5082928.html">5082928</a>)
+
+</ul>
+
+<!-- ================== INCOMPATIBILITIES ====================== -->
+
+<a name="incompatibilitieswithcustomdoclets"></a>
+<h3>Incompatibilities with Custom Doclets</h3>
+
+Custom doclets written prior to 5.0 will have compatibility
+problems when run on source files that use new language features in 5.0.
+
+<ul>
+  <li><b>New Language Features</b>:
+      The Doclet API and standard doclet were revised to handle
+      the new 5.0 language features
+      -- generics, enums, varargs and annotations.  To handle these
+      features, custom doclets would also need to be revised.
+<p>
+      The Javadoc tool tries -- to the extent possible -- to present
+      so-called "legacy" doclets with a view of the program that
+      1) continues to work with pre-5.0 source code, and 2) matches
+      their expectations for 5.0 source code.  So, for example, type
+      parameters and type arguments are stripped from generic
+      constructs, type variables and wildcard types are replaced by
+      their erasures, and <code>ClassDoc.fields()</code> will 
+      return enum constants.
+<p>
+      But legacy support is not specified with precision.  It's
+      a compatibility mode that will suffice until the doclet gets updated 
+      to understand the language it is operating on.  The only guarantee 
+      is source and binary compatibility of doclets themselves:
+      when using the 5.0 Javadoc tool, if your doclet is based on 1.4 
+      and the source code on which you're operating is also based on 
+      1.4, then you can still compile the doclet and it will still 
+      operate as before (modulo bug fixes). 
+
+</ul>
+
+<hr>
+
+<!-- =============== NEW FEATURES AND BUG FIXES ================== -->
+
+<a name="featuresandfixes"></a>
+<h3>New Features and Bug Fixes</h3>
+
+The following is a list of essentially all new features and bug fixes 
+in 5.0.  Only very minor changes are omitted (such as fixing broken
+links in the documentation for the Doclet API) and bugs introduced in
+early-access releases of 5.0 but fixed in the final release are omitted.
+<p>
+
+<a name="commandlineoptions"></a>
+<b>Command Line Options</b>
+
+<ul>
+
+<!-- DON'T DOCUMENT YET
+<li><b>New feature:</b> Added -packagesheader option for upper left frame
+   (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4766385.html">4766385</a>, stddoclet)
+-->
+
+<!-- THIS ISN'T IN BETA1 -- PROBABLY BETA2
+<li><b>New feature:</b> Added "-sourcetab &lt;n&gt;" option to convert each tab to &lt;n&gt; spaces. 
+   (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4510979.html">4510979</a>, stddoclet)
+-->
+
+  <li><b>New feature:</b> New -keywords option adds HTML meta tags
+      to each generated file to help with search
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4776637.html">4776637</a>, stddoclet)
+ 
+  <li><b>New feature:</b> New -notimestamp option suppresses hidden timestamp 
+      embedded near the top of HTML pages
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4777717.html">4777717</a>
+
+  <li><b>New feature</b>: It is now possible to create test subpackages
+      that contain hyphens that the -subpackages option will skip over
+      without producing warnings.  That is, this option will no longer
+      warn if it encounters a directory with an illegal Java name
+      (which is consistent with illegal source filenames).
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4773013.html">4773013</a>, tool)
+ 
+  <li>Bug fix: The -help option no longer mistakenly shows "[classnames]" 
+      in the usage.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4775743.html">4775743</a>, tool)
+ 
+  <li>Bug fix: The -group option no longer causes a duplicate warning.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4924383.html">4924383</a>, stddoclet)
+
+</ul>
+
+<a name="tags"></a>
+<b>Tags and Taglets</b>
+
+<ul>
+
+  <li><b>New feature:</b>
+      The {@literal} tag denotes literal text. The enclosed text is
+      interpreted as not containing HTML markup or nested javadoc tags.
+      For example, the doc comment text: {@literal a&lt;B&gt;c} displays in
+      the generated HTML page unchanged: a&lt;B&gt;c -- that is, 
+      the &lt;B&gt; is not interpreted as bold.
+
+  <li><b>New feature:</b>
+      The {@code} tag formats literal text in the code font.
+      It is equivalent to &lt;code&gt;{@literal}&lt;/code&gt;.
+
+  <li><b>New feature:</b> The {@value} inline tag now accepts the name of 
+      a program element and label:
+      <code>{@value package.class#member label}</code>.
+      This enables it to be used in any doc comment.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4764045.html">4764045</a>, stddoclet)
+ 
+  <li>Bug fix: (regresion): Fixed @param so the parameter name (its first
+      argument) is printed even if incorrect, as it worked in 1.3.1.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4802275.html">4802275</a>, stddoclet)
+ 
+  <li>Bug fix: (regression) Fixed -tag so its name can once again contain
+      a dash "-", as was allowed in 1.4.1.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4920381.html">4920381</a>, stddoclet)
+ 
+  <li>Bug fix: A first sentence containing a {@docRoot} link is no longer
+      broken in the single-page index.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4760191.html">4760191</a>, stddoclet)
+ 
+  <li>Bug fix: The end of a first sentence containing {@inheritDoc} is 
+      now determined correctly.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4767038.html">4767038</a>, stddoclet, 4 votes)
+
+  <li>Bug fix: Use of the {@docroot} tag in -bottom text no longer causes 
+      a broken link on the help-doc.html page.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4851991.html">4851991</a>, stddoclet)
+
+  <li>Bug fix: Modified taglet code to allow standalone tags to handle inline 
+      tags.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4654308.html">4654308</a>, stddoclet)
+ 
+  <li>Bug fix: Use of {@value} in a custom tag no longer generates a 
+      NullPointerException.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4821796.html">4821796</a>, stddoclet)
+ 
+  <li>Bug fix: Inline tags now allow nested braces that do not belong 
+      to inline tags.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4965490.html">4965490</a>, tool)
+  
+  <li>Bug fix: @param, @return and some @throws tags now inherit comments properly.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4915434.html">4915434</a>, stddoclet)
+ 
+  <li>Bug fix: @throws documentation is now auto-inherited if the exception 
+      is checked.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4947455.html">4947455</a>, stddoclet)
+
+</ul>
+
+
+<a name="links"></a>
+<b>Links</b>
+
+<ul>
+ 
+  <li>Bug fix: An inherited comment now links directly to the proper member,
+      not just to the class.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4368820.html">4368820</a>, stddoclet)
+ 
+  <li>Bug fix: The summary heading is no longer missing when a class has 
+      no direct members but inherits members.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904036.html">4904036</a>, stddoclet)
+ 
+  <li>Bug fix: Relative link in &lt;a href&gt; in first sentence no longer 
+      generates a broken link when it appears on other pages.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4460354.html">4460354</a>, stddoclet)
+<p>
+    For more link bug fixes, see "Tags and Taglets", associated with the
+    <code>{@docRoot}</code> tag.
+
+</ul>
+
+
+<a name="generatedapispec"></a>
+<b>Generated API Specifications</b>
+
+<ul>
+
+  <li><b>New feature:</b> Added support for generics, enums, and varargs
+      in the javadoc tool front-end (Doclet API) 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4421066.html">4421066</a>, tool)
+      and standard doclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4789689.html">4789689</a>, stddoclet)
+
+  <li><b>New feature:</b> Added support for annotations and annotation types
+      in the javadoc tool front-end (Doclet API) 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904495.html">4904495</a>, tool)
+      and standard doclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4905985.html">4905985</a>, stddoclet)
+ 
+  <li><b>New feature:</b> For legibility, constant field values 
+      of type long are now printed with "L" rather than lowercase "l".
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4869993.html">4869993</a>, tool)
+ 
+  <li><b>New feature:</b> For legibility, serialVersionUID values 
+      of type long are now printed with "L" rather than lowercase "l".
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4821483.html">4821483</a>, stddoclet)
+ 
+  <li><b>New feature:</b> Table of contents has been added to the 
+      top of the "Deprecated" list.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4927552.html">4927552</a>, stddoclet)
+ 
+  <li>Bug fix: No longer hangs when {@inheritDoc}
+      (1) cannot inherit or (2) inherits from super-superinterface.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4812240.html">4812240</a>, stddoclet)
+
+  <li>Bug fix: Inherited non-public superclass is no longer mentioned
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4874845.html">4874845</a>, stddoclet)
+ 
+  <li>Bug fix: "Specified by:" and "Overrides:" comments are now
+      inherited from externally referenced classes.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4857717.html">4857717</a>, stddoclet)
+ 
+  <li>Bug fix: Documentation is no longer inherited from members
+      of package-private classes.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4780441.html">4780441</a>, stddoclet)
+ 
+  <li>Bug fix: Order of method descriptions can no longer change from one 
+      run to the next.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4885372.html">4885372</a>, stddoclet)
+ 
+  <li>Bug fix: When class B extends class A which implements interface I, 
+      in the documentation for I, we now document that B implements I 
+      (under "All implementing classes").
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4947464.html">4947464</a>, stddoclet)
+ 
+  <li>Bug fix: Correct return type now shows up in member summary 
+      when a method inherits documentation from an overridden method
+      that returns a different type.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4951228.html">4951228</a>, stddoclet)
+ 
+  <li>Bug fix: Now generates doc for readObjectNoData() in serialized form 
+      page.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4770063.html">4770063</a>, stddoclet)
+ 
+  <li>Bug fix: Now generates a package summary page for the unnamed package,
+      if present.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4774450.html">4774450</a>, stddoclet)
+ 
+  <li>Bug fix: Now prints "Unnamed" as the name of the unnamed package,
+      rather than printing empty string.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904075.html">4904075</a>, stddoclet)
+ 
+  <li>Bug fix: All inherited methods from multiple extended interfaces
+      are now documented.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4933335.html">4933335</a>, stddoclet)
+ 
+  <li>Bug fix: Interface methods are no longer marked "public" (just a
+      change -- not actually a bug).
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4682448.html">4682448</a>, stddoclet)
+
+  <li>Bug fix: Constructor comments are now indented properly.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904037.html">4904037</a>, stddoclet)
+ 
+  <li>Bug fix: packages.html (note the plural) file is no longer included, 
+      as it has not been used or needed since 1.1.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4475679.html">4475679</a>, stddoclet)
+ 
+  <li>Bug fix: When a type parameter in the member summary is greater than
+      10 characters, now add a line break to shorten it
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4927167.html">4927167</a>, stddoclet)
+ 
+</ul>
+
+<!--
+<a name="javascript"></a>
+<b>Javascript</b>
+
+<ul>
+</ul>
+-->
+
+<a name="invalidhtml"></a>
+<b>Formatting and Invalid HTML</b>
+
+<ul>
+
+  <li>Bug fix: Now outputs &lt;NOSCRIPT&gt; tag with each &lt;SCRIPT&gt; tag.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4855054.html">4855054</a>, stddoclet)
+ 
+  <li>Bug fix: Internet Explorer no longer displays an unnecessary
+      horizontal scroll bar when frames are showing.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4852280.html">4852280</a>, stddoclet)
+ 
+  <li>Bug fix: Newlines are no longer hard-coded as "\n".
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4938109.html">4938109</a>, stddoclet)
+ 
+  <li>Bug fix: Table border added around class headings in constant value
+      summary.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904025.html">4904025</a>, stddoclet)
+
+  <li>Bug fix: Now prints certain HTML source comments conditionally
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904038.html">4904038</a>, stddoclet)
+ 
+</ul>
+
+
+<a name="navbar"></a>
+<b>Navigation Bar</b>
+<ul>
+
+  <li>Bug fix: An extra column no longer appears in the first row of
+      the navbar. 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4664607.html">4664607</a>, stddoclet, 1 vote)
+ 
+  <li>Bug fix: Package link is now active when documenting only one
+      package.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4689286.html">4689286</a>, stddoclet)
+ 
+  <li>Bug fix: Next/Prev Class links  now iterate through all interfaces 
+      <em>and</em> classes in current package.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4131628.html">4131628</a>, stddoclet)
+
+</ul>
+<p>
+
+<a name="accessibility"></a>
+<b>Accessibility</b>
+
+<ul>
+
+  <li>Bug fix: Table headings now use <th> rather than <td>.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4905786.html">4905786</a>, stddoclet)
+ 
+  <li>Bug fix: Missing space added at end of alternate text for inherit.gif.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4956908.html">4956908</a>, stddoclet)
+
+</ul>
+
+<a name="runningjavadoc"></a>
+<b>Running Javadoc</b>
+
+<ul>
+
+  <li>Bug fix: No longer get InvocationTargetException when a source
+      flie links to another source file in the wrong directory.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4835749.html">4835749</a>, stddoclet)
+ 
+  <li>Bug fix: (regression) No longer fails on internal classes,
+      as it worked in 1.4.1.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4843578.html">4843578</a>, tool)
+
+</ul>
+
+<p>
+
+<a name="messages"></a>
+<b>Error/Warning/Notice Messages</b>
+
+<ul>
+ 
+  <li><b>New feature:</b> Now warns when @return tag is present in void method.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4490068.html">4490068</a>, stddoclet)
+ 
+  <li><b>New feature:</b> Now displays message when creating new 
+      destination directory
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4657239.html">4657239</a>, stddoclet)
+ 
+  <li>Bug fix: BreakIterator warnings no longer appear.  For more 
+      information, see <a href="#breakiterator">above</a>.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4959985.html">4959985</a>, tool)
+
+  <li>Bug fix: The "first sentence" warning is no longer split between stderr 
+      and stdout.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4753853.html">4753853</a>, tool)
+ 
+  <li>Bug fix: DocLocale.java implementation has been modified to allow for
+      proper translation.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4780921.html">4780921</a>, tool)
+ 
+  <li>Bug fix: Now uses DocletErrorReporter to print option errors, 
+      rather than MessageRetriever.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4927928.html">4927928</a>, stddoclet)
+ 
+  <li>Bug fix: Message no longer says "error" when it's really a warning 
+      for a missing package-list file.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4625883.html">4625883</a>, stddoclet)
+
+</ul>
+
+
+<a name="docletapi"></a>
+<b>Doclet API</b>
+
+<ul>
+
+  <li><b>New feature:</b> Added support for generics, enums, and varargs
+      in the javadoc tool front-end (Doclet API) 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4421066.html">4421066</a>, tool)
+      and standard doclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4789689.html">4789689</a>, stddoclet)
+
+  <li><b>New feature:</b> Added support for annotations and annotation types
+      in the javadoc tool front-end (Doclet API) 
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4904495.html">4904495</a>, tool)
+      and standard doclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4905985.html">4905985</a>, stddoclet)
+
+  <li><b>New feature:</b> Add Doclet.languageVersion method to determine which
+      version of Java source code the doclet was written for.
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4909767.html">4909767</a>, tool)
+ 
+</ul>
+<p>
+
+<a name="stddoclet"></a>
+<b>Standard Doclet Implementation</b>
+
+<ul>
+
+  <li>Bug fix: Re-implemented standard doclet to maximize shared
+      code for doclets emulating the stddoclet
+      (<a href="http://developer.java.sun.com/developer/bugParade/bugs/4638723.html">4638723</a>, stddoclet)
+ 
+</ul>
+
+</blockquote>
+
+
+<!-- ======================================================= -->
+<p>
+
+<HR SIZE=3 NOSHADE>
+
+<TABLE BORDER="0" WIDTH="100%" summary="layout">
+<TR VALIGN=TOP>
+<TD>
+<P><FONT SIZE="-2">
+  <A HREF="../../relnotes/SMICopyright.html">Copyright</A> &#169; 2004
+  <A HREF="http://www.sun.com">Sun Microsystems, Inc.</A>
+  All Rights Reserved.</FONT></P>
+<FONT SIZE="-1">Please send comments to: <img src="javadoctool-email.gif">
+</TD>
+<TD ALIGN=RIGHT>
+  <IMG SRC="../../images/sunlogo64x30.gif" ALT="Sun" BORDER=0 WIDTH=64 HEIGHT=30>
+  <BR>
+  <FONT SIZE="+1">
+  <i>Java Software</i>
+  </FONT>
+</TD>
+</TR>
+</TABLE>
+
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+</body>
+</html>
