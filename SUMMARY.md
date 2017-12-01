@@ -18,3 +18,4 @@
 * [井字遊戲](example/OX-game.md)
 * [河內塔](example/tower-of-hanoi.md)
 * [數獨](example/sudoku.md)
+* [堆疊資料結構](example/stack.md)
