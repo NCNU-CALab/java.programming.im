@@ -1058,4 +1058,6 @@ public class PrintYLNoticeA4 extends Print {
 
 #### 執行後的結果
 
-![執行後的結果](https://github.com/NCNU-CALab/java.programming.im/raw/master/images/print1.jpg)
+![執行後的結果1](https://github.com/NCNU-CALab/java.programming.im/raw/master/images/print1.jpg)
+
+![執行後的結果2](https://github.com/NCNU-CALab/java.programming.im/raw/master/images/print2.jpg)
