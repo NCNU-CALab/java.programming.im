@@ -2,15 +2,15 @@
 
 C 語言的開發模式，是編寫 `.c` 的 Source Code，再經由 Compiler 編譯成 Object Code。所謂 Object Code 指的是和硬體相關的機器指令，也就是說當我們想要把 C 程式移植到不同的硬體時，必須要重新 Compile，以產生新的執行檔。除了需要重新編譯外，新系統是否具備應用程式所需的程式庫，include 的檔案是否相容，也是程式能否在新機器上順利編譯和執行的條件之一。
 
-在實務上，為了讓 C 程式能在不同的 UNIX 版本上都能順利編譯，原作者往往必須使用前置處理器的 `#ifdef` 指令，判斷不同環境的適當寫法。如果想把在 UNIX 上開發的 C 程式移植到 Windows 上，則有用到專屬程式庫的部分 \(如 UNIX 的使用者介面可能用到 X Window 的 API，Windows 就沒有支援，必須一台一台灌程式庫才行，很可能還要花錢買\)，就必須重寫才行。
+在實務上，為了讓 C 程式能在不同的 UNIX 版本上都能順利編譯，原作者往往必須使用前置處理器的 `#ifdef` 指令，判斷不同環境的適當寫法。如果想把在 UNIX 上開發的 C 程式移植到 Windows 上，則有用到專屬程式庫的部分 (如 UNIX 的使用者介面可能用到 X Window 的 API，Windows 就沒有支援，必須一台一台灌程式庫才行，很可能還要花錢買)，就必須重寫才行。
 
-解決此類問題的方法之一，是定義一種 Virtual Machine\(虛擬機器\)，讓程式語言編譯時不要翻成實體機器的指令，而是翻成 Virtual Machine 的目的碼。Virtual Machine 一般是以軟體來模擬的，只要新的平台有 Virtual Machine，則原始程式不用 Compile，執行舊機器上已有的 Virtual Machine 目的碼，就可以了。當然要達到完全不用重新 Compile 就能執行的理想，還要配合標準的程式庫才行。
+解決此類問題的方法之一，是定義一種 Virtual Machine(虛擬機器)，讓程式語言編譯時不要翻成實體機器的指令，而是翻成 Virtual Machine 的目的碼。Virtual Machine 一般是以軟體來模擬的，只要新的平台有 Virtual Machine，則原始程式不用 Compile，執行舊機器上已有的 Virtual Machine 目的碼，就可以了。當然要達到完全不用重新 Compile 就能執行的理想，還要配合標準的程式庫才行。
 
 Java 語言基於上述理念，定義了 Java Virtual Machine，它所用的指令稱為 byte code。使用 Virtual Machine 的缺點之一，是執行的速度較慢，代價是開發的速度變快了。以現在的硬體來說，大部分應用程式的執行速度已經沒有那麼重要，反倒是軟體的開發速度和品質越來越值得重視。
 
-此外 JVM 的技術不斷進步，諸如 Just In Time\(JIT\) Compiler，或 HotSpot 等技術都可以讓 Java 程式以非常接近原生碼 \(Native Code\) 的速度執行。因此不要因為某些偏頗的報告或直覺，就不使用 Java 了。
+此外 JVM 的技術不斷進步，諸如 Just In Time(JIT) Compiler，或 HotSpot 等技術都可以讓 Java 程式以非常接近原生碼 (Native Code) 的速度執行。因此不要因為某些偏頗的報告或直覺，就不使用 Java 了。
 
-開發 Java 應用程式的工具中，最常見的是由 Java 的原創公司 Sun Micro 所出版的 JDK\(Java Development Kit\)。JDK 可以免費下載。以 Text Editor 寫好的 Hello.java 原始檔：
+開發 Java 應用程式的工具中，最常見的是由 Java 的原創公司 Sun Micro 所出版的 JDK(Java Development Kit)。JDK 可以免費下載。以 Text Editor 寫好的 Hello.java 原始檔：
 
 ```java
 public class Hello {
@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 
 `$ java Hello`
 
-就可以利用 Java Virtual Machine\(此處是 java 這個執行檔\) 來執行了。
+就可以利用 Java Virtual Machine(此處是 java 這個執行檔) 來執行了。
 
 上述過程中幾個比較會發生的問題是：
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
 * javac 抱怨 class Hello 找不到：請確定你的檔名是大寫 `Hello.java`，程式內的 `public class Hello` 有沒有大小寫的問題。
 * java 抱怨找不到 main：請確定 `public static void main(String[] argv)` 毫無錯誤。
 
-# Java 是物件導向 \(Object-Oriented\) 程式語言
+# Java 是物件導向 (Object-Oriented) 程式語言
 
 Java 是由 C++ 簡化來的。由於 C++ 要和 C 完全相容，又很注重效能問題，因此 C++ 算是很複雜的程式語言。Java 在設計之初，考量的重點之一就是簡單，因此和 C++ 比起來，不僅更為物件導向，而且比 C++ 容易學習。
 
@@ -80,18 +80,18 @@ Java 語言所定義的基本資料型別有
 
 Java 的資料型態裡沒有 unsigned。
 
-Java 對數值型態的轉換比 C 稍微嚴格一點，下列左邊的部分都可以指定 \(assignment\) 給右邊的型別:
+Java 對數值型態的轉換比 C 稍微嚴格一點，下列左邊的部分都可以指定 (assignment) 給右邊的型別:
 
-`byte` --&gt; `short` --&gt; `int` --&gt; `long` --&gt; `float` --&gt; `double`
+`byte` --> `short` --> `int` --> `long` --> `float` --> `double`
 
-除上述外，其他型別間的轉換都必須下達型別轉換 \(Type Casting\) 命令來處理，其形式為圓括弧裡寫上型別名稱，如 \(double\)
+除上述外，其他型別間的轉換都必須下達型別轉換 (Type Casting) 命令來處理，其形式為圓括弧裡寫上型別名稱，如 (double)
 
 由於 Java 在 char 的型態部分採用 Unicode，因此字元常數的表示法，除因循 C 的規則外，也可以直接指定 16 bits Unicode 編碼給 char 型別的變數。例如由 Windows 「字元對應表」 程式中可查到象棋中的紅車的 unicode 編碼為 `4FE5`，Java 可用 `\u4fe5` 來表達。Java 的變數也可以用 Unicode 來命名，換句話說，你可以用中文取變數名稱。
 
-除了這些基本資料型別外，Java 還有一個稱為 Reference\(參考\) 的型別。Reference 用來存取 Object\(物件\)，其功能和 C 語言的 pointer 用來存取記憶體有點像，但沒有 pointer 的 `&+-` 等運算符號，而且 Reference 只能存取型態相符合的類別。宣告 `Reference` 的語法是 `ClassName varName`，例如
+除了這些基本資料型別外，Java 還有一個稱為 Reference(參考) 的型別。Reference 用來存取 Object(物件)，其功能和 C 語言的 pointer 用來存取記憶體有點像，但沒有 pointer 的 `&+-` 等運算符號，而且 Reference 只能存取型態相符合的類別。宣告 `Reference` 的語法是 `ClassName varName`，例如
 
 `String s`;  
-宣告 s 是一個型態為 reference 的變數，這表示我們可透過 s 來存取屬於 String 類別的物件 \(s is a reference to String object\)。
+宣告 s 是一個型態為 reference 的變數，這表示我們可透過 s 來存取屬於 String 類別的物件 (s is a reference to String object)。
 
 要特別強調的是，**s 並不是物件，而是用來指向 String 物件的 reference**。打個比方，
 
@@ -115,11 +115,11 @@ java.lang.Integer i;
 
 以上變數的型態都是 reference
 
-# 運算符號 \(Operator\)
+# 運算符號 (Operator)
 
 Java 語言在運算式的部分，和 C 語言極為類似，除了沒有 `sizeof`, `pointer` 和 `struct` 相關的運算符號外，另外新增了 `>>>` 向右無號 shift，以及用來判斷物件型態的 `instanceof`。Java 的常數的表示法也和 C 相同，而 Java 裡的新資料型態 `boolean` 的合法值為 `true` 和 `false` 兩個常數。
 
-## 算術 \(Arithmetic\) 運算符號
+## 算術 (Arithmetic) 運算符號
 
 | 運算符號 | 功能敘述 |
 | :--- | :--- |
@@ -131,7 +131,7 @@ Java 語言在運算式的部分，和 C 語言極為類似，除了沒有 `size
 | ++ | 加一 |
 | -- | 減一 |
 
-## 邏輯 \(logic\) 運算符號
+## 邏輯 (logic) 運算符號
 
 | 運算符號 | 功能敘述 |
 | :--- | :--- |
@@ -142,19 +142,19 @@ Java 語言在運算式的部分，和 C 語言極為類似，除了沒有 `size
 | == | 等於 |
 | != | 不等於 |
 | && | logic AND |
-| \|\| | logic OR |
+| &#124;&#124; | logic OR |
 | ! | logic NOT |
 | instanceof | reference instanceof ClassName 判斷 reference 所指到的物件其型態是否和 ClassName 相容 |
 
-Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolean 資料型態 \(只有 true 和 false 兩種值\) 判斷條件是否成立, 而 C 語言只能使用 0 或非 0。
+Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolean 資料型態 (只有 true 和 false 兩種值) 判斷條件是否成立, 而 C 語言只能使用 0 或非 0。
 
-## 位元 \(Bit\) 運算符號
+## 位元 (Bit) 運算符號
 
 | 運算符號 | 功能敘述 |
 | :--- | :--- |
 | & | bit AND |
 | &lt;&lt; | left bit shift |
-| \| | bit OR |
+| &#124; | bit OR |
 | &gt;&gt; | right bit shift with sign |
 | ^ | bit XOR |
 | ~ | 1 補數 |
@@ -165,11 +165,11 @@ Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolea
 | 運算符號 | 功能敘述 |
 | :--- | :--- |
 | = | 將右邊的值複製到左邊的變數 |
-| \(type\) | 將右邊的數值或 reference 轉換成 type 型別 |
+| (type) | 將右邊的數值或 reference 轉換成 type 型別 |
 | += | 將右邊的數值加上左邊的數值然後指定給左邊的變數 |
 | ?: | 若 `?` 左邊成立則做 `:` 左邊否則做 `:` 右邊 |
 | , | 合併兩個運算視為一個敘述 |
-| \(運算式\) | 表示 \(\) 內優先運算 |
+| (運算式) | 表示 () 內優先運算 |
 | . | Reference.ObjectMember 或 ClassName.ClassName 存取物件或類別成員 |
 | new | 產生物件 |
 
@@ -177,10 +177,10 @@ Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolea
 
 | 種類 | 運算符號 | 結合順序 |
 | :--- | :--- | :--- |
-| group | \(op\) | left to right |
-| postfix | \[\] . \(params\) op++ op-- | right to left |
+| group | (op) | left to right |
+| postfix | [] . (params) op++ op-- | right to left |
 | prefix | ++op --op +op -op ~ ! | right to left |
-| creation or casting | new \(type\)op | right to left |
+| creation or casting | new (type)op | right to left |
 | multiplicative | \* / % | left to right |
 | additive | + - | left to right |
 | shift | &lt;&lt;&gt;&gt; &gt;&gt;&gt; | left to right |
@@ -188,11 +188,11 @@ Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolea
 | equality | == != | left to right |
 | bitwise and | & | left to right |
 | bitwise exclusive or | ^ | left to right |
-| bitwise inclusive or | \| | left to right |
+| bitwise inclusive or | &#124; | left to right |
 | logical and | && | left to right |
-| logical or | \|\| | left to right |
+| logical or | &#124;&#124; | left to right |
 | conditional | ? : | right to left |
-| assignment | = += -= \*= /= %= &= ^= \|= &lt;&lt;=&gt;&gt;= &gt;&gt;&gt;= | right to left |
+| assignment | = += -= \*= /= %= &= ^= &#124;= &lt;&lt;=&gt;&gt;= &gt;&gt;&gt;= | right to left |
 | seperator | , | left to right |
 
 # 流程控制敘述
@@ -519,7 +519,7 @@ public class Example {
 }
 ```
 
-# 遞迴 \(recursion\) 範例
+# 遞迴 (recursion) 範例
 
 求 $$ 1 + 2 + 3 + ... + n $$
 
