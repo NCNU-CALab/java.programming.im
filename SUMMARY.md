@@ -15,3 +15,4 @@
 * [踩地雷](example/minesweeper.md)
 * [工程型計算機](example/engineering-calculator.md)
 * [八皇后問題](example/eight-queens-puzzle.md)
+* [井字遊戲](example/OX-game.md)
