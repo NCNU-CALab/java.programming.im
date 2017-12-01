@@ -146,45 +146,45 @@ Java 語言在運算式的部分，和 C 語言極為類似，除了沒有 `size
 | ! | logic NOT |
 | instanceof | reference instanceof ClassName 判斷 reference 所指到的物件其型態是否和 ClassName 相容 |
 
-Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolean 資料型態 (只有 true 和 false 兩種值) 判斷條件是否成立, 而 C 語言只能使用 0 或非 0。
+Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolean 資料型態 \(只有 true 和 false 兩種值\) 判斷條件是否成立, 而 C 語言只能使用 0 或非 0。
 
-## 位元 (Bit) 運算符號
+## 位元 \(Bit\) 運算符號
 
 | 運算符號 | 功能敘述 |
 | :--- | :--- |
 | & | bit AND |
-| << | left bit shift |
+| &lt;&lt; | left bit shift |
 | \| | bit OR |
-| >> | right bit shift with sign |
+| &gt;&gt; | right bit shift with sign |
 | ^ | bit XOR |
 | ~ | 1 補數 |
-| >>> | 同 >> 但左邊一律補零 |
+| &gt;&gt;&gt; | 同 &gt;&gt; 但左邊一律補零 |
 
 ## 其他運算符號
 
 | 運算符號 | 功能敘述 |
 | :--- | :--- |
 | = | 將右邊的值複製到左邊的變數 |
-| (type) | 將右邊的數值或 reference 轉換成 type 型別 |
+| \(type\) | 將右邊的數值或 reference 轉換成 type 型別 |
 | += | 將右邊的數值加上左邊的數值然後指定給左邊的變數 |
 | ?: | 若 `?` 左邊成立則做 `:` 左邊否則做 `:` 右邊 |
 | , | 合併兩個運算視為一個敘述 |
-| (運算式) | 表示 () 內優先運算 |
-| .	| Reference.ObjectMember 或 ClassName.ClassName 存取物件或類別成員 |
+| \(運算式\) | 表示 \(\) 內優先運算 |
+| . | Reference.ObjectMember 或 ClassName.ClassName 存取物件或類別成員 |
 | new | 產生物件 |
 
 ## 優先權
 
 | 種類 | 運算符號 | 結合順序 |
-|:--- |:--- |:--- |
-| group | (op) | left to right |
-| postfix | [] . (params) op++ op-- | right to left |
+| :--- | :--- | :--- |
+| group | \(op\) | left to right |
+| postfix | \[\] . \(params\) op++ op-- | right to left |
 | prefix | ++op --op +op -op ~ ! | right to left |
-| creation or casting | new (type)op | right to left |
-| multiplicative | * / % | left to right |
+| creation or casting | new \(type\)op | right to left |
+| multiplicative | \* / % | left to right |
 | additive | + - | left to right |
-| shift | <<>> >>> | left to right |
-| relational | <> <=>= instanceof == | left to right |
+| shift | &lt;&lt;&gt;&gt; &gt;&gt;&gt; | left to right |
+| relational | &lt;&gt; &lt;=&gt;= instanceof == | left to right |
 | equality | == != | left to right |
 | bitwise and | & | left to right |
 | bitwise exclusive or | ^ | left to right |
@@ -192,7 +192,7 @@ Java 語言和 C 語言有關邏輯運算最大的不同, 在於 Java 以 boolea
 | logical and | && | left to right |
 | logical or | \|\| | left to right |
 | conditional | ? : | right to left |
-| assignment | = += -= *= /= %= &= ^= \|= <<=>>= >>>= | right to left |
+| assignment | = += -= \*= /= %= &= ^= \|= &lt;&lt;=&gt;&gt;= &gt;&gt;&gt;= | right to left |
 | seperator | , | left to right |
 
 # 流程控制敘述
@@ -251,11 +251,11 @@ public class StringTest {
 
 寫作 Java 程式時，請注意下列幾種風格
 
-- Class Name 請首字大寫
-- Variable Name 和 Method Name 請首字小寫
-- 如果名稱由數個英文字組成，第二個英文字以後首字大寫
-- 內縮四個空格
-- 註解部分如要變成說明文件，請遵照 javadoc 這個工具的寫作規則
+* Class Name 請首字大寫
+* Variable Name 和 Method Name 請首字小寫
+* 如果名稱由數個英文字組成，第二個英文字以後首字大寫
+* 內縮四個空格
+* 註解部分如要變成說明文件，請遵照 javadoc 這個工具的寫作規則
 
 ```java
 /**
@@ -483,7 +483,7 @@ public class Example {
         }
         return y;
     }
-}      
+}
 ```
 
 ## 寫一函數求兩個整數的最小公倍數
@@ -519,15 +519,15 @@ public class Example {
 }
 ```
 
-# 遞迴 (recursion) 範例
+# 遞迴 \(recursion\) 範例
 
 求 $$ 1 + 2 + 3 + ... + n $$
 
 解析
 
-- 邊際條件是 `n = 1` 時，總合為 `1`
-- 該函數可定成 `int sum(int n)`
-- `sum(n) = n + sum(n - 1)`
+* 邊際條件是 `n = 1` 時，總合為 `1`
+* 該函數可定成 `int sum(int n)`
+* `sum(n) = n + sum(n - 1)`
 
 ```java
 public class Example {
@@ -567,8 +567,8 @@ public class Example {
 
 解析
 
-- 如果 `n == 0`，則最大公因數為 `m`
-- 如果 `n` 不等於 `0`，則最大公因數為 `gcd(m, n) == gcd(n, m%n)`
+* 如果 `n == 0`，則最大公因數為 `m`
+* 如果 `n` 不等於 `0`，則最大公因數為 `gcd(m, n) == gcd(n, m%n)`
 
 怎麼寫?
 
@@ -576,8 +576,8 @@ public class Example {
 
 解析
 
-- 費氏數列的定義為 `F(n) = n`, `if n <= 1`
-- `F(n) = F(n-1) + F(n-2), if n > 1`。
+* 費氏數列的定義為 `F(n) = n`, `if n <= 1`
+* `F(n) = F(n-1) + F(n-2), if n > 1`。
 
 ```java
 public class Example {
@@ -602,3 +602,4 @@ public class Example {
 3. `A(m - 1, A(m, n - 1))`, otherwise
 
 怎麼寫?
+
