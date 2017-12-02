@@ -12,7 +12,9 @@ Java 的 IO 可分為以下幾類。
     * [`ObjectOutputStream`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/ObjectOutputStream.html) 將其他 OutputStream 加工後，可用來輸出 Object  
     * [`DataOutputStream`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/DataOutputStream.html) 將其他 OutputStream 加工後，可用來輸出 `int` `float` `double` `boolean` `byte` `char` 等基本資料型態  
     * [`PrintStream`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/PrintStream.html) 可將各種基本資料型態和字串以文字形式輸出，`System.out` 就是一個 PrintStream  
-    
+  
+  
+  
 * 處理 `char` 的類別有：  
   * [`Reader`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/Reader.html) 作為 `char` 輸入，具有將輸入編碼轉為 Unicode 編碼的能力，主要的子類別有：  
     * [`BufferedReader`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/BufferedReader.html) 具有緩衝功能，可讓 IO 比較有效率  
@@ -24,7 +26,9 @@ Java 的 IO 可分為以下幾類。
     * [`CharArrayWriter`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/CharArrayWriter.html) 輸出到某個字元陣列  
     * [`OutputStreamWriter`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/OutputStreamWriter.html) 作為 Writer 轉到 OutputStream 的介面  
     * [`FileWriter`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/FileWriter.html) 將 `char` 輸出到檔案  
-    
+  
+  
+  
 * 處理檔案的類別有：
   * [`File`](https://rawgit.com/NCNU-CALab/java.programming.im/master/docs/api/java/io/File.html) 具有新增刪除檔案、查詢檔案長度、查詢檔案屬性、查詢路徑等功能  
   
