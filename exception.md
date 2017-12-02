@@ -15,7 +15,7 @@ main() {
 }
 ```
 
-上述例子裡，如果檔案 sample.txt 不存在，則無法開啟該檔案，因此 `fopen` 傳回 NULL。如果不檢查傳回值，則會產生 segmentation fault。比較好的寫法是：
+上述例子裡，如果檔案 sample.txt 不存在，則無法開啟該檔案，因此 `fopen()` 傳回 NULL。如果不檢查傳回值，則會產生 segmentation fault。比較好的寫法是：
 
 ```c
 #include <stdio.h>
