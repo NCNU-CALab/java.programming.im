@@ -79,5 +79,63 @@ public class H2 {
             throw new MalMatrixException();
         }
         data = new double[x][y];
-        for (int i=0; i
+        for (int i=0; i<x; i++) {
+            for (int j=0; j<y; j++) {
+                try {
+                    token = nextToken(din);
+                    data[i][j] = Double.valueOf(token).doubleValue();
+                } catch (NumberFormatException eNum) {
+                    throw new MalMatrixException();
+                }
+            }
+        }
+        return new Matrix(data);
+    }
+
+    public static void main(String[] args) {
+        BufferedReader din;
+
+        if (args.length != 1) {
+            System.out.println("Usage: java H2 fname");
+            System.out.println("where fname is a file contains matrix data.");
+            System.exit(0);
+        }
+        try {
+            String inputbuf;
+            din = new BufferedReader(new FileReader(args[0]));
+            for (;!(inputbuf=nextToken(din)).equals("");) {
+                if (inputbuf.equals("+")) {
+                    Matrix a = readMatrix(din);
+                    Matrix b = readMatrix(din);
+                    a.print();
+                    a.add(b);
+                    System.out.println("+");
+                    b.print();
+                    System.out.println("=");
+                    a.print();
+                } else if (inputbuf.equals("*")) {
+                    Matrix a = readMatrix(din);
+                    Matrix b = readMatrix(din);
+                    Matrix c = a.multiply(b);
+                    a.print();
+                    System.out.println("*");
+                    b.print();
+                    System.out.println("=");
+                    c.print();
+                } else if (inputbuf.equals("value")) {
+                    Matrix a = readMatrix(din);
+                    System.out.println("value of ");
+                    a.print();
+                    System.out.println("=");
+                    System.out.println(a.determinant());
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+}
 ```
