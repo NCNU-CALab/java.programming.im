@@ -5,6 +5,7 @@
 * [類別與物件](class-and-obj.md)
 * [陣列](array.md)
 * ......
+* [介面](interface.md)
 * [例外處理](exception.md)
 * [線串與同步處理](thread.md)
 * [容器類別](container.md)
