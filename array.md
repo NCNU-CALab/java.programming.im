@@ -41,7 +41,7 @@ int main() {
 
 Java 的陣列並不以一塊連續的記憶體空間來表達，而是把陣列視為特殊的物件。此物件不但可存放資料，還利用 object variable length 記錄著該陣列的長度。
 
-![](https://i.imgur.com/FyLCpm3.png)
+![](https://raw.githubusercontent.com/NCNU-CALab/java.programming.im/master/images/JArray1.jpg)
 
 ```java
 public class ArrayExample {
@@ -90,7 +90,7 @@ public class Arrays {
 
 Java 陣列物件是只能儲存基本資料型態或 reference 的一維陣列，二維以上的陣列是透過 reference 指到其他的一維陣列物件來達成。
 
-![](https://i.imgur.com/FbXV9Zr.png)
+![](https://raw.githubusercontent.com/NCNU-CALab/java.programming.im/master/images/JArray2.jpg)
 
 ```java
 public class ArrayExample2 {
@@ -108,7 +108,7 @@ public class ArrayExample2 {
 
 上述的範例中，`x` 宣告為 reference to `int[][]`, `x[i][j]` 事實上是先找出 reference `x[i]`，再找 `x[i]` 所指到的陣列物件內的第 `j` 個元素。由於 Java 採用這種機制，因此下面的有趣情形就發生了：
 
-![](https://i.imgur.com/iy6a5xN.png)
+![](https://raw.githubusercontent.com/NCNU-CALab/java.programming.im/master/images/JArray3.jpg)
 
 ```java
 public class ArrayExample3 {
