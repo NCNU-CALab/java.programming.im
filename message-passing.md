@@ -4,7 +4,7 @@ Procedure Language 以函數作為寫作和執行的主體。函數由一群程�
 
 Object-Oriented Language 以 Class 作為寫作的主體，執行時主要由 Object 來紀錄程式狀態。由於物件導向程式語言將 Object Variable 和 Object Method 一起定義在 Class 內，再透過 Encapsulation 的機制規範存取 Object Member 的範圍，因此 Object 的 Variable 和 Method 就組成了一個完整的個體。
 
-雖然 Object Method 寫起來就像 Function，但執行 Method 內程式碼的機制和 Function 不同:
+雖然 Object Method 寫起來就像 Function，但執行 Method 內程式碼的機制和 Function 不同：
 
 - Object Method 定義物件接受到訊息時的反應，也就是說執行 Method 時有一個隱形的參數，意即這個物件 (this)
 - Function 的實際地址在 Compile 或 Link time 就已經決定好了，但對 OO 來說，Object 必須在 Runtime 接受到訊息後，才能決定實際要執行的 Method。
