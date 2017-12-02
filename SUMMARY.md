@@ -4,6 +4,7 @@
 * [Java 與 C 的比較](java-vs-c.md)
 * [類別與物件](class-and-obj.md)
 * [陣列](array.md)
+* [封裝](encapsulation.md)
 * ......
 * [介面](interface.md)
 * [例外處理](exception.md)
