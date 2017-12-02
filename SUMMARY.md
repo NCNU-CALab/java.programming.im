@@ -3,6 +3,7 @@
 * [Introduction](README.md)
 * [Java 與 C 的比較](java-vs-c.md)
 * [類別與物件](class-and-obj.md)
+* [陣列](array.md)
 * ......
 * [例外處理](exception.md)
 * [線串與同步處理](thread.md)
