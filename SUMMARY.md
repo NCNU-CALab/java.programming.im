@@ -6,7 +6,7 @@
 * [陣列](array.md)
 * [封裝](encapsulation.md)
 * [訊息傳遞 ](message-passing.md)
-* ......
+* [繼承](extends.md)
 * [介面](interface.md)
 * [例外處理](exception.md)
 * [線串與同步處理](thread.md)
